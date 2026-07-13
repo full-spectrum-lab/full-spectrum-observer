@@ -1,5 +1,52 @@
-LICENSE PENDING FORMAL DECISION
+Full Spectrum Observer Dual License
+===================================
 
-This repository bootstrap is not yet published as a licensed open-source release.
-Do not redistribute it as an official release until the project owner selects and
-records an explicit license through the project change-control process.
+Copyright 2026 Full Spectrum Lab / 全频谱实验室
+
+SPDX-License-Identifier: MulanPSL-2.0 OR Apache-2.0
+
+本项目采用双许可证发布。任何接收者均可自行选择以下任一许可证使用、
+复制、修改和分发本项目：
+
+1. 木兰宽松许可证第 2 版（MulanPSL-2.0），作为中国境内优先许可；或
+2. Apache License, Version 2.0（Apache-2.0），作为国际兼容许可。
+
+选择其中任一许可证即可，无须同时满足两套许可证。许可证的规范全文为：
+
+- MulanPSL-2.0: https://license.coscl.org.cn/MulanPSL2
+- Apache-2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+木兰宽松许可证第 2 版声明
+--------------------------
+
+Copyright (c) 2026 Full Spectrum Lab / 全频谱实验室
+
+Full Spectrum Observer is licensed under Mulan PSL v2. You can use this
+software according to the terms and conditions of the Mulan PSL v2. You may
+obtain a copy of Mulan PSL v2 at:
+
+    https://license.coscl.org.cn/MulanPSL2
+
+THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the
+Mulan PSL v2 for more details.
+
+Apache License 2.0 声明
+-----------------------
+
+Copyright 2026 Full Spectrum Lab / 全频谱实验室
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this project except in compliance with the License. You may obtain a copy
+of the License at:
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations.
+
+第三方组件不因本双许可证而改变其原许可证；其版本和许可证以发行包中的
+SBOM.cdx.json、ReleaseManifest.json 及各组件自带声明为准。

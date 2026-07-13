@@ -65,11 +65,17 @@ def main() -> int:
     root = pathlib.Path(args.package_root).resolve()
 
     license_text = (root / "LICENSE").read_text(encoding="utf-8")
-    project_license_status = "PENDING_OWNER_DECISION" if "PENDING FORMAL DECISION" in license_text else "DECIDED"
+    project_license_expression = "MulanPSL-2.0 OR Apache-2.0"
+    project_license_status = (
+        "DECIDED"
+        if "SPDX-License-Identifier: MulanPSL-2.0 OR Apache-2.0" in license_text
+        else "PENDING_OWNER_DECISION"
+    )
     observer = {
         "type": "application",
         "name": "full-spectrum-observer",
         "version": "0.1.0-alpha",
+        "licenses": [{"expression": project_license_expression}],
         "properties": [{"name": "license_status", "value": project_license_status}],
     }
     components = [
@@ -129,8 +135,8 @@ def main() -> int:
             "Foundation Kernel CLI only; no Web Console.",
             "Pinned to Engine v1.0.0; Engine v1.5 is not supported by this package.",
             "Synthetic CASE005 only; not production or enterprise validated.",
-            "Project license is pending an explicit owner decision; official redistribution is blocked.",
-            "IG8 must be repeated against the corrected package after all IG7 blockers close.",
+            "Dual license applies only to Observer-owned work; bundled components retain their own licenses.",
+            "Foundation Kernel release evidence applies to the exact package digest only.",
         ],
     }
     manifest["manifest_sha256"] = hashlib.sha256(canonical(manifest)).hexdigest()

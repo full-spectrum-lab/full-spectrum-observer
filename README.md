@@ -17,15 +17,16 @@ WP-04 Execution Source:    IMPLEMENTED
 WP-05 CLI Source:          IMPLEMENTED
 IG5 Minimum Loop:          PASS
 IG6 Security/Fault Gate:   PASS
-IG7 Offline Package Gate:  NOT_READY (license owner decision required)
-IG8 Independent Repro:     FAILED_ON_OLD_PACKAGE / RERUN_REQUIRED
+IG7 Offline Package Gate:  R2 REBUILD IN PROGRESS
+IG8 Independent Repro:     R2 RERUN REQUIRED
 ```
 
 IG0 through IG6 pass. The first IG7 package passed functional verification, but
-independent IG8 review found a blocking LICENSE/SBOM contradiction. Packaging now
-records the pending license honestly, inventories every payload file and includes
-all bundled Python distributions. A corrected formal package remains blocked until
-the project owner explicitly selects the Observer license; IG8 must then be rerun.
+independent IG8 review found a blocking LICENSE/SBOM contradiction. The owner has
+now selected `MulanPSL-2.0 OR Apache-2.0`; packaging records that expression,
+inventories every payload file and includes all bundled Python distributions.
+The exact R2 package must still pass IG7 verification and independent IG8 replay
+before the alpha tag is published.
 
 ## Fixed toolchain
 
