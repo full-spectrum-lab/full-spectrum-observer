@@ -2,7 +2,7 @@
 
 ## 重要版本边界
 
-本候选包固定 **Full Spectrum Engine v1.0.0**，没有与 Engine v1.4 打通。Engine v1.4 Compatibility Adapter 属于 Observer v0.2.0-alpha。
+本候选包固定 **Full Spectrum Engine v1.0.0**，没有与 Engine v1.5 打通。Engine v1.0/v1.5 Compatibility Adapter 属于 Observer v0.2.0-alpha。
 
 本包是 Foundation Kernel CLI 候选，不是最终 Web Console，也不代表企业生产可用。
 
