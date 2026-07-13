@@ -5,7 +5,7 @@
   "case": "CASE005_KNOWLEDGE_CONFLICT",
   "input_sha256": "70c5f2c585556fd355ac0f3cb17121a5f9c3dd529d329e2dd2429d28804817da",
   "engine_output_sha256": "51a74d6ff458f3d48f82c7e04ed7c279826b79f789140ff96e364122edf9bf80",
-  "worker_stdout_sha256": "0ba98b90593ee74a1db9511bafc693e2dc6ab2db3d1bdea4bf81f6f0c3435a93",
+  "worker_stdout_sha256": "b9118b86f6a9309bd713fd73d5ac7d1d5411aff1be63d1ab4346fc861640333a",
   "worker_stderr_sha256": "b2a0090845fd88ce1c4a8d20dddacaf1726d230a565eafaa227d24fc7352ef31",
   "boundary": {
     "observer_only": true,
