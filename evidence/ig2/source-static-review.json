@@ -1,0 +1,161 @@
+{
+  "report_id": "IG2-SOURCE-STATIC-REVIEW",
+  "status": "PASS",
+  "checks": [
+    {
+      "check_id": "DTO-COUNT",
+      "status": "PASS",
+      "detail": "12"
+    },
+    {
+      "check_id": "REASON-CONSTANTS",
+      "status": "PASS",
+      "detail": "50"
+    },
+    {
+      "check_id": "SCHEMA-LOCK",
+      "status": "PASS",
+      "detail": "12 schema + 2 catalog + 12 examples"
+    },
+    {
+      "check_id": "UNIT-TEST-IDS",
+      "status": "PASS",
+      "detail": "unit IDs"
+    },
+    {
+      "check_id": "CONTRACT-TEST-IDS",
+      "status": "PASS",
+      "detail": "contract IDs"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/BuildIdentity.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/ModuleMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/RepositoryLayout.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Application/Ports.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Application/ModuleMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Execution/ModuleMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.EngineFacade/ModuleMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Evidence/ModuleMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Host.Cli/Program.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Models/FoundationContracts.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Serialization/FoundationJson.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/ReasonCodes/FoundationReasonCodes.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/ReasonCodes/ReasonCodeCatalog.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Canonicalization/FsObsCanonicalizer.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Canonicalization/SelfDigestCalculator.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Canonicalization/CanonicalizationException.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Schema/SchemaValidationIssue.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Schema/FoundationSchemaValidator.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Schema/FoundationSchemaBundle.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Schema/PinnedReferencePolicy.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-src/Observer.Contracts/Schema/CommonFragmentConsistencyValidator.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-tests/Observer.Tests.Unit/Program.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-tests/Observer.Tests.Contract/Program.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-tests/Observer.Tests.Architecture/TestProjectMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-tests/Observer.Tests.Integration/TestProjectMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    },
+    {
+      "check_id": "BRACES-tests/Observer.Tests.Security/TestProjectMarker.cs",
+      "status": "PASS",
+      "detail": "balanced"
+    }
+  ]
+}

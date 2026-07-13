@@ -1,0 +1,22 @@
+{
+  "candidate_id": "FS-OBS-V010-IG5-SOURCE-CANDIDATE-1",
+  "generated_at_utc": "2026-07-12T16:58:39.653066+00:00",
+  "base_branch": "integration/IG3-IG4-source-candidate",
+  "wp04_branch": "feat/IMP-0401-execution-pipeline-candidate",
+  "wp04_head": "a0046f7bc4eff1731d512e00f6db0d22ac39d750",
+  "wp05_branch": "feat/IMP-0501-cli-candidate",
+  "wp04_source": "COMPLETE_CANDIDATE",
+  "wp05_source": "COMPLETE_CANDIDATE",
+  "python_reference_pipeline": "PASS",
+  "source_static": "PASS",
+  "dotnet_restore": "NOT_EXECUTED",
+  "dotnet_build": "NOT_EXECUTED",
+  "csharp_tests": "NOT_EXECUTED",
+  "prerequisite_ig3": "NOT_PASSED",
+  "prerequisite_ig4": "NOT_PASSED",
+  "formal_ig5": "NOT_PASSED",
+  "next_after_formal_ig5": "WP-06 Security, Privacy & Fault Tests",
+  "wp05_head": "e6b164f1000b228d00c08d262f3f70d8bea252be",
+  "integration_branch": "integration/IG5-source-candidate",
+  "integration_source_head_before_manifest": "e6b164f1000b228d00c08d262f3f70d8bea252be"
+}

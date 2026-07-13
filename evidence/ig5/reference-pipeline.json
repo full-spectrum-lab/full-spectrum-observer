@@ -1,0 +1,91 @@
+{
+  "report_id": "IG5_REFERENCE_PIPELINE",
+  "status": "PASS",
+  "formal_gate": "PASSED",
+  "case": "CASE005_KNOWLEDGE_CONFLICT",
+  "input_sha256": "70c5f2c585556fd355ac0f3cb17121a5f9c3dd529d329e2dd2429d28804817da",
+  "engine_output_sha256": "51a74d6ff458f3d48f82c7e04ed7c279826b79f789140ff96e364122edf9bf80",
+  "worker_stdout_sha256": "a19791027ffb2e33a4fe9f1d6442cc48c224799794519befd6569f646f869028",
+  "worker_stderr_sha256": "b2a0090845fd88ce1c4a8d20dddacaf1726d230a565eafaa227d24fc7352ef31",
+  "boundary": {
+    "observer_only": true,
+    "certified": false,
+    "authorized": false,
+    "active_external": false
+  },
+  "stages": [
+    "INTAKE",
+    "ADAPTER",
+    "SCHEMA_VALIDATION",
+    "GOVERNANCE_VALIDATION",
+    "SNAPSHOT",
+    "ENGINE_FACADE",
+    "ENGINE",
+    "OUTPUT",
+    "OBSERVATION",
+    "AUDIT"
+  ],
+  "checks": [
+    {
+      "id": "worker_exit_zero",
+      "status": "PASS"
+    },
+    {
+      "id": "worker_one_line",
+      "status": "PASS"
+    },
+    {
+      "id": "output_digest",
+      "status": "PASS"
+    },
+    {
+      "id": "golden_equal",
+      "status": "PASS"
+    },
+    {
+      "id": "observer_only",
+      "status": "PASS"
+    },
+    {
+      "id": "certified_false",
+      "status": "PASS"
+    },
+    {
+      "id": "authorized_false",
+      "status": "PASS"
+    },
+    {
+      "id": "active_external_false",
+      "status": "PASS"
+    },
+    {
+      "id": "operation_completed",
+      "status": "PASS"
+    },
+    {
+      "id": "observation_artifact_ref",
+      "status": "PASS"
+    },
+    {
+      "id": "observation_audit_head",
+      "status": "PASS"
+    },
+    {
+      "id": "audit_genesis",
+      "status": "PASS"
+    },
+    {
+      "id": "audit_event_hash",
+      "status": "PASS"
+    },
+    {
+      "id": "audit_payload_digest",
+      "status": "PASS"
+    },
+    {
+      "id": "artifact_verified",
+      "status": "PASS"
+    }
+  ],
+  "note": "C#/.NET minimum loop and Python reference oracle passed."
+}

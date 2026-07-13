@@ -1,0 +1,47 @@
+{
+  "gate": "IG4_SOURCE_REFERENCE",
+  "status": "PASS",
+  "formal_gate": "PASSED",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "checks": [
+    {
+      "id": "one_line",
+      "status": "PASS"
+    },
+    {
+      "id": "exit_zero",
+      "status": "PASS"
+    },
+    {
+      "id": "status_success",
+      "status": "PASS"
+    },
+    {
+      "id": "golden_equal",
+      "status": "PASS"
+    },
+    {
+      "id": "digest",
+      "status": "PASS"
+    },
+    {
+      "id": "deterministic",
+      "status": "PASS"
+    },
+    {
+      "id": "wrong_commit_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "invalid_protocol_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "stderr_not_stdout",
+      "status": "PASS"
+    }
+  ],
+  "success_stdout_sha256": "abf3b7aa1f4fbae3588a6a4e973886a79cf08b8c9996592c5be140a41c3631da",
+  "stderr_sha256": "b2a0090845fd88ce1c4a8d20dddacaf1726d230a565eafaa227d24fc7352ef31",
+  "note": "Pinned Engine, private Python 3.11 and C# process tests passed."
+}

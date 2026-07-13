@@ -1,0 +1,18 @@
+{
+  "gate": "IG2",
+  "formal_status": "BLOCKED_BY_IG1_DOTNET_BUILD",
+  "source_candidate": {
+    "IMP-0101": "SOURCE_COMPLETE",
+    "IMP-0102": "SOURCE_COMPLETE_BUILD_PENDING",
+    "IMP-0103": "SOURCE_COMPLETE_BUILD_PENDING",
+    "IMP-0104": "SOURCE_COMPLETE_BUILD_PENDING",
+    "IMP-0105": "SOURCE_COMPLETE_BUILD_PENDING",
+    "IMP-0106": "SOURCE_COMPLETE_BUILD_PENDING",
+    "IMP-0107": "SOURCE_COMPLETE_BUILD_PENDING",
+    "IMP-0108": "SOURCE_COMPLETE_BUILD_PENDING"
+  },
+  "reference_validation": "PASS",
+  "architecture_static": "PASS",
+  "dotnet_build": "NOT_EXECUTED",
+  "dotnet_tests": "NOT_EXECUTED"
+}

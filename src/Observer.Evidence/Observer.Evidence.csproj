@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>FullSpectrum.Observer.Evidence</AssemblyName>
+    <RootNamespace>FullSpectrum.Observer.Evidence</RootNamespace>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
+    <ProjectReference Include="../../src/Observer.Application/Observer.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations/001_foundation.sql" />
+  </ItemGroup>
+</Project>

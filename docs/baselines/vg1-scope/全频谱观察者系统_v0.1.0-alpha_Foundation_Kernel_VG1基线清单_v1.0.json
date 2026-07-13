@@ -1,0 +1,54 @@
+{
+  "baseline_id": "FS-OBS-V010-SCOPE-BL-1.0",
+  "decision": "GO",
+  "status": "FROZEN VERSION SCOPE BASELINE",
+  "freeze_date": "2026-07-12",
+  "target_release": "Observer System v0.1.0-alpha",
+  "requirements_baseline": "FS-OBS-REQ-BL-1.0",
+  "architecture_baseline": "FS-OBS-ARCH-BL-1.0",
+  "version_planning_baseline": "FS-OBS-VRP-BL-1.0",
+  "scope_records": 24,
+  "architecture_constraints": [
+    "VAC-FK-001"
+  ],
+  "fixtures": 12,
+  "vg2_open_decisions": 12,
+  "implementation_authorization": "NO",
+  "files": [
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求分解_v1.0_Scope_Baseline.docx",
+      "size_bytes": 74195,
+      "sha256": "bd72319e36a9d4a73a89c309fe58894b234c085c3391327f327da30ab717f1ef"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求分解_v1.0_Scope_Baseline.md",
+      "size_bytes": 33455,
+      "sha256": "b30123f7f9c2368eabbf9eee70a408dffa7660a1bfda0abc6048e7e471aca77d"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求矩阵_v1.0_Baseline.xlsx",
+      "size_bytes": 41321,
+      "sha256": "b6433a1f28f67257480ab8e8c96d525fc45bc9d7a8431ba86ba0cf09a32339b1"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1范围覆盖与设计输入验证报告_v1.0.docx",
+      "size_bytes": 39199,
+      "sha256": "33b4f3af8bd94a449653498cba4f59336e2f70b4e4efa2d7021a5a4a0a85fe21"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1范围覆盖与设计输入验证报告_v1.0.md",
+      "size_bytes": 1222,
+      "sha256": "0ba79c3b6de40af7bdb3a606dc1473b3ee6d66bd36229bd04a795bbdabdba892"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1冻结准入与决定_v1.0.docx",
+      "size_bytes": 38433,
+      "sha256": "e29658d3b223ab3a4f3bee2bfda27c7a7d913501380651c6c839de4c5d9dbb84"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1冻结准入与决定_v1.0.md",
+      "size_bytes": 710,
+      "sha256": "2c23f25dec07c963df76ad294a00f9d031481a0b44282f3ecbe04878ec33ba03"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "CANON-OBJECT-ORDER",
+    "canonical_utf8": "{\"a\":1,\"b\":2}",
+    "sha256": "43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777",
+    "status": "PASS"
+  },
+  {
+    "id": "CANON-NESTED",
+    "canonical_utf8": "{\"a\":\"x\",\"z\":[3,{\"a\":1,\"b\":2}]}",
+    "sha256": "34876417014f833bdd6c7281b1041bc3acdcffca87864ca079491ecb15913dec",
+    "status": "PASS"
+  }
+]

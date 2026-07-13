@@ -1,0 +1,11 @@
+{
+  "engine_id": "full-spectrum-engine",
+  "version": "v1.0.0",
+  "source_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
+  "tag": "v1.0.0",
+  "artifact_status": "PENDING_VG3",
+  "artifact_sha256": null,
+  "allowed_entrypoint": "run_simulation",
+  "fastapi_forbidden": true,
+  "engine_sqlite_forbidden": true
+}

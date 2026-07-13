@@ -1,0 +1,2 @@
+# IG1 worker has no third-party Python dependency.
+# WP-03 must replace this with a hash-locked wheelhouse manifest.

@@ -1,0 +1,19 @@
+{
+  "contract": "fs-observer/observation-record/1",
+  "observation_id": "12345678-1234-4234-8234-123456789abc",
+  "operation_id": "12345678-1234-4234-8234-123456789abc",
+  "request_id": "12345678-1234-4234-8234-123456789abc",
+  "trace_id": "12345678-1234-4234-8234-123456789abc",
+  "status": "COMPLETED",
+  "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "runtime_snapshot_id": "12345678-1234-4234-8234-123456789abc",
+  "output_ref": {
+    "artifact_id": "12345678-1234-4234-8234-123456789abc",
+    "media_type": "application/json",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "size_bytes": 1
+  },
+  "audit_head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "created_at_utc": "value",
+  "updated_at_utc": "value"
+}

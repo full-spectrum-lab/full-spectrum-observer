@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>FullSpectrum.Observer.Tests.Contract</AssemblyName>
+    <RootNamespace>FullSpectrum.Observer.Tests.Contract</RootNamespace>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
+  </ItemGroup>
+</Project>

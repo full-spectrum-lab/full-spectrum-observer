@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>FullSpectrum.Observer.Contracts</AssemblyName>
+    <RootNamespace>FullSpectrum.Observer.Contracts</RootNamespace>
+
+  </PropertyGroup>
+</Project>

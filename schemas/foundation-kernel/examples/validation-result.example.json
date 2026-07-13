@@ -1,0 +1,7 @@
+{
+  "contract": "fs-observer/validation-result/1",
+  "validation_kind": "SCHEMA",
+  "status": "PASS",
+  "reason_codes": [],
+  "validated_at_utc": "value"
+}

@@ -1,0 +1,314 @@
+{
+  "simulation_id": "CASE005_KNOWLEDGE_CONFLICT",
+  "timestamp": "2026-07-04T00:00:00Z",
+  "input_query": "An AI assistant and enterprise knowledge sources returned conflicting answers to the same question. The system must determine which source should be treated as authoritative.",
+  "sensitivity_level": "medium",
+  "initial_state": {
+    "survival": 0.8,
+    "coordination": 0.5,
+    "meaning": 0.35
+  },
+  "final_state": {
+    "survival": 0.8075,
+    "coordination": 0.508475,
+    "meaning": 0.35727499999999995
+  },
+  "fshi": {
+    "value": 56.78,
+    "risk_level": "WARNING",
+    "weights": {
+      "survival": 0.35,
+      "coordination": 0.35,
+      "meaning": 0.3
+    },
+    "penalty": 0.0
+  },
+  "ess": {
+    "selected_option": "PATH-001",
+    "horizon": 7,
+    "paths": [
+      {
+        "option": "PATH-001",
+        "selected": true,
+        "total_pain": 9.2359,
+        "low_freq": 0.479,
+        "mid_freq": 0.3384,
+        "high_freq": 0.2765
+      },
+      {
+        "option": "PATH-002",
+        "selected": false,
+        "total_pain": 9.2459,
+        "low_freq": 0.3699,
+        "mid_freq": 0.3926,
+        "high_freq": 0.2993
+      },
+      {
+        "option": "PATH-003",
+        "selected": false,
+        "total_pain": 9.2485,
+        "low_freq": 0.4248,
+        "mid_freq": 0.2931,
+        "high_freq": 0.3324
+      },
+      {
+        "option": "PATH-004",
+        "selected": false,
+        "total_pain": 9.2487,
+        "low_freq": 0.4098,
+        "mid_freq": 0.3369,
+        "high_freq": 0.3086
+      },
+      {
+        "option": "PATH-005",
+        "selected": false,
+        "total_pain": 9.2489,
+        "low_freq": 0.4762,
+        "mid_freq": 0.2883,
+        "high_freq": 0.2883
+      }
+    ]
+  },
+  "validation": {
+    "dream_butterfly_passed": true,
+    "dream_butterfly_reason": "ALL_PASSED",
+    "bomb_triggered": false,
+    "bomb_reason": "not triggered",
+    "brake_state": "TRIGGERED"
+  },
+  "risk_vector": {
+    "survival_impact": 0.1925,
+    "trust_impact": 0.491525,
+    "meaning_impact": 0.642725,
+    "reversibility": 0.7,
+    "explainability": 0.8,
+    "diffusivity": 0.3,
+    "urgency": 0.5,
+    "uncertainty": 0.2
+  },
+  "runestone": {
+    "runestone_id": "RS_77afaec728dac918",
+    "timestamp": 1783123242.0,
+    "decision": "PATH-001",
+    "reason": "ESS-knowledge-service-v0.3",
+    "risk_vector": {
+      "survival_impact": 0.1925,
+      "trust_impact": 0.491525,
+      "meaning_impact": 0.642725,
+      "reversibility": 0.7,
+      "explainability": 0.8,
+      "diffusivity": 0.3,
+      "urgency": 0.5,
+      "uncertainty": 0.2
+    },
+    "parent_runestone": null,
+    "agent_trail": [
+      "AI_Agent",
+      "Human_Agent",
+      "Regulator_Agent",
+      "Enterprise_Agent"
+    ],
+    "ess_snapshot": {
+      "horizon": 7,
+      "num_paths": 5,
+      "selected_pain": 9.23594751952488
+    },
+    "causal_chain": null,
+    "signature": null
+  },
+  "causal_chain": {
+    "causal_chain_id": "CC_8fd8a5a9b57a10ea",
+    "timestamp": "2026-07-04T00:00:00Z",
+    "version": "1.0",
+    "system_state": {
+      "current_state": "WARNING",
+      "judgment_basis": [
+        "FSHI=56.8 (WARNING)",
+        "ESS selected PATH-001 (pain=9.236)",
+        "Bomb: not triggered"
+      ],
+      "spectrum_priority": "meaning"
+    },
+    "ess_decision_context": {
+      "candidate_options": [
+        "PATH-001",
+        "PATH-002",
+        "PATH-003",
+        "PATH-004",
+        "PATH-005"
+      ],
+      "selected_option": "PATH-001",
+      "horizon": 7
+    },
+    "causal_paths": [
+      {
+        "path_id": "PATH-001",
+        "option": "PATH-001",
+        "selected": true,
+        "frequency_impacts": {
+          "low_frequency": {
+            "signal_type": "survival_support",
+            "intensity": 0.4789606407753696,
+            "description": "Low-frequency impact intensity 0.48"
+          },
+          "mid_frequency": {
+            "signal_type": "trust_repair",
+            "intensity": 0.3383717364576454,
+            "description": "Mid-frequency impact intensity 0.34"
+          },
+          "high_frequency": {
+            "signal_type": "meaning_drift",
+            "intensity": 0.27652628070325236,
+            "description": "High-frequency impact intensity 0.28"
+          }
+        },
+        "total_pain": 9.23594751952488,
+        "chain_visual": "low(0.48) -> mid(0.34) -> high(0.28)"
+      },
+      {
+        "path_id": "PATH-002",
+        "option": "PATH-002",
+        "selected": false,
+        "frequency_impacts": {
+          "low_frequency": {
+            "signal_type": "survival_support",
+            "intensity": 0.3699146693885302,
+            "description": "Low-frequency impact intensity 0.37"
+          },
+          "mid_frequency": {
+            "signal_type": "trust_repair",
+            "intensity": 0.39261390922544687,
+            "description": "Mid-frequency impact intensity 0.39"
+          },
+          "high_frequency": {
+            "signal_type": "meaning_drift",
+            "intensity": 0.2993251387631033,
+            "description": "High-frequency impact intensity 0.30"
+          }
+        },
+        "total_pain": 9.245880626422705,
+        "chain_visual": "low(0.37) -> mid(0.39) -> high(0.30)"
+      },
+      {
+        "path_id": "PATH-003",
+        "option": "PATH-003",
+        "selected": false,
+        "frequency_impacts": {
+          "low_frequency": {
+            "signal_type": "survival_support",
+            "intensity": 0.42483570765056167,
+            "description": "Low-frequency impact intensity 0.42"
+          },
+          "mid_frequency": {
+            "signal_type": "trust_repair",
+            "intensity": 0.29308678494144075,
+            "description": "Mid-frequency impact intensity 0.29"
+          },
+          "high_frequency": {
+            "signal_type": "meaning_drift",
+            "intensity": 0.3323844269050346,
+            "description": "High-frequency impact intensity 0.33"
+          }
+        },
+        "total_pain": 9.248506811423724,
+        "chain_visual": "low(0.42) -> mid(0.29) -> high(0.33)"
+      },
+      {
+        "path_id": "PATH-004",
+        "option": "PATH-004",
+        "selected": false,
+        "frequency_impacts": {
+          "low_frequency": {
+            "signal_type": "survival_support",
+            "intensity": 0.4098430617934562,
+            "description": "Low-frequency impact intensity 0.41"
+          },
+          "mid_frequency": {
+            "signal_type": "trust_repair",
+            "intensity": 0.3369233289997705,
+            "description": "Mid-frequency impact intensity 0.34"
+          },
+          "high_frequency": {
+            "signal_type": "meaning_drift",
+            "intensity": 0.30856841405949853,
+            "description": "High-frequency impact intensity 0.31"
+          }
+        },
+        "total_pain": 9.248700473214782,
+        "chain_visual": "low(0.41) -> mid(0.34) -> high(0.31)"
+      },
+      {
+        "path_id": "PATH-005",
+        "option": "PATH-005",
+        "selected": false,
+        "frequency_impacts": {
+          "low_frequency": {
+            "signal_type": "survival_support",
+            "intensity": 0.4761514928204013,
+            "description": "Low-frequency impact intensity 0.48"
+          },
+          "mid_frequency": {
+            "signal_type": "trust_repair",
+            "intensity": 0.2882923312638332,
+            "description": "Mid-frequency impact intensity 0.29"
+          },
+          "high_frequency": {
+            "signal_type": "meaning_drift",
+            "intensity": 0.288293152152541,
+            "description": "High-frequency impact intensity 0.29"
+          }
+        },
+        "total_pain": 9.248902649208954,
+        "chain_visual": "low(0.48) -> mid(0.29) -> high(0.29)"
+      }
+    ],
+    "dream_butterfly_validation": {
+      "passed": true,
+      "reason": "ALL_PASSED",
+      "bomb_triggered": false,
+      "bomb_reason": "not triggered"
+    },
+    "soul_account": {
+      "initial_balance": 100,
+      "debits": [
+        {
+          "item": "coordination_friction",
+          "points": -8,
+          "basis": "Coordination layer shows unresolved friction."
+        }
+      ],
+      "credits": [],
+      "balance": 92,
+      "health_status": "healthy"
+    },
+    "who_hurts": {
+      "low_frequency": {
+        "pain_bearer": "frontline operators",
+        "description": "Delivery cost, ticket volume, or operational friction rises first."
+      },
+      "mid_frequency": {
+        "pain_bearer": "partners and reviewers",
+        "description": "Trust repair work and coordination overhead expand next."
+      },
+      "high_frequency": {
+        "pain_bearer": "decision owners",
+        "description": "Narrative pressure, accountability, and strategic ambiguity accumulate last."
+      }
+    },
+    "frequency_plan": {
+      "recommendation": "preserve meaning continuity while monitoring lower layers",
+      "priority": "meaning",
+      "system_state": "WARNING",
+      "interventions": [
+        {
+          "name": "coordination_repair",
+          "target_frequency": "mid_frequency",
+          "description": "Add explicit review and cross-source consistency checks.",
+          "expected_effect": "Reduce trust erosion and repeated escalation.",
+          "urgency": "high"
+        }
+      ]
+    },
+    "full_chain_narrative": "The engine classified the system as WARNING. ESS selected path PATH-001 with total pain 9.236. Final state = [survival=0.807, coordination=0.508, meaning=0.357]. Runestone RS_77afaec728dac918 anchors the audit token for this evaluation."
+  }
+}

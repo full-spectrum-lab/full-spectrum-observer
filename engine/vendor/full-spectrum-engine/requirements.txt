@@ -1,0 +1,9 @@
+numpy>=1.24.0
+pytest>=8.0.0
+dataclasses>=0.6; python_version < '3.7'
+
+# v0.5-alpha REST API (optional, install with: pip install -e ".[api]")
+fastapi>=0.100.0
+uvicorn>=0.23.0
+httpx>=0.24.0  # for TestClient
+

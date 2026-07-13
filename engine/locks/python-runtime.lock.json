@@ -1,0 +1,9 @@
+{
+  "runtime": "CPython",
+  "version": "3.11.x",
+  "architecture": "x64",
+  "distribution": "Windows embeddable package",
+  "exact_patch": "PENDING_WP03",
+  "sha256": null,
+  "status": "DESIGN_PINNED_BUILD_ARTIFACT_PENDING"
+}

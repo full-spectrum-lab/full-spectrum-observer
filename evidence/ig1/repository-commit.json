@@ -1,0 +1,7 @@
+{
+  "repository": "full-spectrum-observer",
+  "branch": "main",
+  "bootstrap_commit": "1850df7cd5a80a64591ed631d386b5ae2e8c0837",
+  "commit_message": "IMP-0001/0002/0005: bootstrap IG0-IG1 repository skeleton",
+  "note": "The delivery package manifest records the final exported HEAD after evidence metadata is committed."
+}

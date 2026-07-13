@@ -1,0 +1,15 @@
+{
+    "report_id":  "IG7-PACKAGE-VERIFICATION-1",
+    "status":  "PASS",
+    "formal_gate":  "PASSED",
+    "package":  "full-spectrum-observer-v0.1.0-alpha-ig7.zip",
+    "package_sha256":  "6afdf1a54b385661154d04c22aa216c44bff2f88fa0360dd5d966c0cbdb576d3",
+    "manifest_verified":  true,
+    "sha256sums_verified":  true,
+    "version_command":  true,
+    "analyze_case005":  true,
+    "audit_verified":  true,
+    "tamper_detected":  true,
+    "engine_version":  "v1.0.0",
+    "engine_1_4_supported":  false
+}

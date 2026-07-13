@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-error-envelope/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "FoundationErrorEnvelope",
+  "type": "object",
+  "required": [
+    "contract",
+    "error_id",
+    "trace_id",
+    "stage",
+    "reason_codes",
+    "occurred_at_utc"
+  ],
+  "properties": {
+    "contract": {
+      "const": "fs-observer/foundation-error-envelope/1"
+    },
+    "error_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "REQUEST",
+        "INTAKE",
+        "ADAPTER",
+        "SCHEMA_VALIDATION",
+        "GOVERNANCE_VALIDATION",
+        "SNAPSHOT",
+        "FACADE",
+        "ENGINE",
+        "OUTPUT",
+        "STORE",
+        "AUDIT",
+        "SYSTEM"
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^(REQ|INTAKE|ADAPTER|SCHEMA|GOV|SNAPSHOT|FACADE|ENGINE|OUTPUT|STORE|AUDIT|SEC|SYSTEM)_[A-Z0-9_]+$"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "field_path": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "details_redacted": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "occurred_at_utc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "details": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "contract": "fs-observer/foundation-error-envelope/1",
+  "error_id": "12345678-1234-4234-8234-123456789abc",
+  "trace_id": "12345678-1234-4234-8234-123456789abc",
+  "stage": "REQUEST",
+  "reason_codes": [
+    {
+      "code": "REQ_INVALID_ARGUMENT",
+      "message": "value"
+    }
+  ],
+  "occurred_at_utc": "value"
+}

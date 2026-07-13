@@ -1,0 +1,88 @@
+{
+  "schema_set_id": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "schema_count": 12,
+  "draft": "2020-12",
+  "meta_validation_pass": 12,
+  "instance_validation_pass": 12,
+  "stable_id_count": 12,
+  "duplicate_ids": [],
+  "explicit_ref_count": 0,
+  "cycle_count": 0,
+  "strategy": "SELF_CONTAINED_GENERATED",
+  "common_fragment_issues": [],
+  "zero_digest_placeholders": [],
+  "rows": [
+    {
+      "schema": "audit-event.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "engine-facade-request.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "engine-facade-response.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "foundation-analysis-request.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "foundation-case-pack-manifest.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "foundation-error-envelope.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "foundation-operation-status.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "governance-output-envelope.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "observation-record.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "release-manifest.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "runtime-configuration-snapshot.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    },
+    {
+      "schema": "validation-result.schema.json",
+      "schema_meta": "PASS",
+      "instance": "PASS",
+      "errors": []
+    }
+  ]
+}

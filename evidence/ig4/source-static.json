@@ -1,0 +1,25 @@
+{
+  "branch": "feat/IMP-0301-engine-bridge-candidate",
+  "base": "783dfda1447703a3852050851c13f285bfb2fcb1",
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "worker_lock",
+      "status": "PASS",
+      "file_count": 25
+    },
+    {
+      "id": "vendored_engine_commit_identity",
+      "status": "PASS"
+    },
+    {
+      "id": "worker_smoke",
+      "status": "PASS"
+    },
+    {
+      "id": "evidence_project_not_referenced",
+      "status": "PASS"
+    }
+  ],
+  "csharp_build": "NOT_EXECUTED"
+}
