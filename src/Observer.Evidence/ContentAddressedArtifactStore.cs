@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Collections.Concurrent;
 using FullSpectrum.Observer.Application;
 using FullSpectrum.Observer.Contracts.ReasonCodes;
 
@@ -6,6 +7,7 @@ namespace FullSpectrum.Observer.Evidence;
 
 public sealed class ContentAddressedArtifactStore : IArtifactStore
 {
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> DigestLocks = new(StringComparer.Ordinal);
     private readonly EvidenceOptions _options;
     private readonly IClock _clock;
     private readonly IIdGenerator _ids;
@@ -20,6 +22,10 @@ public sealed class ContentAddressedArtifactStore : IArtifactStore
     public async Task<ArtifactDescriptor> WriteAsync(ArtifactWriteRequest request, CancellationToken cancellationToken)
     {
         string digest = Convert.ToHexStringLower(SHA256.HashData(request.Content.Span));
+        SemaphoreSlim digestLock = DigestLocks.GetOrAdd(digest, static _ => new SemaphoreSlim(1, 1));
+        await digestLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
         string relativePath = Path.Combine(digest[..2], digest).Replace('\\', '/');
         string finalPath = Path.Combine(_options.ArtifactRoot, digest[..2], digest);
         Directory.CreateDirectory(Path.GetDirectoryName(finalPath)!);
@@ -69,6 +75,11 @@ public sealed class ContentAddressedArtifactStore : IArtifactStore
         {
             TryDelete(tempPath);
             throw new EvidenceStoreException(FoundationReasonCodes.STORE_WRITE_FAILED, "Artifact write failed.", exception);
+        }
+        }
+        finally
+        {
+            digestLock.Release();
         }
     }
 

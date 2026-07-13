@@ -3,6 +3,11 @@ from __future__ import annotations
 import argparse, contextlib, hashlib, json, pathlib, re, sys, traceback
 from typing import Any
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from offline_guard import install as install_offline_guard
+
+install_offline_guard()
+
 PROTOCOL='fs-observer-engine-facade/1'
 ENGINE_VERSION='v1.0.0'
 ENGINE_COMMIT='09062bae2c7608bda79ee4bfde5779109e8e6197'

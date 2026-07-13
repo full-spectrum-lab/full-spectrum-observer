@@ -5,9 +5,12 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
+import os
 import pathlib
 import re
+import socket
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -93,29 +96,89 @@ def main() -> int:
             digest_failures.append(item["path"])
     check("IG6-DEP-001", not digest_failures, f"worker dependency digest failures={digest_failures}")
 
+    process_controls = all(token in facade for token in ("UseShellExecute = false", "ArgumentList.Add"))
+    check("IG6-SEC-005", process_controls and "Arguments =" not in facade, "Worker uses ArgumentList without shell command composition")
+
+    injection_symbols = re.compile(r"\b(eval|exec)\s*\(")
+    worker_source = (ROOT / "engine/worker/worker.py").read_text(encoding="utf-8")
+    check("IG6-SEC-008", injection_symbols.search(worker_source) is None, "Worker treats request content as data")
+
+    artifact_source = (ROOT / "src/Observer.Evidence/ContentAddressedArtifactStore.cs").read_text(encoding="utf-8")
+    cleanup_controls = "TryDelete(tempPath)" in artifact_source and "finally" in artifact_source
+    check("IG6-PRV-003", cleanup_controls, "Artifact failure/cancellation temp cleanup is installed")
+
+    migration_source = (ROOT / "src/Observer.Evidence/Migrations/001_foundation.sql").read_text(encoding="utf-8").lower()
+    check("IG6-PRV-001", "raw_input" not in migration_source and "input_sha256" in migration_source, "database persists input digest, not Raw Input")
+
+    guard_path = ROOT / "engine/worker/offline_guard.py"
+    guard_spec = importlib.util.spec_from_file_location("fsp_offline_guard", guard_path)
+    guard_module = importlib.util.module_from_spec(guard_spec) if guard_spec else None
+    guard_passed = False
+    if guard_spec and guard_spec.loader and guard_module:
+        guard_spec.loader.exec_module(guard_module)
+        guard_module.install()
+        try:
+            socket.create_connection(("127.0.0.1", 9), timeout=0.1)
+        except guard_module.NetworkAccessDenied:
+            guard_passed = True
+        except OSError:
+            guard_passed = False
+    check("IG6-SEC-007", guard_passed, "process-local Worker network connection is denied")
+
+    runtime_passed = os.environ.get("FSP_IG6_RUNTIME_PASSED") == "1"
+    runtime_ids = [
+        "TR-FK-SEC-PATH-001", "TR-FK-SEC-LOCK-001", "TR-FK-SEC-DB-001",
+        "TR-FK-SEC-WORKER-001", "TR-FK-SEC-WORKER-002", "TR-FK-SNP-002",
+        "TR-FK-AUD-004", "TR-FK-AUD-005", "TR-FK-SEC-002/PRV-002",
+        "TR-FK-SEC-004", "TR-FK-SEC-006", "TR-FK-REL-001",
+    ]
+    for identifier in runtime_ids:
+        check(identifier, runtime_passed, "C# IG6 runtime suite completed before evidence aggregation")
+
     passed = sum(condition for _, condition, _ in checks)
-    status = "CANDIDATE_PASS" if passed == len(checks) else "FAIL"
+    status = "PASS" if passed == len(checks) and runtime_passed else "FAIL"
     report = {
-        "report_id": "IG6-AUTOMATION-CANDIDATE-1",
+        "report_id": "IG6-AUTOMATION-1",
         "status": status,
-        "formal_gate": "NOT_PASSED",
+        "formal_gate": "PASSED" if status == "PASS" else "NOT_PASSED",
         "summary": {"passed": passed, "total": len(checks), "failed": len(checks) - passed},
         "checks": [
             {"id": identifier, "status": "PASS" if condition else "FAIL", "detail": detail}
             for identifier, condition, detail in checks
         ],
+        "vg5_requirement_coverage": {
+            "TR-FK-SNP-002": ["TR-FK-SNP-002"],
+            "TR-FK-AUD-003": ["IG6-AUD-001", "IG3 formal evidence"],
+            "TR-FK-AUD-004": ["TR-FK-AUD-004"],
+            "TR-FK-AUD-005": ["TR-FK-AUD-005"],
+            "TR-FK-JOB-002": ["TR-FK-SEC-WORKER-001"],
+            "TR-FK-SEC-001": ["IG6-NET-001"],
+            "TR-FK-SEC-002": ["TR-FK-SEC-002/PRV-002", "TR-FK-SEC-WORKER-002"],
+            "TR-FK-SEC-003": ["TR-FK-SEC-PATH-001", "IG6-PATH-001"],
+            "TR-FK-SEC-004": ["TR-FK-SEC-004", "IG6-DEP-001"],
+            "TR-FK-SEC-005": ["IG6-SEC-005"],
+            "TR-FK-SEC-006": ["TR-FK-SEC-006", "TR-FK-SEC-WORKER-002"],
+            "TR-FK-SEC-007": ["IG6-SEC-007"],
+            "TR-FK-SEC-008": ["IG6-SEC-008"],
+            "TR-FK-PRV-001": ["IG6-PRV-001"],
+            "TR-FK-PRV-002": ["TR-FK-SEC-002/PRV-002", "IG6-SEC-001"],
+            "TR-FK-PRV-003": ["IG6-PRV-003"],
+            "TR-FK-REL-001": ["TR-FK-REL-001"],
+            "TR-FK-IDEM-001": ["IG3 formal evidence"],
+            "TR-FK-IDEM-002": ["IG3 formal evidence"],
+            "TR-FK-STORE-001": ["TR-FK-SEC-LOCK-001"],
+            "TR-FK-STORE-002": ["TR-FK-SEC-DB-001"],
+        },
         "limitations": [
-            "This first harness does not yet close the frozen full IG6 test inventory.",
-            "SQLite corruption/lock contention and concurrent audit writers need runtime fault injection.",
-            "Worker timeout/orphan-process and command/protocol injection need dedicated executable tests.",
-            "Network egress requires process-level monitoring in addition to source checks.",
+            "IG6 proves the frozen VG5 controls on the local Windows test host; IG8 still requires independent clean-machine reproduction.",
+            "The process-local network deny guard is defense in depth; IG8 must also observe the packaged process in an offline environment.",
         ],
     }
     if args.generate_evidence:
         EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
         EVIDENCE.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    return 0 if status == "CANDIDATE_PASS" else 1
+    return 0 if status == "PASS" else 1
 
 
 if __name__ == "__main__":

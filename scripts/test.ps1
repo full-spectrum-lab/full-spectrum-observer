@@ -89,6 +89,7 @@ if ($Gate -eq "IG6") {
     $env:FSP_TEST_SCOPE = "ALL"
     & dotnet run --project (Join-Path $RepoRoot "tests/Observer.Tests.Integration/Observer.Tests.Integration.csproj") --configuration Release --no-restore
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    $env:FSP_IG6_RUNTIME_PASSED = "1"
 
     foreach ($FormalGate in @("IG3", "IG4", "IG5")) {
         $env:FSP_FORMAL_GATE_CONTEXT = $FormalGate

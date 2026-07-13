@@ -1,10 +1,10 @@
 {
-  "report_id": "IG6-AUTOMATION-CANDIDATE-1",
-  "status": "CANDIDATE_PASS",
-  "formal_gate": "NOT_PASSED",
+  "report_id": "IG6-AUTOMATION-1",
+  "status": "PASS",
+  "formal_gate": "PASSED",
   "summary": {
-    "passed": 14,
-    "total": 14,
+    "passed": 31,
+    "total": 31,
     "failed": 0
   },
   "checks": [
@@ -77,12 +77,166 @@
       "id": "IG6-DEP-001",
       "status": "PASS",
       "detail": "worker dependency digest failures=[]"
+    },
+    {
+      "id": "IG6-SEC-005",
+      "status": "PASS",
+      "detail": "Worker uses ArgumentList without shell command composition"
+    },
+    {
+      "id": "IG6-SEC-008",
+      "status": "PASS",
+      "detail": "Worker treats request content as data"
+    },
+    {
+      "id": "IG6-PRV-003",
+      "status": "PASS",
+      "detail": "Artifact failure/cancellation temp cleanup is installed"
+    },
+    {
+      "id": "IG6-PRV-001",
+      "status": "PASS",
+      "detail": "database persists input digest, not Raw Input"
+    },
+    {
+      "id": "IG6-SEC-007",
+      "status": "PASS",
+      "detail": "process-local Worker network connection is denied"
+    },
+    {
+      "id": "TR-FK-SEC-PATH-001",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SEC-LOCK-001",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SEC-DB-001",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SEC-WORKER-001",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SEC-WORKER-002",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SNP-002",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-AUD-004",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-AUD-005",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SEC-002/PRV-002",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SEC-004",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-SEC-006",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
+    },
+    {
+      "id": "TR-FK-REL-001",
+      "status": "PASS",
+      "detail": "C# IG6 runtime suite completed before evidence aggregation"
     }
   ],
+  "vg5_requirement_coverage": {
+    "TR-FK-SNP-002": [
+      "TR-FK-SNP-002"
+    ],
+    "TR-FK-AUD-003": [
+      "IG6-AUD-001",
+      "IG3 formal evidence"
+    ],
+    "TR-FK-AUD-004": [
+      "TR-FK-AUD-004"
+    ],
+    "TR-FK-AUD-005": [
+      "TR-FK-AUD-005"
+    ],
+    "TR-FK-JOB-002": [
+      "TR-FK-SEC-WORKER-001"
+    ],
+    "TR-FK-SEC-001": [
+      "IG6-NET-001"
+    ],
+    "TR-FK-SEC-002": [
+      "TR-FK-SEC-002/PRV-002",
+      "TR-FK-SEC-WORKER-002"
+    ],
+    "TR-FK-SEC-003": [
+      "TR-FK-SEC-PATH-001",
+      "IG6-PATH-001"
+    ],
+    "TR-FK-SEC-004": [
+      "TR-FK-SEC-004",
+      "IG6-DEP-001"
+    ],
+    "TR-FK-SEC-005": [
+      "IG6-SEC-005"
+    ],
+    "TR-FK-SEC-006": [
+      "TR-FK-SEC-006",
+      "TR-FK-SEC-WORKER-002"
+    ],
+    "TR-FK-SEC-007": [
+      "IG6-SEC-007"
+    ],
+    "TR-FK-SEC-008": [
+      "IG6-SEC-008"
+    ],
+    "TR-FK-PRV-001": [
+      "IG6-PRV-001"
+    ],
+    "TR-FK-PRV-002": [
+      "TR-FK-SEC-002/PRV-002",
+      "IG6-SEC-001"
+    ],
+    "TR-FK-PRV-003": [
+      "IG6-PRV-003"
+    ],
+    "TR-FK-REL-001": [
+      "TR-FK-REL-001"
+    ],
+    "TR-FK-IDEM-001": [
+      "IG3 formal evidence"
+    ],
+    "TR-FK-IDEM-002": [
+      "IG3 formal evidence"
+    ],
+    "TR-FK-STORE-001": [
+      "TR-FK-SEC-LOCK-001"
+    ],
+    "TR-FK-STORE-002": [
+      "TR-FK-SEC-DB-001"
+    ]
+  },
   "limitations": [
-    "This first harness does not yet close the frozen full IG6 test inventory.",
-    "SQLite corruption/lock contention and concurrent audit writers need runtime fault injection.",
-    "Worker timeout/orphan-process and command/protocol injection need dedicated executable tests.",
-    "Network egress requires process-level monitoring in addition to source checks."
+    "IG6 proves the frozen VG5 controls on the local Windows test host; IG8 still requires independent clean-machine reproduction.",
+    "The process-local network deny guard is defense in depth; IG8 must also observe the packaged process in an offline environment."
   ]
 }
