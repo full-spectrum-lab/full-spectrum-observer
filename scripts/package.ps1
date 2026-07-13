@@ -50,6 +50,7 @@ foreach ($Directory in @("engine","packs","schemas")) {
 }
 Copy-Item (Join-Path $RepoRoot "baselines.lock.json") $Staging
 Copy-Item (Join-Path $RepoRoot "LICENSE") $Staging
+Copy-Item (Join-Path $RepoRoot "NOTICE") $Staging
 Copy-Item (Join-Path $RepoRoot "SECURITY.md") $Staging
 New-Item -ItemType Directory -Force -Path (Join-Path $Staging "docs"),(Join-Path $Staging "tools") | Out-Null
 Copy-Item (Join-Path $RepoRoot "docs/acceptance/USER_ACCEPTANCE_GUIDE.md") (Join-Path $Staging "docs/USER_ACCEPTANCE_GUIDE.md")
@@ -83,4 +84,3 @@ $ZipHash = (Get-FileHash $Zip -Algorithm SHA256).Hash.ToLowerInvariant()
 [IO.File]::WriteAllText("$Zip.sha256", "$ZipHash *$([IO.Path]::GetFileName($Zip))`n", (New-Object Text.UTF8Encoding($false)))
 Write-Host "IG7 package: $Zip"
 Write-Host "SHA-256: $ZipHash"
-

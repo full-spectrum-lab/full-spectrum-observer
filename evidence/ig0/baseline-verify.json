@@ -2,7 +2,7 @@
     "report_id":  "EVD-IMP-001",
     "gate":  "IG0",
     "status":  "PASS",
-    "generated_at_utc":  "2026-07-13T03:04:40.8834029+00:00",
+    "generated_at_utc":  "2026-07-13T14:56:46.7003454+00:00",
     "lock_id":  "FS-OBS-V010-IG0-LOCK-1",
     "sdk_status":  "PASS",
     "engine":  {
@@ -321,10 +321,10 @@
                   {
                       "path":  "schemas/foundation-kernel/release-manifest.schema.json",
                       "status":  "PASS",
-                      "expected_sha256":  "708d9667a1ec24103ee647fac2757ea6f9cd95b46271c020af5f6443d9be2725",
-                      "actual_sha256":  "708d9667a1ec24103ee647fac2757ea6f9cd95b46271c020af5f6443d9be2725",
-                      "expected_size":  6252,
-                      "actual_size":  6252
+                      "expected_sha256":  "dc688ff41e603a736557e176eaf92d29d438d77bd318b374c36041b41fb188d9",
+                      "actual_sha256":  "dc688ff41e603a736557e176eaf92d29d438d77bd318b374c36041b41fb188d9",
+                      "expected_size":  6307,
+                      "actual_size":  6307
                   },
                   {
                       "path":  "schemas/foundation-kernel/runtime-configuration-snapshot.schema.json",

@@ -29,6 +29,9 @@ def main():
  sbom_doc=json.loads((root/sbom['relative_path']).read_text(encoding='utf-8'))
  observer_props={p.get('name'):p.get('value') for p in sbom_doc.get('metadata',{}).get('component',{}).get('properties',[])}
  if observer_props.get('license_status')!='DECIDED': errors.append('project license pending explicit owner decision')
+ observer_licenses=sbom_doc.get('metadata',{}).get('component',{}).get('licenses',[])
+ if {'expression':'MulanPSL-2.0 OR Apache-2.0'} not in observer_licenses: errors.append('unexpected project license expression')
+ if not (root/'NOTICE').is_file(): errors.append('NOTICE missing')
  if manifest['engine']['version']!='v1.0.0': errors.append('unexpected Engine version')
  print(json.dumps({'status':'PASS' if not errors else 'FAIL','checked':len(sums.read_text(encoding='utf-8').splitlines()),'errors':errors},ensure_ascii=False,indent=2))
  return 0 if not errors else 1
