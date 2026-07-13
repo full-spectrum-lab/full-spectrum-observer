@@ -31,7 +31,8 @@ def main() -> int:
         {"type":"library","name":"SQLite","version":"3.50.4","licenses":[{"license":{"name":"Public Domain"}}]},
         {"type":"application","name":"full-spectrum-engine","version":"1.0.0","properties":[{"name":"source_commit","value":"09062bae2c7608bda79ee4bfde5779109e8e6197"}]},
     ]
-    sbom = {"bomFormat":"CycloneDX","specVersion":"1.6","serialNumber":f"urn:uuid:{uuid.uuid4()}","version":1,"metadata":{"component":components[0]},"components":components[1:]}
+    sbom_id = uuid.uuid5(uuid.NAMESPACE_URL, f"full-spectrum-observer:{args.release_commit}:0.1.0-alpha")
+    sbom = {"bomFormat":"CycloneDX","specVersion":"1.6","serialNumber":f"urn:uuid:{sbom_id}","version":1,"metadata":{"component":components[0]},"components":components[1:]}
     sbom_path=root/"SBOM.cdx.json"; sbom_path.write_text(json.dumps(sbom,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     selected=["app/FullSpectrum.Observer.Host.Cli.dll","engine/worker/worker.py","packs/foundation-case005/foundation-case-pack.manifest.json","schemas/foundation-kernel/schemas.lock.json"]
     files=[]
@@ -58,4 +59,3 @@ def main() -> int:
     (root/"SHA256SUMS.txt").write_text("".join(f"{sha(p)} *{p.relative_to(root).as_posix()}\n" for p in paths),encoding="utf-8")
     return 0
 if __name__=="__main__": raise SystemExit(main())
-

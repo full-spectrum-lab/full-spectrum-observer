@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse,hashlib,json,pathlib,re,sys
+from jsonschema import Draft202012Validator
 
 def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def canonical(v): return json.dumps(v,ensure_ascii=False,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
@@ -15,10 +16,13 @@ def main():
   if sha(target)!=m.group(1): errors.append(f'digest mismatch: {m.group(2)}')
  manifest=json.loads((root/'ReleaseManifest.json').read_text(encoding='utf-8'));declared=manifest.pop('manifest_sha256',None);actual=hashlib.sha256(canonical(manifest)).hexdigest()
  if declared!=actual: errors.append('ReleaseManifest digest mismatch')
+ manifest_with_digest=dict(manifest);manifest_with_digest['manifest_sha256']=declared
+ schema=json.loads((root/'schemas/foundation-kernel/release-manifest.schema.json').read_text(encoding='utf-8'))
+ schema_errors=sorted(Draft202012Validator(schema).iter_errors(manifest_with_digest),key=lambda e:list(e.absolute_path))
+ errors.extend(f"ReleaseManifest schema: {error.message}" for error in schema_errors)
  sbom=manifest['sbom'];
  if sha(root/sbom['relative_path'])!=sbom['sha256']: errors.append('SBOM digest mismatch')
  if manifest['engine']['version']!='v1.0.0': errors.append('unexpected Engine version')
  print(json.dumps({'status':'PASS' if not errors else 'FAIL','checked':len(sums.read_text(encoding='utf-8').splitlines()),'errors':errors},ensure_ascii=False,indent=2))
  return 0 if not errors else 1
 if __name__=='__main__': raise SystemExit(main())
-
