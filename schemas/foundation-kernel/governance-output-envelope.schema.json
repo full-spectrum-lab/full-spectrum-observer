@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/governance-output-envelope/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "GovernanceOutputEnvelope",
+  "type": "object",
+  "required": [
+    "contract",
+    "observation_id",
+    "trace_id",
+    "classification",
+    "boundary",
+    "engine",
+    "runtime_snapshot_ref",
+    "engine_output",
+    "engine_output_sha256",
+    "unknowns",
+    "evidence_refs",
+    "audit_head",
+    "created_at_utc"
+  ],
+  "properties": {
+    "contract": {
+      "const": "fs-observer/governance-output-envelope/1"
+    },
+    "observation_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "classification": {
+      "const": "SYNTHETIC"
+    },
+    "boundary": {
+      "type": "object",
+      "required": [
+        "observer_only",
+        "certified",
+        "authorized",
+        "active_external"
+      ],
+      "properties": {
+        "observer_only": {
+          "const": true
+        },
+        "certified": {
+          "const": false
+        },
+        "authorized": {
+          "const": false
+        },
+        "active_external": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "engine": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "runtime_snapshot_ref": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "engine_output": {
+      "type": "object"
+    },
+    "engine_output_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "source",
+          "impact",
+          "human_review_required"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^(REQ|INTAKE|ADAPTER|SCHEMA|GOV|SNAPSHOT|FACADE|ENGINE|OUTPUT|STORE|AUDIT|SEC|SYSTEM)_[A-Z0-9_]+$"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "human_review_required": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "artifact_id",
+          "media_type",
+          "sha256",
+          "size_bytes"
+        ],
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "relative_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "SYNTHETIC",
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "RESTRICTED"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "audit_head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "created_at_utc": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

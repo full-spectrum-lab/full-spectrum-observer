@@ -1,0 +1,159 @@
+{
+  "report_id": "EVD-IMP-002-BOOTSTRAP",
+  "gate": "IG1",
+  "status": "STRUCTURE_READY_BUILD_NOT_EXECUTED",
+  "generated_at_utc": "2026-07-12T15:06:19.371299+00:00",
+  "static_structure_status": "PASS",
+  "dotnet_restore_status": "NOT_EXECUTED",
+  "dotnet_build_status": "NOT_EXECUTED",
+  "required_sdk": "10.0.301",
+  "dotnet_sdk_available_in_generation_environment": false,
+  "reason": "The generation environment does not contain the pinned .NET SDK. The exact SDK and offline build procedure are fixed in the repository.",
+  "checks": [
+    {
+      "check_id": "XML-Observer.Application",
+      "status": "PASS",
+      "detail": "src/Observer.Application/Observer.Application.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Contracts",
+      "status": "PASS",
+      "detail": "src/Observer.Contracts/Observer.Contracts.csproj"
+    },
+    {
+      "check_id": "XML-Observer.EngineFacade",
+      "status": "PASS",
+      "detail": "src/Observer.EngineFacade/Observer.EngineFacade.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Evidence",
+      "status": "PASS",
+      "detail": "src/Observer.Evidence/Observer.Evidence.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Execution",
+      "status": "PASS",
+      "detail": "src/Observer.Execution/Observer.Execution.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Host.Cli",
+      "status": "PASS",
+      "detail": "src/Observer.Host.Cli/Observer.Host.Cli.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Tests.Architecture",
+      "status": "PASS",
+      "detail": "tests/Observer.Tests.Architecture/Observer.Tests.Architecture.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Tests.Contract",
+      "status": "PASS",
+      "detail": "tests/Observer.Tests.Contract/Observer.Tests.Contract.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Tests.Integration",
+      "status": "PASS",
+      "detail": "tests/Observer.Tests.Integration/Observer.Tests.Integration.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Tests.Security",
+      "status": "PASS",
+      "detail": "tests/Observer.Tests.Security/Observer.Tests.Security.csproj"
+    },
+    {
+      "check_id": "XML-Observer.Tests.Unit",
+      "status": "PASS",
+      "detail": "tests/Observer.Tests.Unit/Observer.Tests.Unit.csproj"
+    },
+    {
+      "check_id": "REF-Observer.Contracts",
+      "status": "PASS",
+      "detail": "expected=[] actual=[]"
+    },
+    {
+      "check_id": "REF-Observer.Application",
+      "status": "PASS",
+      "detail": "expected=['Observer.Contracts'] actual=['Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.Execution",
+      "status": "PASS",
+      "detail": "expected=['Observer.Application', 'Observer.Contracts'] actual=['Observer.Application', 'Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.EngineFacade",
+      "status": "PASS",
+      "detail": "expected=['Observer.Application', 'Observer.Contracts'] actual=['Observer.Application', 'Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.Evidence",
+      "status": "PASS",
+      "detail": "expected=['Observer.Application', 'Observer.Contracts'] actual=['Observer.Application', 'Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.Host.Cli",
+      "status": "PASS",
+      "detail": "expected=['Observer.Application', 'Observer.Contracts', 'Observer.EngineFacade', 'Observer.Evidence', 'Observer.Execution'] actual=['Observer.Application', 'Observer.Contracts', 'Observer.EngineFacade', 'Observer.Evidence', 'Observer.Execution']"
+    },
+    {
+      "check_id": "COUNT-SOURCE-PROJECTS",
+      "status": "PASS",
+      "detail": "actual=6"
+    },
+    {
+      "check_id": "COUNT-TEST-PROJECTS",
+      "status": "PASS",
+      "detail": "actual=5"
+    },
+    {
+      "check_id": "COUNT-SCHEMAS",
+      "status": "PASS",
+      "detail": "12 frozen JSON Schemas"
+    },
+    {
+      "check_id": "PYTHON-WORKER-SYNTAX",
+      "status": "PASS",
+      "detail": "Spreadsheet runtime warmup failed during python startup\nTraceback (most recent call last):\n  File \"/tmp/tmp.yTcnQsZYiA/artifact_tool_v2-2.8.4/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py\", line 26, in warm_spreadsheet_runtime_on_startup\n  File \"/tmp/tmp.yTcnQsZYiA/artifact_tool_v2-2.8.4/artifact_tool/spreadsheet_warmup.py\", line 785, in warm_spreadsheet_runtime\n  File \"/tmp/tmp.yTcnQsZYiA/artifact_tool_v2-2.8.4/artifact_tool/spreadsheet_warmup.py\", line 720, in _warm_feature_flows\n  File \"/tmp/tmp.yTcnQsZYiA/artifact_tool_v2-2.8.4/artifact_tool/spreadsheet_warmup.py\", line 704, in _warm_collaboration_flows\n  File \"/tmp/tmp.yTcnQsZYiA/artifact_tool_v2-2.8.4/artifact_tool/generated/interface/models.py\", line 30820, in hydrate_crdt_from_proto\n  File \"/tmp/tmp.yTcnQsZYiA/artifact_tool_v2-2.8.4/artifact_tool/rpc/remote.py\", line 749, in __call__\n  File \"/tmp/tmp.yTcnQsZYiA/artifact_tool_v2-2.8.4/artifact_tool/rpc/client.py\", line 150, in call\nartifact_tool.rpc.client.RemoteError: hydrateCrdtFromProto requires an empty collaborative document."
+    },
+    {
+      "check_id": "GLOBAL-JSON-PIN",
+      "status": "PASS",
+      "detail": "10.0.301"
+    },
+    {
+      "check_id": "PACKAGES-LOCK",
+      "status": "PASS",
+      "detail": "one packages.lock.json per C# project"
+    },
+    {
+      "check_id": "REQUIRED-SCRIPTS",
+      "status": "PASS",
+      "detail": "five PowerShell entry scripts"
+    },
+    {
+      "check_id": "SOLUTION-PROJECT-COUNT",
+      "status": "PASS",
+      "detail": "actual=11"
+    },
+    {
+      "check_id": "NO-DEFERRED-MODULES",
+      "status": "PASS",
+      "detail": "no Console/Copilot/Connector/Registry implementation module"
+    },
+    {
+      "check_id": "VAC-FK-001-NO-GOVERNANCE-COPY",
+      "status": "PASS",
+      "detail": "no Engine entry point or formal governance calculation in C# System code"
+    },
+    {
+      "check_id": "ENGINE-FACADE-ONLY-WORKER-PATH",
+      "status": "PASS",
+      "detail": "no C# module starts the worker during IG1"
+    },
+    {
+      "check_id": "OFFLINE-NUGET-CONFIG",
+      "status": "PASS",
+      "detail": "IG1 has no online NuGet source"
+    }
+  ]
+}

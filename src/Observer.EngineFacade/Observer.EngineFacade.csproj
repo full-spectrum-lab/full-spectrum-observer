@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>FullSpectrum.Observer.EngineFacade</AssemblyName>
+    <RootNamespace>FullSpectrum.Observer.EngineFacade</RootNamespace>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
+    <ProjectReference Include="../../src/Observer.Application/Observer.Application.csproj" />
+  </ItemGroup>
+</Project>

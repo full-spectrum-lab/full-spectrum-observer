@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "file_count": 50,
+  "failed": [],
+  "note": "Pygments lexical review only; dotnet build remains pending."
+}

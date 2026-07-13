@@ -1,0 +1,28 @@
+{
+  "contract": "fs-observer/governance-output-envelope/1",
+  "observation_id": "12345678-1234-4234-8234-123456789abc",
+  "trace_id": "12345678-1234-4234-8234-123456789abc",
+  "classification": "SYNTHETIC",
+  "boundary": {
+    "observer_only": true,
+    "certified": false,
+    "authorized": false,
+    "active_external": false
+  },
+  "engine": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "runtime_snapshot_ref": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "engine_output": {},
+  "engine_output_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "unknowns": [],
+  "evidence_refs": [],
+  "audit_head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "created_at_utc": "value"
+}

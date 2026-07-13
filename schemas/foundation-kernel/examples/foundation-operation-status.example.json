@@ -1,0 +1,9 @@
+{
+  "contract": "fs-observer/foundation-operation-status/1",
+  "operation_id": "12345678-1234-4234-8234-123456789abc",
+  "request_id": "12345678-1234-4234-8234-123456789abc",
+  "trace_id": "12345678-1234-4234-8234-123456789abc",
+  "state": "RECEIVED",
+  "updated_at_utc": "value",
+  "reason_codes": []
+}

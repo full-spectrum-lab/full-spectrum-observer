@@ -1,0 +1,84 @@
+{
+  "gate": "IG3_IG4_SOURCE_INTEGRATION",
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "baseline_lock",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "evidence_no_engine",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "facade_no_evidence",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "application_ports",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "no_merge_markers",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "no_governance_copy",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "facade_process_boundary",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "evidence_sqlite_boundary",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "worker_lock",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "engine_identity",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "sql_create_table_if_not_exists_audit_events",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "sql_tr_audit_events_no_update",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "sql_tr_audit_events_no_delete",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "sql_tr_runtime_snapshots_no_update",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "id": "csharp_source_inventory",
+      "status": "PASS",
+      "detail": "count=50"
+    }
+  ],
+  "csharp_build": "NOT_EXECUTED",
+  "formal_ig3": "NOT_PASSED",
+  "formal_ig4": "NOT_PASSED"
+}

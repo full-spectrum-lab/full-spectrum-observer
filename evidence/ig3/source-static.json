@@ -1,0 +1,25 @@
+{
+  "branch": "feat/IMP-0201-evidence-core-candidate",
+  "base": "783dfda1447703a3852050851c13f285bfb2fcb1",
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "evidence_files",
+      "status": "PASS",
+      "count": 15
+    },
+    {
+      "id": "migration_present",
+      "status": "PASS"
+    },
+    {
+      "id": "no_engine_reference",
+      "status": "PASS"
+    },
+    {
+      "id": "reference_oracle",
+      "status": "PASS"
+    }
+  ],
+  "csharp_build": "NOT_EXECUTED"
+}

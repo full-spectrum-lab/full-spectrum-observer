@@ -1,0 +1,32 @@
+{
+  "gate": "IG3_SOURCE_REFERENCE",
+  "status": "PASS",
+  "formal_gate": "PASSED",
+  "checks": [
+    {
+      "id": "schema_tables",
+      "status": "PASS"
+    },
+    {
+      "id": "snapshot_immutable",
+      "status": "PASS"
+    },
+    {
+      "id": "audit_immutable",
+      "status": "PASS"
+    },
+    {
+      "id": "audit_chain",
+      "status": "PASS"
+    },
+    {
+      "id": "idempotency",
+      "status": "PASS"
+    },
+    {
+      "id": "artifact_digest",
+      "status": "PASS"
+    }
+  ],
+  "note": "Python SQL oracle plus C# native win-x64 execution passed."
+}

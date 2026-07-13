@@ -1,0 +1,81 @@
+{
+  "report_id": "IG2-REFERENCE-VALIDATION",
+  "status": "PASS",
+  "schema_meta_and_instance": "12/12 PASS",
+  "reason_codes": 50,
+  "rows": [
+    {
+      "test": "schema-instance:audit-event",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:engine-facade-request",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:engine-facade-response",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:foundation-analysis-request",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:foundation-case-pack-manifest",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:foundation-error-envelope",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:foundation-operation-status",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:governance-output-envelope",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:observation-record",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:release-manifest",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:runtime-configuration-snapshot",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "schema-instance:validation-result",
+      "status": "PASS",
+      "errors": []
+    },
+    {
+      "test": "reason-codes",
+      "status": "PASS",
+      "count": 50
+    },
+    {
+      "test": "CANON-OBJECT-ORDER",
+      "status": "PASS"
+    },
+    {
+      "test": "CANON-NESTED",
+      "status": "PASS"
+    }
+  ]
+}

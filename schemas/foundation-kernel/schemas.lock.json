@@ -1,0 +1,165 @@
+{
+  "lock_id": "FS-OBS-V010-IG2-CONTRACT-LOCK-1",
+  "schema_baseline": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "effective_status": "APPROVED_DESIGN_BASELINE",
+  "reason_code_approval_authority": "FS-OBS-V010-DES-BL-1.0",
+  "runtime_external_refs": false,
+  "files": [
+    {
+      "file": "audit-event.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/audit-event/1.0.0-alpha.1",
+      "title": "AuditEvent",
+      "sha256": "e11358d1503b2ff0b1eb51027a12cd3b7609f5053df1640ead486800e82ab157"
+    },
+    {
+      "file": "engine-facade-request.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/engine-facade-request/1.0.0-alpha.1",
+      "title": "EngineFacadeRequest",
+      "sha256": "6248b26e8e0e4d0a1722c4622fbbd208818edde8a44182f89d5aac32fa7c7e45"
+    },
+    {
+      "file": "engine-facade-response.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/engine-facade-response/1.0.0-alpha.1",
+      "title": "EngineFacadeResponse",
+      "sha256": "bdd28cd993a88887b443b8c2639ab49d21e33bb865a9eec1ae995fae32cdbf65"
+    },
+    {
+      "file": "foundation-analysis-request.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-analysis-request/1.0.0-alpha.1",
+      "title": "FoundationAnalysisRequest",
+      "sha256": "2d4bf2d26f800444ac83f9e72a374796a6aca17ee06b4caea8ef7a529a63e9ff"
+    },
+    {
+      "file": "foundation-case-pack-manifest.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-case-pack-manifest/1.0.0-alpha.1",
+      "title": "FoundationCasePackManifest",
+      "sha256": "1ae8f54d89cc015adc05e9ad204d4ac4bae9584798206559cb43a6464c87e0cc"
+    },
+    {
+      "file": "foundation-error-envelope.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-error-envelope/1.0.0-alpha.1",
+      "title": "FoundationErrorEnvelope",
+      "sha256": "142a7a55bb82cb567761efe8bc12cf70a0ab6a999f7f313da6dc4d9b66849d33"
+    },
+    {
+      "file": "foundation-operation-status.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-operation-status/1.0.0-alpha.1",
+      "title": "FoundationOperationStatus",
+      "sha256": "a9a5ffd2997a05f536d17459c7bfa32785405cd1642830b348234e65b5d348fe"
+    },
+    {
+      "file": "governance-output-envelope.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/governance-output-envelope/1.0.0-alpha.1",
+      "title": "GovernanceOutputEnvelope",
+      "sha256": "79d0a85100573b132171e35981b80b2fdefb52852d626858f64715b6140dcfe5"
+    },
+    {
+      "file": "observation-record.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/observation-record/1.0.0-alpha.1",
+      "title": "ObservationRecord",
+      "sha256": "356316e4c11a7f3b976a412f1b083ec8fdbb4a55b72afbdba0ed03c40d56b700"
+    },
+    {
+      "file": "release-manifest.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/release-manifest/1.0.0-alpha.1",
+      "title": "ReleaseManifest",
+      "sha256": "708d9667a1ec24103ee647fac2757ea6f9cd95b46271c020af5f6443d9be2725"
+    },
+    {
+      "file": "runtime-configuration-snapshot.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/runtime-configuration-snapshot/1.0.0-alpha.1",
+      "title": "RuntimeConfigurationSnapshot",
+      "sha256": "b3c423b33f87f3ff34beb8ac772910cc5ce93046185fd1ffbe1d4820f5e82d1b"
+    },
+    {
+      "file": "validation-result.schema.json",
+      "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/validation-result/1.0.0-alpha.1",
+      "title": "ValidationResult",
+      "sha256": "88c7c100abe46d7c6a29a8efda3e12c3eb260d16d34e561249d51b1cfbb0dde0"
+    },
+    {
+      "file": "reason-codes.v1.json",
+      "schema_id": null,
+      "title": "reason-codes.v1.json",
+      "sha256": "0b95f88c2040e8f23d9351ea724b940802d64fdab7c2fd680aff60c79669fe87"
+    },
+    {
+      "file": "schema-common-fragments.v1.json",
+      "schema_id": null,
+      "title": "schema-common-fragments.v1.json",
+      "sha256": "f6c1cc327800106f8d55b61123f310f80cbfa0b966dc4b324805a87020607ffc"
+    },
+    {
+      "file": "examples/audit-event.example.json",
+      "schema_id": null,
+      "title": "audit-event.example",
+      "sha256": "871f8513d445d77207c3b8bdd69485783840ac6d3f14762012df08fd7f7e0d91"
+    },
+    {
+      "file": "examples/engine-facade-request.example.json",
+      "schema_id": null,
+      "title": "engine-facade-request.example",
+      "sha256": "75c6cb66220be01f1109cb11357086bf116439b9a010983abc6297e62656bd0e"
+    },
+    {
+      "file": "examples/engine-facade-response.example.json",
+      "schema_id": null,
+      "title": "engine-facade-response.example",
+      "sha256": "730e387dea246b6328fe5d857c512b3d08e0f4ddb4cbda042a88ea751b5d955b"
+    },
+    {
+      "file": "examples/foundation-analysis-request.example.json",
+      "schema_id": null,
+      "title": "foundation-analysis-request.example",
+      "sha256": "6261e621073fe1412fadbcc5591f60682c911dc2702d4b3e7a79989408a20928"
+    },
+    {
+      "file": "examples/foundation-case-pack-manifest.example.json",
+      "schema_id": null,
+      "title": "foundation-case-pack-manifest.example",
+      "sha256": "aa9d411a98aed631f98ed7b7ca822f3f3f11c4e6e15a48cc455e31e6aef26c6c"
+    },
+    {
+      "file": "examples/foundation-error-envelope.example.json",
+      "schema_id": null,
+      "title": "foundation-error-envelope.example",
+      "sha256": "d3cf862a36ef36895934376ef4628a24acbfe540b480f88f7635712db94059b4"
+    },
+    {
+      "file": "examples/foundation-operation-status.example.json",
+      "schema_id": null,
+      "title": "foundation-operation-status.example",
+      "sha256": "3d40c8634c961b0695fe5c1c01b355849add0b6ce395d1e6f8155858b473028a"
+    },
+    {
+      "file": "examples/governance-output-envelope.example.json",
+      "schema_id": null,
+      "title": "governance-output-envelope.example",
+      "sha256": "69187e285f07d3172865a5febf3afae825f19ad8373c9dcb452d2305ef7be288"
+    },
+    {
+      "file": "examples/observation-record.example.json",
+      "schema_id": null,
+      "title": "observation-record.example",
+      "sha256": "f6887056f821d97b7f3bc097cb57f8daef42676ff29fd2d22639e27c7cc0469c"
+    },
+    {
+      "file": "examples/release-manifest.example.json",
+      "schema_id": null,
+      "title": "release-manifest.example",
+      "sha256": "35f16151a52644102811ea9f760bec97ac23595dca6390c0198ee092defdbeb7"
+    },
+    {
+      "file": "examples/runtime-configuration-snapshot.example.json",
+      "schema_id": null,
+      "title": "runtime-configuration-snapshot.example",
+      "sha256": "35f3c461ee3c6b3918b21a09c7b5fb36348adef574e31bf26ca912d521b89e8b"
+    },
+    {
+      "file": "examples/validation-result.example.json",
+      "schema_id": null,
+      "title": "validation-result.example",
+      "sha256": "fd1da7168c76737f048a79dca491b4f13e7e8ad538660404a66d1a40b7d7ea0f"
+    }
+  ]
+}

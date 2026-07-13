@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/runtime-configuration-snapshot/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "RuntimeConfigurationSnapshot",
+  "type": "object",
+  "required": [
+    "contract",
+    "snapshot_id",
+    "created_at_utc",
+    "engine",
+    "adapter",
+    "scenario",
+    "profile",
+    "knowledge",
+    "report_template",
+    "schema_set",
+    "serialization",
+    "snapshot_sha256"
+  ],
+  "properties": {
+    "contract": {
+      "const": "fs-observer/runtime-configuration-snapshot/1"
+    },
+    "snapshot_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "created_at_utc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "engine": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "adapter": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scenario": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "knowledge": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "report_template": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schema_set": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "serialization": {
+      "type": "object",
+      "required": [
+        "id",
+        "hash_algorithm"
+      ],
+      "properties": {
+        "id": {
+          "const": "FS-OBS-CANON-1"
+        },
+        "hash_algorithm": {
+          "const": "SHA-256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256(FS-OBS-CANON-1(object with snapshot_sha256 property removed))",
+      "x-fsp-digest-rule": "SHA-256(FS-OBS-CANON-1(object with snapshot_sha256 property removed))",
+      "x-fsp-excluded-fields": [
+        "snapshot_sha256"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

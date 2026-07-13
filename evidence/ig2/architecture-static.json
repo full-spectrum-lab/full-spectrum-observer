@@ -1,0 +1,51 @@
+{
+  "report_id": "TR-FK-ARCH-001-005-STATIC",
+  "status": "PASS",
+  "checks": [
+    {
+      "check_id": "REF-Observer.Application",
+      "status": "PASS",
+      "detail": "actual=['Observer.Contracts'] expected=['Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.Contracts",
+      "status": "PASS",
+      "detail": "actual=[] expected=[]"
+    },
+    {
+      "check_id": "REF-Observer.EngineFacade",
+      "status": "PASS",
+      "detail": "actual=['Observer.Application', 'Observer.Contracts'] expected=['Observer.Application', 'Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.Evidence",
+      "status": "PASS",
+      "detail": "actual=['Observer.Application', 'Observer.Contracts'] expected=['Observer.Application', 'Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.Execution",
+      "status": "PASS",
+      "detail": "actual=['Observer.Application', 'Observer.Contracts'] expected=['Observer.Application', 'Observer.Contracts']"
+    },
+    {
+      "check_id": "REF-Observer.Host.Cli",
+      "status": "PASS",
+      "detail": "actual=['Observer.Application', 'Observer.Contracts', 'Observer.EngineFacade', 'Observer.Evidence', 'Observer.Execution'] expected=['Observer.Application', 'Observer.Contracts', 'Observer.EngineFacade', 'Observer.Evidence', 'Observer.Execution']"
+    },
+    {
+      "check_id": "VAC-FK-001-NO-GOVERNANCE-COPY",
+      "status": "PASS",
+      "detail": "formal governance implementation absent"
+    },
+    {
+      "check_id": "WORKER-START-PythonWorkerEngineFacade.cs",
+      "status": "PASS",
+      "detail": "src\\Observer.EngineFacade\\PythonWorkerEngineFacade.cs"
+    },
+    {
+      "check_id": "NO-DEFERRED-MODULES",
+      "status": "PASS",
+      "detail": "deferred modules absent"
+    }
+  ]
+}

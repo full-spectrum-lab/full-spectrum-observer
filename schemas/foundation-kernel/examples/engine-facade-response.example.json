@@ -1,0 +1,7 @@
+{
+  "protocol": "fs-observer-engine-facade/1",
+  "request_id": "12345678-1234-4234-8234-123456789abc",
+  "status": "SUCCESS",
+  "engine_version": "v1.0.0",
+  "engine_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197"
+}

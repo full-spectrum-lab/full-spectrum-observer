@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-operation-status/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "FoundationOperationStatus",
+  "type": "object",
+  "required": [
+    "contract",
+    "operation_id",
+    "request_id",
+    "trace_id",
+    "state",
+    "updated_at_utc",
+    "reason_codes"
+  ],
+  "properties": {
+    "contract": {
+      "const": "fs-observer/foundation-operation-status/1"
+    },
+    "operation_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "observation_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "RECEIVED",
+        "ADAPTING",
+        "VALIDATING_SCHEMA",
+        "VALIDATING_GOVERNANCE",
+        "SNAPSHOT_FIXED",
+        "ENGINE_RUNNING",
+        "ASSEMBLING_OUTPUT",
+        "PERSISTING",
+        "COMPLETED",
+        "REJECTED_SCHEMA",
+        "NEEDS_EVIDENCE",
+        "ADAPTER_FAILED",
+        "ENGINE_FAILED",
+        "STORE_FAILED",
+        "CANCELLING",
+        "CANCELLED",
+        "TIMED_OUT",
+        "INTERNAL_FAILED"
+      ]
+    },
+    "progress_stage": {
+      "type": "string"
+    },
+    "started_at_utc": {
+      "type": "string"
+    },
+    "updated_at_utc": {
+      "type": "string"
+    },
+    "completed_at_utc": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^(REQ|INTAKE|ADAPTER|SCHEMA|GOV|SNAPSHOT|FACADE|ENGINE|OUTPUT|STORE|AUDIT|SEC|SYSTEM)_[A-Z0-9_]+$"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "field_path": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "details_redacted": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

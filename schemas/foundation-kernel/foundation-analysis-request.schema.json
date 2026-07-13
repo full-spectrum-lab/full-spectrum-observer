@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-analysis-request/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "FoundationAnalysisRequest",
+  "type": "object",
+  "required": [
+    "contract",
+    "request_id",
+    "idempotency_key",
+    "input",
+    "requested_runtime",
+    "submitted_at_utc"
+  ],
+  "properties": {
+    "contract": {
+      "const": "fs-observer/foundation-analysis-request/1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "BUILTIN_CASE",
+            "JSON_FILE"
+          ]
+        },
+        "case_id": {
+          "type": "string"
+        },
+        "file_path": {
+          "type": "string"
+        },
+        "expected_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "BUILTIN_CASE"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "case_id"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "JSON_FILE"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "file_path"
+            ]
+          }
+        }
+      ]
+    },
+    "requested_runtime": {
+      "type": "object",
+      "required": [
+        "case_pack_id",
+        "case_pack_version",
+        "seed",
+        "fixed_time_utc"
+      ],
+      "properties": {
+        "case_pack_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_pack_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "fixed_time_utc": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 300,
+      "default": 30
+    },
+    "submitted_at_utc": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

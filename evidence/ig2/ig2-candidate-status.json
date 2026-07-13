@@ -1,0 +1,31 @@
+{
+  "report_id": "FS-OBS-V010-IG2-CANDIDATE-STATUS-1",
+  "generated_at_utc": "2026-07-12T15:36:33.513952+00:00",
+  "branch": "feat/IMP-0101-ig2-contracts-candidate",
+  "formal_gate": "IG2",
+  "formal_status": "BLOCKED_BY_IG1_DOTNET_BUILD",
+  "ig0": "PASS",
+  "ig1_static_structure": "PASS",
+  "ig1_dotnet_build": "NOT_EXECUTED",
+  "ig2_source_candidate": "COMPLETE",
+  "ig2_reference_validation": "PASS",
+  "ig2_architecture_static": "PASS",
+  "ig2_source_static_review": "PASS",
+  "ig2_dotnet_build": "NOT_EXECUTED",
+  "ig2_dotnet_test_runners": "NOT_EXECUTED",
+  "contracts": 12,
+  "reason_codes": 50,
+  "schema_examples": 12,
+  "csharp_source_and_runner_files": 17,
+  "csharp_lines": 1522,
+  "implemented_test_sources": [
+    "TR-FK-UNIT-001",
+    "TR-FK-UNIT-002",
+    "TR-FK-UNIT-003",
+    "TR-FK-CON-001",
+    "TR-FK-CON-002",
+    "TR-FK-CON-003",
+    "TR-FK-CON-004"
+  ],
+  "merge_policy": "DO_NOT_MERGE_TO_MAIN_UNTIL_IG1_BUILD_AND_IG2_CSHARP_RUNNERS_PASS"
+}

@@ -1,0 +1,22 @@
+{
+  "candidate_id": "FS-OBS-V010-IG3-IG4-SOURCE-CANDIDATE-1.0",
+  "generated_at_utc": "2026-07-12T16:17:50.251322+00:00",
+  "branch": "integration/IG3-IG4-source-candidate",
+  "base_ig2_commit": "783dfda1447703a3852050851c13f285bfb2fcb1",
+  "evidence_branch_head": "b952af5fa0e155f6daad49f55d40e87efa349769",
+  "engine_branch_head": "c596cd8",
+  "ig3_source": "COMPLETE_CANDIDATE",
+  "ig3_python_reference": "PASS",
+  "ig3_dotnet_build": "NOT_EXECUTED",
+  "ig3_windows_native_sqlite": "NOT_EXECUTED",
+  "formal_ig3": "NOT_PASSED",
+  "ig4_source": "COMPLETE_CANDIDATE",
+  "ig4_actual_worker_smoke": "PASS",
+  "ig4_csharp_process_tests": "NOT_EXECUTED",
+  "ig4_private_python_3_11": "NOT_ASSEMBLED",
+  "ig4_windows_process_tree": "NOT_EXECUTED",
+  "formal_ig4": "NOT_PASSED",
+  "wp04": "NOT_STARTED",
+  "csharp_lexical_review": "PASS",
+  "csharp_build": "NOT_EXECUTED"
+}

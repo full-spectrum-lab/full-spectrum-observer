@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "full-spectrum-engine"
+version = "1.0.0"
+description = "Full Spectrum Protocol — stable local-first simulation engine contract (v1.0.0)"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24.0"]
+license = {text = "Mulan PSL v2 / Apache 2.0 (dual license)"}
+authors = [
+    {name = "Full Spectrum Guardian Network", email = "527980484@qq.com"},
+]
+keywords = ["full-spectrum", "FSHI", "AI safety", "governance", "simulation", "multi-agent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "pytest>=8.0.0",
+    "httpx>=0.25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/full-spectrum-lab/full-spectrum-engine"
+Documentation = "https://github.com/full-spectrum-lab/full-spectrum-engine"
+Repository = "https://github.com/full-spectrum-lab/full-spectrum-engine"
+"Development Source" = "https://gitee.com/full-spectrum/full-spectrum-engine"
+"Protocol Spec" = "https://github.com/full-spectrum-lab/full-spectrum-protocol"
+"Commons" = "https://github.com/full-spectrum-lab/full-spectrum-commons"
+"QPP Wiki" = "https://gitee.com/full-spectrum/qpp/wikis/Home"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

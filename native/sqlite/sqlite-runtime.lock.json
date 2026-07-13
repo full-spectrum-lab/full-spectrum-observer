@@ -1,0 +1,7 @@
+{
+  "library": "sqlite3",
+  "platform": "win-x64",
+  "version": "PENDING_WP07",
+  "sha256": null,
+  "status": "SOURCE_CONTRACT_FIXED_RUNTIME_ARTIFACT_PENDING"
+}

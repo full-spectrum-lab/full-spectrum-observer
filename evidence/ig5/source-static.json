@@ -1,0 +1,103 @@
+{
+  "report_id": "IG5_SOURCE_STATIC",
+  "status": "PASS",
+  "formal_gate": "NOT_PASSED",
+  "checks": [
+    {
+      "check": "FILE-FoundationAnalysisUseCase.cs",
+      "status": "PASS",
+      "detail": "FoundationAnalysisUseCase.cs"
+    },
+    {
+      "check": "FILE-FoundationInputIntake.cs",
+      "status": "PASS",
+      "detail": "FoundationInputIntake.cs"
+    },
+    {
+      "check": "FILE-FoundationScenarioAdapter.cs",
+      "status": "PASS",
+      "detail": "FoundationScenarioAdapter.cs"
+    },
+    {
+      "check": "FILE-FoundationValidationPipeline.cs",
+      "status": "PASS",
+      "detail": "FoundationValidationPipeline.cs"
+    },
+    {
+      "check": "FILE-RuntimeConfigurationResolver.cs",
+      "status": "PASS",
+      "detail": "RuntimeConfigurationResolver.cs"
+    },
+    {
+      "check": "FILE-GovernanceOutputAssembler.cs",
+      "status": "PASS",
+      "detail": "GovernanceOutputAssembler.cs"
+    },
+    {
+      "check": "FILE-FoundationReadUseCases.cs",
+      "status": "PASS",
+      "detail": "FoundationReadUseCases.cs"
+    },
+    {
+      "check": "FILE-ExecutionComposition.cs",
+      "status": "PASS",
+      "detail": "ExecutionComposition.cs"
+    },
+    {
+      "check": "VAC-FK-001",
+      "status": "PASS",
+      "detail": "No formal Engine algorithm implementation or direct Engine function call in System code."
+    },
+    {
+      "check": "NO-HTTP",
+      "status": "PASS",
+      "detail": "No HTTP entry point in v0.1 source candidate."
+    },
+    {
+      "check": "NO-DEFERRED-PRODUCTS",
+      "status": "PASS",
+      "detail": "No Console/Copilot/Connector/Registry implementation."
+    },
+    {
+      "check": "BOUNDARY-CONSTANTS",
+      "status": "PASS",
+      "detail": "Observer-only boundary constants are explicit."
+    },
+    {
+      "check": "CLI-COMMANDS",
+      "status": "PASS",
+      "detail": "Required CLI commands are present."
+    },
+    {
+      "check": "EXECUTION-USES-PORTS",
+      "status": "PASS",
+      "detail": "Execution project does not reference concrete Evidence or EngineFacade namespaces."
+    },
+    {
+      "check": "RAW-INPUT-NOT-FINALIZED",
+      "status": "PASS",
+      "detail": "Finalization receives input/context digests rather than raw input."
+    },
+    {
+      "check": "ENGINE-FACADE-SINGLE-PORT",
+      "status": "PASS",
+      "detail": "Execution pipeline has one Engine Facade invocation."
+    },
+    {
+      "check": "CANCELLATION-STATE-PATH",
+      "status": "PASS",
+      "detail": "Cancellation uses CANCELLING then CANCELLED state path."
+    },
+    {
+      "check": "SCHEMA-GOVERNANCE-SEPARATE",
+      "status": "PASS",
+      "detail": "Schema and Governance validation are separate stages."
+    },
+    {
+      "check": "LEXICAL-BALANCE",
+      "status": "PASS",
+      "detail": "Balanced braces/parentheses for 14 WP-04/WP-05 C# files."
+    }
+  ],
+  "note": "Static source verification is not a .NET compilation or Windows integration result."
+}

@@ -1,0 +1,12 @@
+<Project>
+  <Target Name="RejectFloatingPackageVersions" BeforeTargets="Restore">
+    <ItemGroup>
+      <_FloatingPackageReference Include="@(PackageReference)"
+        Condition="$([System.String]::Copy('%(PackageReference.Version)').Contains('*'))
+          Or $([System.String]::Copy('%(PackageReference.Version)').Contains('['))
+          Or $([System.String]::Copy('%(PackageReference.Version)').Contains('('))" />
+    </ItemGroup>
+    <Error Condition="'@(_FloatingPackageReference)' != ''"
+      Text="Floating or ranged PackageReference versions are forbidden: @(_FloatingPackageReference)" />
+  </Target>
+</Project>

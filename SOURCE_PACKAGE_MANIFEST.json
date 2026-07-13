@@ -1,0 +1,1238 @@
+{
+  "package_id": "FS-OBS-V010-IG5-SOURCE-CANDIDATE-1",
+  "generated_at_utc": "2026-07-12T16:59:04.753892+00:00",
+  "repository": "full-spectrum-observer",
+  "branch": "integration/IG5-source-candidate",
+  "source_head_before_manifest": "e6b164f1000b228d00c08d262f3f70d8bea252be",
+  "formal_status": "SOURCE_CANDIDATE_ONLY",
+  "wp04_source": "COMPLETE_CANDIDATE",
+  "wp05_source": "COMPLETE_CANDIDATE",
+  "python_reference_pipeline": "PASS",
+  "source_static": "PASS",
+  "dotnet_build": "NOT_EXECUTED",
+  "formal_ig3": "NOT_PASSED",
+  "formal_ig4": "NOT_PASSED",
+  "formal_ig5": "NOT_PASSED",
+  "files": [
+    {
+      "path": ".editorconfig",
+      "size_bytes": 339,
+      "sha256": "59264a4c843ca8a5dfb5542de825cfec5933efb0c8930224c1d9ef70ba35c33c"
+    },
+    {
+      "path": ".gitattributes",
+      "size_bytes": 150,
+      "sha256": "ab943f438b9442f341207911861b2c06551ead4efbf965651ac2fbf25db7e9c9"
+    },
+    {
+      "path": ".gitignore",
+      "size_bytes": 307,
+      "sha256": "6f40db32b17241a910c16d7c31cf25fd4389a3b6ea2942ea0538aa1b8582ed26"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "size_bytes": 643,
+      "sha256": "8e718e846ddccb3c59e84dadb1b9edc07330e75b24ce2ef0599200c29543ed36"
+    },
+    {
+      "path": "Directory.Build.props",
+      "size_bytes": 1083,
+      "sha256": "65992ae270c11c9467c9eef3f97da7ffcb0d89542587e813289c170b43b79c05"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "size_bytes": 625,
+      "sha256": "7292b7437174b6c12b55f77cec76410d04d1706d6beabcdc4e743d6cfa909b5f"
+    },
+    {
+      "path": "FullSpectrum.Observer.sln",
+      "size_bytes": 6381,
+      "sha256": "0f282c97efb29691e8198dbf19c534bfb72f4881eb202d59a7232751ccdd805a"
+    },
+    {
+      "path": "IG0_IG1_执行报告.md",
+      "size_bytes": 1112,
+      "sha256": "704dc711c8604b40f3135253fc13f7e1389068f79b6b75a40aa9baffee1beeef"
+    },
+    {
+      "path": "IG2_候选实现说明.md",
+      "size_bytes": 757,
+      "sha256": "c437539b23b2b67ddcf36a8f5972ba460c387207402f2c8b0aa4714d11113262"
+    },
+    {
+      "path": "IG2_候选执行报告.md",
+      "size_bytes": 1925,
+      "sha256": "fadf2ef47ab7cf3af9ebe0117aa5a358892d39ba0bda398a4a21bdc4cf00570a"
+    },
+    {
+      "path": "IG3_Evidence_Core_候选执行报告.md",
+      "size_bytes": 348,
+      "sha256": "ceeea0fb6c5bd0f31e4835d4c24d725c8e34228cb5ebfbfe4ad8fb6fa3ccf665"
+    },
+    {
+      "path": "IG3_IG4_并行候选执行报告.md",
+      "size_bytes": 1791,
+      "sha256": "66ea3694a9a4a5f05135ced767edbff3a02d20b53d50a738e1d420d087d4fc0d"
+    },
+    {
+      "path": "IG4_Engine_Bridge_候选执行报告.md",
+      "size_bytes": 443,
+      "sha256": "cb011870374fa1256749c8e09b17750c72d7a7e71e373823ad00cf13663587fd"
+    },
+    {
+      "path": "IG5_最小闭环候选执行报告.md",
+      "size_bytes": 2242,
+      "sha256": "316d93bd01925143d31014ce79157edcb407284a36cdb2534ae48ef6150c4ea1"
+    },
+    {
+      "path": "LICENSE",
+      "size_bytes": 269,
+      "sha256": "da9132ce91ec9c8214b6c6bbbf12511e9d310577b21f37513f9dfeac5409fda2"
+    },
+    {
+      "path": "NuGet.Config",
+      "size_bytes": 205,
+      "sha256": "2a838828aadb695922d62b9ba11dd24ba7cd0f184c8b94f8a156a674a9f63b28"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 3019,
+      "sha256": "da63bd30719c5eae797f146d871e71edc5a91ce1c484564b0d0fb069ba2257a3"
+    },
+    {
+      "path": "SECURITY.md",
+      "size_bytes": 428,
+      "sha256": "c387794ea12c4cb9d5eb1ec200ee93b13d85a466f9fd8edd83d9232de27d85f0"
+    },
+    {
+      "path": "artifacts/.gitkeep",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "baselines.lock.json",
+      "size_bytes": 12240,
+      "sha256": "8fcd454ca1680bbd2c611f8e4ea8bc0833705da3b3be4564dd24c56563635b4d"
+    },
+    {
+      "path": "docs/baselines/README.md",
+      "size_bytes": 401,
+      "sha256": "121178fb270b1a13d25826b207383df57d2854b820f72e39508c30112a2e2b87"
+    },
+    {
+      "path": "docs/baselines/implementation-plan/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_实施计划基线总包_v1.0.zip",
+      "size_bytes": 1240577,
+      "sha256": "2a1bcccf42a96bcb8e9b1ad1c7de8970406618eac110245a75cb13cee018d5b7"
+    },
+    {
+      "path": "docs/baselines/implementation-plan/实施计划基线总包_v1.0_外部校验.json",
+      "size_bytes": 239,
+      "sha256": "6aa0fab1e57f94a685690b3f61b1d6187e58eff05a58a4139053ef47071945b3"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1冻结准入与决定_v1.0.docx",
+      "size_bytes": 38433,
+      "sha256": "e29658d3b223ab3a4f3bee2bfda27c7a7d913501380651c6c839de4c5d9dbb84"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1冻结准入与决定_v1.0.md",
+      "size_bytes": 710,
+      "sha256": "2c23f25dec07c963df76ad294a00f9d031481a0b44282f3ecbe04878ec33ba03"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1基线清单_v1.0.json",
+      "size_bytes": 2244,
+      "sha256": "e99b68685a81009b670ffc8f7079fd0a0a9d3ecc2a39a0950da499c009667cf8"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1范围覆盖与设计输入验证报告_v1.0.docx",
+      "size_bytes": 39199,
+      "sha256": "33b4f3af8bd94a449653498cba4f59336e2f70b4e4efa2d7021a5a4a0a85fe21"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1范围覆盖与设计输入验证报告_v1.0.md",
+      "size_bytes": 1222,
+      "sha256": "0ba79c3b6de40af7bdb3a606dc1473b3ee6d66bd36229bd04a795bbdabdba892"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求分解_v1.0_Scope_Baseline.docx",
+      "size_bytes": 74195,
+      "sha256": "bd72319e36a9d4a73a89c309fe58894b234c085c3391327f327da30ab717f1ef"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求分解_v1.0_Scope_Baseline.md",
+      "size_bytes": 33455,
+      "sha256": "b30123f7f9c2368eabbf9eee70a408dffa7660a1bfda0abc6048e7e471aca77d"
+    },
+    {
+      "path": "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求矩阵_v1.0_Baseline.xlsx",
+      "size_bytes": 41321,
+      "sha256": "b6433a1f28f67257480ab8e8c96d525fc45bc9d7a8431ba86ba0cf09a32339b1"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_Schema身份依赖与实例验证报告_v1.0.docx",
+      "size_bytes": 42284,
+      "sha256": "338af2bc305d77cfe83b9f235b2bfc90dd642eb6dfb3aebe42fe7515ad3ea3c1"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_Schema身份依赖与实例验证报告_v1.0.md",
+      "size_bytes": 3683,
+      "sha256": "01c4041caa5990bf53fdf02581ef92caa0947315dd271dd6203f0345ae36a409"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2冻结准入与决定_v1.0.docx",
+      "size_bytes": 41154,
+      "sha256": "f7a35f8eb40ab6d6c3090c27d3fba6cbe0b49139c6cad55f3663c394d9e5aa66"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2冻结准入与决定_v1.0.md",
+      "size_bytes": 610,
+      "sha256": "7a2c9f3e7bbd67edd0ee4c2e602056ab2c9a988859ff2179ced8f7a8d0125f60"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2合同Schema基线包_v1.0.zip",
+      "size_bytes": 32860,
+      "sha256": "5971d1a02a2126ae9f6d464e2a9e480278326dfb755ccc770adac065308b41d7"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计决策与ADR记录_v1.0_Baseline.docx",
+      "size_bytes": 45911,
+      "sha256": "ba15bf5514b232f22101c810a51e4cfaff36446975ee043528e66ac47957c752"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计决策与ADR记录_v1.0_Baseline.md",
+      "size_bytes": 6211,
+      "sha256": "7cefdc2be956ab37dae86e509c863c13c226aebc99213409ffcf92b62b83392b"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计合同威胁与测试追踪矩阵_v1.0_Baseline.xlsx",
+      "size_bytes": 64770,
+      "sha256": "105d6cce18a1b0a0dcf46bb94406748e5ecf8a68b9b159adc3b048646e8d3c7e"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计基线清单_v1.0.json",
+      "size_bytes": 4805,
+      "sha256": "67c04fd04998346309650b28654a9d347eeaad5c3c3199f6bca112e3b78591a5"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计基线评审包_v1.0.zip",
+      "size_bytes": 928875,
+      "sha256": "22870ae8d4b8c4e2b7dd20093f75477474cf5f4a731026571cbe3db8d6d27d93"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_威胁模型与安全设计_v1.0_Baseline.docx",
+      "size_bytes": 43544,
+      "sha256": "603f8072f1cca1117acc3d16ecc83842919db6739d0f50ef5855eed61f397f2a"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_威胁模型与安全设计_v1.0_Baseline.md",
+      "size_bytes": 4341,
+      "sha256": "4d455780f5f6f0ed200dcf2e9a78fbddac4fe961a9f4c99354745ec026c56860"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_测试需求与Fixture规范_v1.0_Baseline.docx",
+      "size_bytes": 53203,
+      "sha256": "b602750169622a57089f31a41ac9f200afaf9b870d2fc96260e66aa6748a048f"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_测试需求与Fixture规范_v1.0_Baseline.md",
+      "size_bytes": 2143,
+      "sha256": "72e68d93807a66e1ddc861b3f4e897f1d3c72d1705e33cc7672b1c2b9ad91c8e"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_详细技术设计_v1.0_Design_Baseline.docx",
+      "size_bytes": 616251,
+      "sha256": "bb63058ed923a113587ae252b16aa42b0497c3fae7c6ade3a0e55b196f115ddc"
+    },
+    {
+      "path": "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_详细技术设计_v1.0_Design_Baseline.md",
+      "size_bytes": 6091,
+      "sha256": "00b85ab47fa4b3cc534ebf78e4419f44a229f912ed8c5db16ff7ddd0d4b1f5c7"
+    },
+    {
+      "path": "docs/decisions/IG1-bootstrap-decisions.md",
+      "size_bytes": 442,
+      "sha256": "e3ecc559e32db2415be42f3d2bb423501ddfedc8075fd007e7c03db579633320"
+    },
+    {
+      "path": "docs/decisions/IG2-reason-code-status-interpretation.md",
+      "size_bytes": 405,
+      "sha256": "d29a3aeb43c08f091418c09248feb661e25d3c0e3611090228faa51e22195c58"
+    },
+    {
+      "path": "docs/runbooks/IG0-IG1.md",
+      "size_bytes": 446,
+      "sha256": "d22a36b3a942cd186993147d2e6d4907efdebd01eb6e97732e7fb0c38cfe678c"
+    },
+    {
+      "path": "docs/runbooks/IG2.md",
+      "size_bytes": 594,
+      "sha256": "fae382c0a30dd8bf90c174e1d74c26af348fb4d86f1fe8066bde4ee10e4a17fc"
+    },
+    {
+      "path": "engine/bridge-source-manifest.json",
+      "size_bytes": 4973,
+      "sha256": "5a00419b3edbee376067f38cfbda2f917f93692e8aaa6ba4b87404348ec75f09"
+    },
+    {
+      "path": "engine/locks/python-runtime.lock.json",
+      "size_bytes": 226,
+      "sha256": "f2e786519582c67a0711f47769703f94baa98bee3d883c82bcb797a8215e1bd7"
+    },
+    {
+      "path": "engine/runtime/README.md",
+      "size_bytes": 288,
+      "sha256": "19712fcbd61b274680b86798fa48bb86275e24484f961f3fbaa7e708eb12b27a"
+    },
+    {
+      "path": "engine/source.lock.json",
+      "size_bytes": 316,
+      "sha256": "81f27d29f7da77046fc75fb59df122d708aba5a5fc9f9f40728d587d2cb43618"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/LICENSE",
+      "size_bytes": 3900,
+      "sha256": "77e07eed036129ff9326e11999e608d3a7dc83c0639ee928a3ec4cebe4c19b4e"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/pyproject.toml",
+      "size_bytes": 1718,
+      "sha256": "9bc9542a59f7aa606a36729e6512bcaa9540562c2e76ec6cade00658c9f970f4"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/requirements.txt",
+      "size_bytes": 208,
+      "sha256": "b6358709415266be0569d043b556da0083b642f550a18f68ebc142a68330c967"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/simulate.py",
+      "size_bytes": 11514,
+      "sha256": "da795b469fded500f75c837e34e0af8de046fe1fc01cc455e161fbc1e888111d"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/bridge/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/bridge/runestone.py",
+      "size_bytes": 4276,
+      "sha256": "dade75d5427911cdb6aabfd814feb28b3fb804152f95aafc067706afdfa6c27e"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/core/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/core/fshi.py",
+      "size_bytes": 1394,
+      "sha256": "766f0768a73ff4f5a25543a3aba9aafe955e6239df3f2b927a09c3a9d835ab55"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/core/state.py",
+      "size_bytes": 2062,
+      "sha256": "29abf594836b2d34860b5699d1246c05f9369d9f130ae5049a931760f3ae9f74"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/engine/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/engine/agents.py",
+      "size_bytes": 4824,
+      "sha256": "f708d401c2838593a62196bc388cebe815a7f5a76df8fdc0edd6b60a81c89af8"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/engine/ess.py",
+      "size_bytes": 4228,
+      "sha256": "fe3c6638d3f8a0c50686313f23649adda0122113fd535b827df9f01dc13e9b89"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/governance/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/governance/bomb.py",
+      "size_bytes": 3521,
+      "sha256": "902cba88b4796229e904b8ceed453673c2c6a2589db04f982c252f0ed02744a2"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/governance/validator.py",
+      "size_bytes": 5414,
+      "sha256": "f82ff852b34ed976ba78f11687803438d855b2a79c2174afb078ce1458e58bb5"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/guardian/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/guardian/lyapunov.py",
+      "size_bytes": 3817,
+      "sha256": "990fa5b3dd20abd87fc0167159789d828880ad22162cef8af2afaad2ae4ea268"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/guardian/network.py",
+      "size_bytes": 7096,
+      "sha256": "1aaea52196281b97fba284a57f2ee80681361ff0a3bc6799a8721a6050a8fffd"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/observation/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/observation/l0.py",
+      "size_bytes": 5172,
+      "sha256": "e12b5207b2ad350f5a0506267779f01d2a270942eaae2186d4b1c4e802e5dc5a"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/report_generator.py",
+      "size_bytes": 10428,
+      "sha256": "43fa0b65b540da7338a78bd991befa226678572781b35a3d45215061b17aef8b"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/safety/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/safety/emergency.py",
+      "size_bytes": 8785,
+      "sha256": "c9bcd31dc06cbe59b083dcff7ff4be12cb7b67f3ecd6bc034776e1eb24ae176d"
+    },
+    {
+      "path": "engine/worker/requirements.lock",
+      "size_bytes": 117,
+      "sha256": "9980cdda2173d5cc0f8ea87c0d51e21dcb9eff93593859622b24c0b1ee77c82f"
+    },
+    {
+      "path": "engine/worker/worker.py",
+      "size_bytes": 4729,
+      "sha256": "c36d977c9e0ac3651291f1410328d9069b8753939ab34c7bc32396038fefc646"
+    },
+    {
+      "path": "engine/worker.lock.json",
+      "size_bytes": 4803,
+      "sha256": "5081dd0538ecd4fbee3ae9fdd2a7bec2c8298979dd4895825862d960562feea8"
+    },
+    {
+      "path": "evidence/ig0/baseline-verify.json",
+      "size_bytes": 20000,
+      "sha256": "92839166b20c704354dbaf3af2d6e7b5640ebf0a32202dd5d0ba352c13af6c81"
+    },
+    {
+      "path": "evidence/ig1/repository-commit.json",
+      "size_bytes": 325,
+      "sha256": "2f8c920cd9da71c9a1be18174cc96d54e2a7691eac587c2b752b83df022d8a17"
+    },
+    {
+      "path": "evidence/ig1/static-structure-verify.json",
+      "size_bytes": 6122,
+      "sha256": "2fd417433acacc039ced57af5ad40ffa48d3f2a222442d136474bd5a10e6a567"
+    },
+    {
+      "path": "evidence/ig2/architecture-static.json",
+      "size_bytes": 1607,
+      "sha256": "7f0a6035138c553118973a544f04b15b670cccaf0ad753f1fed468467bda244a"
+    },
+    {
+      "path": "evidence/ig2/canonical-vectors.json",
+      "size_bytes": 394,
+      "sha256": "1be458a29e20f4083abbc90b5365c5e6ebb73b0db16a789acf38a50c76479204"
+    },
+    {
+      "path": "evidence/ig2/ig2-candidate-status.json",
+      "size_bytes": 966,
+      "sha256": "58651facd2141ee588ac4696db2578d76d8c2ca79a3e8a7f22dae2d7864ef007"
+    },
+    {
+      "path": "evidence/ig2/implementation-status.json",
+      "size_bytes": 611,
+      "sha256": "6597e7a2dec8045f5a6dfa20c922bff3a4ea5d1e17838cae48f073cc9db5e603"
+    },
+    {
+      "path": "evidence/ig2/reference-validation.json",
+      "size_bytes": 1719,
+      "sha256": "c4850468ac8746dd7e297f5713796c2348c5809595d4cf006d6f9b8088dbb4c7"
+    },
+    {
+      "path": "evidence/ig2/source-static-review.json",
+      "size_bytes": 4289,
+      "sha256": "e3ac6a30de10ed790ff5bd53d84414b9221e262f982546611eeb2109d74ba6e5"
+    },
+    {
+      "path": "evidence/ig3/reference-validation.json",
+      "size_bytes": 596,
+      "sha256": "4769459349ff43780b10e1f2fd59b0f7d50d2041f1db24c4457c14d44191ffc4"
+    },
+    {
+      "path": "evidence/ig3/source-static.json",
+      "size_bytes": 475,
+      "sha256": "73d5c0d04f79f277f9436fa4cc67163c68572d5ffbdc256cb63d56c3e3eac1f0"
+    },
+    {
+      "path": "evidence/ig3-ig4/candidate-status.json",
+      "size_bytes": 869,
+      "sha256": "ce093d221103a761d478f7eae4014e7a5a2c1cec3ece940e8df805bd48c4c35b"
+    },
+    {
+      "path": "evidence/ig3-ig4/csharp-lexical-review.json",
+      "size_bytes": 132,
+      "sha256": "eee4ec7e606a4e5d828e441f755b57ddd65235911ed12faa154d6e3c8e6e75fb"
+    },
+    {
+      "path": "evidence/ig3-ig4/source-integration-static.json",
+      "size_bytes": 1594,
+      "sha256": "0a72526c728c38967b7ff51b87d0695042c565c7ab1f65a96cfde3bd600a5ab6"
+    },
+    {
+      "path": "evidence/ig4/source-static.json",
+      "size_bytes": 499,
+      "sha256": "d5203d0576df5ceb2c7593a5a7d2a2c5754dd1601a6ab675e02c61145a150c9a"
+    },
+    {
+      "path": "evidence/ig4/worker-smoke.json",
+      "size_bytes": 1067,
+      "sha256": "940a2854ceaaf1ad630644fa44ad0acc40aad32e9490f90aa638ce3771295cac"
+    },
+    {
+      "path": "evidence/ig5/candidate-status.json",
+      "size_bytes": 970,
+      "sha256": "9f4e5a1c2eb689d44229fbcc3dd8254d412f627f34508a444f8903dc76752dec"
+    },
+    {
+      "path": "evidence/ig5/reference-pipeline.json",
+      "size_bytes": 1952,
+      "sha256": "aed5d54995f2c735e6b46f8fc58b94706c302cd4c02cfb18bcec8c81c9316969"
+    },
+    {
+      "path": "evidence/ig5/source-static.json",
+      "size_bytes": 2935,
+      "sha256": "49f50677e703d50e9d0fe98e21825fd48f02abaeef713b4d62faa8b47675e877"
+    },
+    {
+      "path": "evidence/templates/README.md",
+      "size_bytes": 200,
+      "sha256": "a71193489d1a1160d0058cd839d9c8a9f1726dac658c698558e5643eb21b21e9"
+    },
+    {
+      "path": "global.json",
+      "size_bytes": 105,
+      "sha256": "a0fc2efcd4cc3a24444007b6e49f5b3c754e9d9e1869052c6ab7bdcba7cb7960"
+    },
+    {
+      "path": "native/sqlite/README.md",
+      "size_bytes": 507,
+      "sha256": "63c7dfe1c55592ff762e55f8e4c67c028ef21dd7cdab9c431ddc0d49bfa89e29"
+    },
+    {
+      "path": "native/sqlite/sqlite-runtime.lock.json",
+      "size_bytes": 161,
+      "sha256": "0d2ada6dff715a1c2fab5b2e470079eca2b90335fcdc337f32d6294fd8bfc5e3"
+    },
+    {
+      "path": "packs/foundation-case005/README.md",
+      "size_bytes": 308,
+      "sha256": "8addcc21f0ec0b581fdf03428aba15ae13a7bacc30bbad5278149e4929769205"
+    },
+    {
+      "path": "packs/foundation-case005/case005.input.json",
+      "size_bytes": 828,
+      "sha256": "70c5f2c585556fd355ac0f3cb17121a5f9c3dd529d329e2dd2429d28804817da"
+    },
+    {
+      "path": "packs/foundation-case005/engine-golden.json",
+      "size_bytes": 9541,
+      "sha256": "0b2bbeaeaf784e3b0c38910617ef03a9f02ad4a8b87adc42e84648979d3a365c"
+    },
+    {
+      "path": "packs/foundation-case005/foundation-case-pack.manifest.json",
+      "size_bytes": 5749,
+      "sha256": "aa9d411a98aed631f98ed7b7ca822f3f3f11c4e6e15a48cc455e31e6aef26c6c"
+    },
+    {
+      "path": "packs/foundation-case005/runtime-components.json",
+      "size_bytes": 662,
+      "sha256": "d214ae8df20029e84599225c76f9f835f5c429cb4ae19af24ef5a7c5484cf994"
+    },
+    {
+      "path": "schemas/foundation-kernel/audit-event.schema.json",
+      "size_bytes": 2902,
+      "sha256": "e11358d1503b2ff0b1eb51027a12cd3b7609f5053df1640ead486800e82ab157"
+    },
+    {
+      "path": "schemas/foundation-kernel/digest-rules-v1.md",
+      "size_bytes": 883,
+      "sha256": "c29fd67367a31afd4aee11316b24b0ac15d254856448a57a1b47d90987d9e487"
+    },
+    {
+      "path": "schemas/foundation-kernel/engine-facade-request.schema.json",
+      "size_bytes": 1421,
+      "sha256": "6248b26e8e0e4d0a1722c4622fbbd208818edde8a44182f89d5aac32fa7c7e45"
+    },
+    {
+      "path": "schemas/foundation-kernel/engine-facade-response.schema.json",
+      "size_bytes": 2267,
+      "sha256": "bdd28cd993a88887b443b8c2639ab49d21e33bb865a9eec1ae995fae32cdbf65"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/audit-event.example.json",
+      "size_bytes": 644,
+      "sha256": "871f8513d445d77207c3b8bdd69485783840ac6d3f14762012df08fd7f7e0d91"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/engine-facade-request.example.json",
+      "size_bytes": 311,
+      "sha256": "75c6cb66220be01f1109cb11357086bf116439b9a010983abc6297e62656bd0e"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/engine-facade-response.example.json",
+      "size_bytes": 220,
+      "sha256": "730e387dea246b6328fe5d857c512b3d08e0f4ddb4cbda042a88ea751b5d955b"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/foundation-analysis-request.example.json",
+      "size_bytes": 467,
+      "sha256": "6261e621073fe1412fadbcc5591f60682c911dc2702d4b3e7a79989408a20928"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/foundation-case-pack-manifest.example.json",
+      "size_bytes": 5749,
+      "sha256": "aa9d411a98aed631f98ed7b7ca822f3f3f11c4e6e15a48cc455e31e6aef26c6c"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/foundation-error-envelope.example.json",
+      "size_bytes": 320,
+      "sha256": "d3cf862a36ef36895934376ef4628a24acbfe540b480f88f7635712db94059b4"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/foundation-operation-status.example.json",
+      "size_bytes": 304,
+      "sha256": "3d40c8634c961b0695fe5c1c01b355849add0b6ce395d1e6f8155858b473028a"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/governance-output-envelope.example.json",
+      "size_bytes": 905,
+      "sha256": "69187e285f07d3172865a5febf3afae825f19ad8373c9dcb452d2305ef7be288"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/observation-record.example.json",
+      "size_bytes": 821,
+      "sha256": "f6887056f821d97b7f3bc097cb57f8daef42676ff29fd2d22639e27c7cc0469c"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/release-manifest.example.json",
+      "size_bytes": 1060,
+      "sha256": "35f16151a52644102811ea9f760bec97ac23595dca6390c0198ee092defdbeb7"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/runtime-configuration-snapshot.example.json",
+      "size_bytes": 1347,
+      "sha256": "35f3c461ee3c6b3918b21a09c7b5fb36348adef574e31bf26ca912d521b89e8b"
+    },
+    {
+      "path": "schemas/foundation-kernel/examples/validation-result.example.json",
+      "size_bytes": 156,
+      "sha256": "fd1da7168c76737f048a79dca491b4f13e7e8ad538660404a66d1a40b7d7ea0f"
+    },
+    {
+      "path": "schemas/foundation-kernel/foundation-analysis-request.schema.json",
+      "size_bytes": 2807,
+      "sha256": "2d4bf2d26f800444ac83f9e72a374796a6aca17ee06b4caea8ef7a529a63e9ff"
+    },
+    {
+      "path": "schemas/foundation-kernel/foundation-case-pack-manifest.schema.json",
+      "size_bytes": 6003,
+      "sha256": "1ae8f54d89cc015adc05e9ad204d4ac4bae9584798206559cb43a6464c87e0cc"
+    },
+    {
+      "path": "schemas/foundation-kernel/foundation-error-envelope.schema.json",
+      "size_bytes": 2134,
+      "sha256": "142a7a55bb82cb567761efe8bc12cf70a0ab6a999f7f313da6dc4d9b66849d33"
+    },
+    {
+      "path": "schemas/foundation-kernel/foundation-operation-status.schema.json",
+      "size_bytes": 2903,
+      "sha256": "a9a5ffd2997a05f536d17459c7bfa32785405cd1642830b348234e65b5d348fe"
+    },
+    {
+      "path": "schemas/foundation-kernel/governance-output-envelope.schema.json",
+      "size_bytes": 5245,
+      "sha256": "79d0a85100573b132171e35981b80b2fdefb52852d626858f64715b6140dcfe5"
+    },
+    {
+      "path": "schemas/foundation-kernel/observation-record.schema.json",
+      "size_bytes": 3569,
+      "sha256": "356316e4c11a7f3b976a412f1b083ec8fdbb4a55b72afbdba0ed03c40d56b700"
+    },
+    {
+      "path": "schemas/foundation-kernel/reason-codes.v1.json",
+      "size_bytes": 2051,
+      "sha256": "0b95f88c2040e8f23d9351ea724b940802d64fdab7c2fd680aff60c79669fe87"
+    },
+    {
+      "path": "schemas/foundation-kernel/release-manifest.schema.json",
+      "size_bytes": 6252,
+      "sha256": "708d9667a1ec24103ee647fac2757ea6f9cd95b46271c020af5f6443d9be2725"
+    },
+    {
+      "path": "schemas/foundation-kernel/runtime-configuration-snapshot.schema.json",
+      "size_bytes": 6721,
+      "sha256": "b3c423b33f87f3ff34beb8ac772910cc5ce93046185fd1ffbe1d4820f5e82d1b"
+    },
+    {
+      "path": "schemas/foundation-kernel/schema-common-fragments.v1.json",
+      "size_bytes": 788,
+      "sha256": "f6c1cc327800106f8d55b61123f310f80cbfa0b966dc4b324805a87020607ffc"
+    },
+    {
+      "path": "schemas/foundation-kernel/schema-generation-policy-v1.md",
+      "size_bytes": 526,
+      "sha256": "9399ecd0c7d6d6e06f16b1a157ff0b8086b8680359b4f4bbee746ea1d8823d3e"
+    },
+    {
+      "path": "schemas/foundation-kernel/schema-validation-report.v1.json",
+      "size_bytes": 2075,
+      "sha256": "3514d4de892ab845ef9cc9aa7c3da05f125282418dd771bbf2e4683b5997d75c"
+    },
+    {
+      "path": "schemas/foundation-kernel/schemas.lock.json",
+      "size_bytes": 7262,
+      "sha256": "251073953e84b1e18b23be520f17c136d7be186c2e11c4e28c020c83fa2687f2"
+    },
+    {
+      "path": "schemas/foundation-kernel/validation-result.schema.json",
+      "size_bytes": 2861,
+      "sha256": "88c7c100abe46d7c6a29a8efda3e12c3eb260d16d34e561249d51b1cfbb0dde0"
+    },
+    {
+      "path": "scripts/README.md",
+      "size_bytes": 493,
+      "sha256": "d881b4193cc00d17fa7f75d0f6711834218637f98b9fdd5fe0630d52e2d95f3c"
+    },
+    {
+      "path": "scripts/__pycache__/ig5-reference-pipeline.cpython-313.pyc",
+      "size_bytes": 10185,
+      "sha256": "71ffcf7b1c9f21dba6d059e7091ccd7c540811f25e3be28505bd5528c5083d8e"
+    },
+    {
+      "path": "scripts/__pycache__/verify-ig5-source.cpython-313.pyc",
+      "size_bytes": 7206,
+      "sha256": "832b788d433ae85193c93cbe575166a5e4a0bd1841e69a70bbad3f9c579289fd"
+    },
+    {
+      "path": "scripts/build.ps1",
+      "size_bytes": 1535,
+      "sha256": "c438f1c589e0f8ac2ddd1c5c430c77c8bdbb3d13c78cdd5ef20e10c9f7737688"
+    },
+    {
+      "path": "scripts/ig2-reference-validator.py",
+      "size_bytes": 3080,
+      "sha256": "01c2e6644600e5aea511b548555da19909468dce8e82cc87c9288bd73a173ecd"
+    },
+    {
+      "path": "scripts/ig3-reference-validator.py",
+      "size_bytes": 3869,
+      "sha256": "a96801fc8c767639fae6d91a5670aed09e75ac196297558b071953fe6b046e24"
+    },
+    {
+      "path": "scripts/ig4-worker-smoke.py",
+      "size_bytes": 2636,
+      "sha256": "7754aaae4971884dddbea3fcfbeeb24198b57316960cf09d2414a3a23e3ca049"
+    },
+    {
+      "path": "scripts/ig5-reference-pipeline.py",
+      "size_bytes": 8606,
+      "sha256": "6c1ad9ea357705b65881ca64e754d544fddab568ffff7cb0f7a2bffe9b290058"
+    },
+    {
+      "path": "scripts/package.ps1",
+      "size_bytes": 151,
+      "sha256": "ba8e7ea4dd2a470676ba763eea7661b0d053d0f894dee1ec35ee6b3af1ad06fe"
+    },
+    {
+      "path": "scripts/test.ps1",
+      "size_bytes": 3649,
+      "sha256": "59f8b781dac282d438f0ae2945fdeb89e8adb514a0abeba0052e85ca686a05bf"
+    },
+    {
+      "path": "scripts/verify-architecture.py",
+      "size_bytes": 1956,
+      "sha256": "e2cac3e6fd4eb71587b205c5fb3ba6153a7d95f01cdeeb80a900c7137e981841"
+    },
+    {
+      "path": "scripts/verify-baseline.ps1",
+      "size_bytes": 2704,
+      "sha256": "23333e2db97b5388116a4a0f16b31bbee183ca9be2939de7cd4300cb131cf871"
+    },
+    {
+      "path": "scripts/verify-ig3-ig4-source.py",
+      "size_bytes": 3377,
+      "sha256": "38a2a2f4648aaa7bb5a5b4bcbe27379f7efec68efe84aa9bf8af2a7e06cfd92e"
+    },
+    {
+      "path": "scripts/verify-ig5-source.py",
+      "size_bytes": 4836,
+      "sha256": "7fc8d31ed6d9c32ead59cfc2b3601dcefb2b84637adb639d72219de62e74b42e"
+    },
+    {
+      "path": "scripts/verify-package.ps1",
+      "size_bytes": 192,
+      "sha256": "9aa914c2d1276a807d365549d11e4ca5546b304e9fd74a40b86ddce44f49aa66"
+    },
+    {
+      "path": "src/Observer.Application/AnalysisPorts.cs",
+      "size_bytes": 2716,
+      "sha256": "a2bf57f9762a42a9f2fd9f3ff4f4796a7f7c044f8f5db0c7ff10356dc5d1fd2e"
+    },
+    {
+      "path": "src/Observer.Application/EngineFacadePort.cs",
+      "size_bytes": 513,
+      "sha256": "14adb91e4754ba6a45a892f2acf7d5fb86c98be3055e3890f982793d87022b2d"
+    },
+    {
+      "path": "src/Observer.Application/EvidencePorts.cs",
+      "size_bytes": 4623,
+      "sha256": "cd8ec09bd49769c38979b5d3ca6e5f4104a58ac45ae40fffdcd86d7f2d3a6a8f"
+    },
+    {
+      "path": "src/Observer.Application/ModuleMarker.cs",
+      "size_bytes": 83,
+      "sha256": "c7cbd9ac6fc7683053b5310a4f8d7001dc99757302fdbec577c0027aacbd20f9"
+    },
+    {
+      "path": "src/Observer.Application/Observer.Application.csproj",
+      "size_bytes": 339,
+      "sha256": "571b4b3cfd4887c7969e9d220d89efeeb0f35c4dcaebf39a3478315766e1528a"
+    },
+    {
+      "path": "src/Observer.Application/Ports.cs",
+      "size_bytes": 162,
+      "sha256": "c4dc744279e617f87cd2e06354da73d682ef2869f4b1680fbe24eea98ac75ab3"
+    },
+    {
+      "path": "src/Observer.Application/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "src/Observer.Contracts/BuildIdentity.cs",
+      "size_bytes": 800,
+      "sha256": "6ba605c33bb7c23fae1c8ededf1144b5ef5fa24136e06345a5859a4e79cc9a14"
+    },
+    {
+      "path": "src/Observer.Contracts/Canonicalization/CanonicalizationException.cs",
+      "size_bytes": 411,
+      "sha256": "342e579856541a15b7d9d8ba89ecd9b0a2d5e4dee85f86623b6bb2ced3504d6c"
+    },
+    {
+      "path": "src/Observer.Contracts/Canonicalization/FsObsCanonicalizer.cs",
+      "size_bytes": 4103,
+      "sha256": "104567bce068b538fdabab43a035660e4e2bf16363115aaab0a48286813501d1"
+    },
+    {
+      "path": "src/Observer.Contracts/Canonicalization/SelfDigestCalculator.cs",
+      "size_bytes": 1095,
+      "sha256": "99fe9bc4fb00be381bcdaf737977bb4a0d6e3f7715b98f56a58cbe604a2e4eeb"
+    },
+    {
+      "path": "src/Observer.Contracts/Models/FoundationContracts.cs",
+      "size_bytes": 13200,
+      "sha256": "5dc9f1f7993b35d06bd5b1958b6a086c03ae130f614275ba2697e8099faec24e"
+    },
+    {
+      "path": "src/Observer.Contracts/Models/OperationStateMachine.cs",
+      "size_bytes": 3298,
+      "sha256": "931da7c379a6348ee3f9ed0fc07975f6518ae4693cb136d5cf5e0331bba9f98f"
+    },
+    {
+      "path": "src/Observer.Contracts/ModuleMarker.cs",
+      "size_bytes": 160,
+      "sha256": "0f4b55c6f248602a9c92c9f2aee970bf48925c56cf2eb9da0c5304930cab9093"
+    },
+    {
+      "path": "src/Observer.Contracts/Observer.Contracts.csproj",
+      "size_bytes": 215,
+      "sha256": "b42353fb899a17f203754be1670720154425aee3baf7fa1c6200dd922efccd21"
+    },
+    {
+      "path": "src/Observer.Contracts/ReasonCodes/FoundationReasonCodes.cs",
+      "size_bytes": 3976,
+      "sha256": "ee9711785424ed6a7297c6f7bad193ec165aa84581c3368674f84e4c9f2ba2d1"
+    },
+    {
+      "path": "src/Observer.Contracts/ReasonCodes/IReasonCodedException.cs",
+      "size_bytes": 130,
+      "sha256": "46e23eccff618322b7ed5adc2ca2d9432a517bdff98ab3e2c26f3e2a4d08005e"
+    },
+    {
+      "path": "src/Observer.Contracts/ReasonCodes/ReasonCodeCatalog.cs",
+      "size_bytes": 2336,
+      "sha256": "5d67d044817115e4a9348430e1c6f2eb41c2af048b41728aec7bd4e2b1d77dc8"
+    },
+    {
+      "path": "src/Observer.Contracts/RepositoryLayout.cs",
+      "size_bytes": 831,
+      "sha256": "e2438ca37cf5b923186b7c4a3824313e5f684abbcb333c9c7b91a2644a3ea71e"
+    },
+    {
+      "path": "src/Observer.Contracts/Schema/CommonFragmentConsistencyValidator.cs",
+      "size_bytes": 1596,
+      "sha256": "84358895083036c0c1cfd8ccf703f3639f7187bb9e0e61420fc2c69e09763c05"
+    },
+    {
+      "path": "src/Observer.Contracts/Schema/FoundationSchemaBundle.cs",
+      "size_bytes": 5835,
+      "sha256": "3290ea3e0b34c3162fc8c5b8952c925756ae3d2fe0e8b5e9777e15b9b9c9f9fd"
+    },
+    {
+      "path": "src/Observer.Contracts/Schema/FoundationSchemaValidator.cs",
+      "size_bytes": 10350,
+      "sha256": "1f8e84c6e4f3fb2e78d85791644be471076aedc08db94c77f7b025e5efd4ba55"
+    },
+    {
+      "path": "src/Observer.Contracts/Schema/PinnedReferencePolicy.cs",
+      "size_bytes": 3753,
+      "sha256": "314897b32bb6e4831c1945d570376433ddb3bb5ca8e65d93d8996804d5cbd58b"
+    },
+    {
+      "path": "src/Observer.Contracts/Schema/SchemaValidationIssue.cs",
+      "size_bytes": 304,
+      "sha256": "5e9073757d15d49ea5681c8f0a60ac45f227bf044b164a59533a62980c874096"
+    },
+    {
+      "path": "src/Observer.Contracts/Serialization/FoundationJson.cs",
+      "size_bytes": 1027,
+      "sha256": "b59feeb0ef5f72a6746ad6e7bfe9a8d0110cd720ef2866a40871764e95624b0b"
+    },
+    {
+      "path": "src/Observer.Contracts/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "src/Observer.EngineFacade/EngineFacadeComposition.cs",
+      "size_bytes": 255,
+      "sha256": "f525341525cbcc04f4570043a1f5b415e2aaf21eb329cedfa63078090761bf90"
+    },
+    {
+      "path": "src/Observer.EngineFacade/EngineFacadeException.cs",
+      "size_bytes": 408,
+      "sha256": "fd6a6840b568fc902ccf9ddac638cf7fd045c7b8d773c9ff911f9dc5e3015b90"
+    },
+    {
+      "path": "src/Observer.EngineFacade/EngineFacadeOptions.cs",
+      "size_bytes": 2111,
+      "sha256": "df4b0a13f0e92b3f146fcd144cc1e103f4d6dd30245efdbc0ce3a68bb706fd5f"
+    },
+    {
+      "path": "src/Observer.EngineFacade/LimitedStreamReader.cs",
+      "size_bytes": 1024,
+      "sha256": "aeeedbf120d099ff230ea29bc4d071ebfeef6d7e83bac881f797bcb8155ee209"
+    },
+    {
+      "path": "src/Observer.EngineFacade/ModuleMarker.cs",
+      "size_bytes": 193,
+      "sha256": "f67ed3d8cccbdca5f8743238479693dc4b6b980398850b9b8457e41e11dddad3"
+    },
+    {
+      "path": "src/Observer.EngineFacade/Observer.EngineFacade.csproj",
+      "size_bytes": 435,
+      "sha256": "f9ce00b79d16042f68c2b58589432588b31d9071c58fb15ba2c1c61c1c6492dd"
+    },
+    {
+      "path": "src/Observer.EngineFacade/PythonWorkerEngineFacade.cs",
+      "size_bytes": 10946,
+      "sha256": "cc359564b832f1b9d73ea8b7530e0e8a0acb63e0d7e993d6af27c6807a4235d9"
+    },
+    {
+      "path": "src/Observer.EngineFacade/WorkerIntegrityVerifier.cs",
+      "size_bytes": 2810,
+      "sha256": "0fb7cc6182b7e0f22e94e351a31e1e289519e928ae3fb7812284b024650bc51c"
+    },
+    {
+      "path": "src/Observer.EngineFacade/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "src/Observer.Evidence/ContentAddressedArtifactStore.cs",
+      "size_bytes": 5593,
+      "sha256": "3114b8c15acd7fc4db1deb06ec2cf06dfa4448c5554f71ae91004d197112a4cc"
+    },
+    {
+      "path": "src/Observer.Evidence/EvidenceComposition.cs",
+      "size_bytes": 1125,
+      "sha256": "919586bcf07a26026e5f2be1366bcc9669319e8a3e0d6a7ce9840c53f70a67a8"
+    },
+    {
+      "path": "src/Observer.Evidence/EvidenceStoreException.cs",
+      "size_bytes": 406,
+      "sha256": "2a6bd178eb7223b73b2cd85ff44b9fb3755cc4cda60251542459a22a7f960387"
+    },
+    {
+      "path": "src/Observer.Evidence/InstanceLock.cs",
+      "size_bytes": 3074,
+      "sha256": "46d8ad0e2f5aa9e140425576ba19f1033a9c878e2f39d20e4921385abad0bcb2"
+    },
+    {
+      "path": "src/Observer.Evidence/Migrations/001_foundation.sql",
+      "size_bytes": 3888,
+      "sha256": "966cd6566e5f865b11dd6756d75c0a2a7eb45d6193630221bcfb624410d5ce15"
+    },
+    {
+      "path": "src/Observer.Evidence/ModuleMarker.cs",
+      "size_bytes": 159,
+      "sha256": "04156f1400cc146c05756f1a9bce56b048eca6d198d51abdba666908310ee18b"
+    },
+    {
+      "path": "src/Observer.Evidence/NativeSqlite/NativeSqlite.cs",
+      "size_bytes": 4455,
+      "sha256": "5d633cf4c0408b00343d79bc608d31c3f336b7c88c8ec84608b72a34900cbb32"
+    },
+    {
+      "path": "src/Observer.Evidence/NativeSqlite/SqliteConnection.cs",
+      "size_bytes": 2866,
+      "sha256": "b0cb8aea0a41ceb042ae49a5113d0a4bbecdd5de1454ca9fd34756cb84716b32"
+    },
+    {
+      "path": "src/Observer.Evidence/NativeSqlite/SqliteStatement.cs",
+      "size_bytes": 2410,
+      "sha256": "1c2bcc581cf0804311c53408ac3a557b9e80040acfa2000ee415b0e133a48345"
+    },
+    {
+      "path": "src/Observer.Evidence/Observer.Evidence.csproj",
+      "size_bytes": 522,
+      "sha256": "08e5a1c64546a157f4043165bd2e289b079be2b00401a1fe61f5395d556cfb84"
+    },
+    {
+      "path": "src/Observer.Evidence/SqliteAuditWriter.cs",
+      "size_bytes": 7188,
+      "sha256": "d40ed46474a8f1fa6689bccba4c540d63fc620e29e20a9c97ddf1603e6266cc7"
+    },
+    {
+      "path": "src/Observer.Evidence/SqliteEvidenceSession.cs",
+      "size_bytes": 12634,
+      "sha256": "d9f0210350af0353e8a73c678219202dc565d60d30c0bb32263b5372223a5a4b"
+    },
+    {
+      "path": "src/Observer.Evidence/SqliteIdempotencyStore.cs",
+      "size_bytes": 2890,
+      "sha256": "5dbb778c83a1d0d64ab3039cdc382f0301a6cb4fb4ce424a15901d8245835841"
+    },
+    {
+      "path": "src/Observer.Evidence/SqliteObservationRepository.cs",
+      "size_bytes": 2758,
+      "sha256": "d06fad1a1eff7fc62196f1fb63a00e8ae66bf41be267f9f35c780e9e86a3720e"
+    },
+    {
+      "path": "src/Observer.Evidence/SqliteOperationStore.cs",
+      "size_bytes": 3648,
+      "sha256": "f51d121203ee999d635383d9795260eddfd82a5a0108e292bd1ccfa0cf2c5d02"
+    },
+    {
+      "path": "src/Observer.Evidence/SqliteRuntimeSnapshotRepository.cs",
+      "size_bytes": 1273,
+      "sha256": "07632189a9cca998c314fc3a6c04acb450c072a9dd79ad7f43043d5a54cc884f"
+    },
+    {
+      "path": "src/Observer.Evidence/SqliteSchemaMigrator.cs",
+      "size_bytes": 2573,
+      "sha256": "26d80f4f3074d3bf1f559031a57c390ce280026d8e89f8255863118554e510f9"
+    },
+    {
+      "path": "src/Observer.Evidence/SystemServices.cs",
+      "size_bytes": 288,
+      "sha256": "84ac72ae8740fe50b2ef472d2c86e426be78ac87252c37a872ddec4409c44885"
+    },
+    {
+      "path": "src/Observer.Evidence/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "src/Observer.Execution/ExecutionComposition.cs",
+      "size_bytes": 1476,
+      "sha256": "bcfc5ae9da9921de80464d61d5276564df7aaa511918d75445844bbf04dbe1d6"
+    },
+    {
+      "path": "src/Observer.Execution/FoundationAnalysisUseCase.cs",
+      "size_bytes": 20765,
+      "sha256": "cebc4c154edfea3a9fd049f4643826f3e6b54ba043b71c953161554923fdcf51"
+    },
+    {
+      "path": "src/Observer.Execution/FoundationExecutionModels.cs",
+      "size_bytes": 475,
+      "sha256": "84c303f66b9d6ee7c7a3d77fa8cc5371b60f2f934c58dec649e591be877e8854"
+    },
+    {
+      "path": "src/Observer.Execution/FoundationInputIntake.cs",
+      "size_bytes": 4650,
+      "sha256": "dec0faf5575bba9d921112235b93edd749d3ca8fc569704d22320ce1f85a6cfc"
+    },
+    {
+      "path": "src/Observer.Execution/FoundationReadUseCases.cs",
+      "size_bytes": 4133,
+      "sha256": "959bacb5c38dbe6b3a725f4c2edfdb4d86433bb5dd594c02cd7d174fdaf62a3e"
+    },
+    {
+      "path": "src/Observer.Execution/FoundationScenarioAdapter.cs",
+      "size_bytes": 1260,
+      "sha256": "e6357ac4f12fa1c253a3d8c368c825cebc473a65c5799e8c9bf05cc91d1ab096"
+    },
+    {
+      "path": "src/Observer.Execution/FoundationValidationPipeline.cs",
+      "size_bytes": 4097,
+      "sha256": "2fb6582d2d44fcf35729e77943144dac4d8b3f02cca5893f03a17db6129663bc"
+    },
+    {
+      "path": "src/Observer.Execution/GovernanceOutputAssembler.cs",
+      "size_bytes": 3770,
+      "sha256": "a164226a34b596dabc27f8c54e74f87ae39da6786e50a4a89a1d0f93e32adcb4"
+    },
+    {
+      "path": "src/Observer.Execution/ModuleMarker.cs",
+      "size_bytes": 238,
+      "sha256": "6313bb7545c8b56e988a5907b1b00cb02b925f35240e2665a7b84d2ead70b480"
+    },
+    {
+      "path": "src/Observer.Execution/Observer.Execution.csproj",
+      "size_bytes": 429,
+      "sha256": "ae2a27b0fde100666aab195a60b6875b4ff18c6986f3a04bf1062cf2541fe332"
+    },
+    {
+      "path": "src/Observer.Execution/RuntimeConfigurationResolver.cs",
+      "size_bytes": 4627,
+      "sha256": "61012fb2da487539632b03664d1cf7c76830c06ff28aa39dfafaa1d490393197"
+    },
+    {
+      "path": "src/Observer.Execution/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "src/Observer.Host.Cli/CliOptions.cs",
+      "size_bytes": 1613,
+      "sha256": "334295cb22382be892bc29304acd04a13bd776476f2c4755a860972408dd4ed6"
+    },
+    {
+      "path": "src/Observer.Host.Cli/Observer.Host.Cli.csproj",
+      "size_bytes": 733,
+      "sha256": "92a6c92cbb216542b6bd8b3f6ec492118bf92ca9b523a3ba70ed8eb5d5e4bbfe"
+    },
+    {
+      "path": "src/Observer.Host.Cli/ObserverHostFactory.cs",
+      "size_bytes": 3159,
+      "sha256": "6959a5aa2449436ff5b2dbc841638c8e4f27c6e598ef47ae6e1ef6b257579781"
+    },
+    {
+      "path": "src/Observer.Host.Cli/Program.cs",
+      "size_bytes": 6862,
+      "sha256": "9eb894ec94e6d20dc4d35bc0aa75a16f1bfcd40e2ea008e4e5e94897e08bead7"
+    },
+    {
+      "path": "src/Observer.Host.Cli/Properties/PublishProfiles/win-x64-self-contained.pubxml",
+      "size_bytes": 480,
+      "sha256": "47be6dd5c3f1fea1e5efcca7358a65ce31a5d5791c24441e5197f2c853876fee"
+    },
+    {
+      "path": "src/Observer.Host.Cli/UnavailableEngineFacade.cs",
+      "size_bytes": 1807,
+      "sha256": "bdfb44a7918acf958d2592fffbe0e7a7b3b144191c27c521648f725195db9482"
+    },
+    {
+      "path": "src/Observer.Host.Cli/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "tests/Observer.Tests.Architecture/Observer.Tests.Architecture.csproj",
+      "size_bytes": 809,
+      "sha256": "c98f16e179e779ecb27319631317c930c9a477b7e96685e3b178f681c03d38a4"
+    },
+    {
+      "path": "tests/Observer.Tests.Architecture/TestProjectMarker.cs",
+      "size_bytes": 256,
+      "sha256": "99d994145e9aba3593b4471db4ee6a6b0856a532f5fd7f5da2d028cc7c0ed46f"
+    },
+    {
+      "path": "tests/Observer.Tests.Architecture/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "tests/Observer.Tests.Contract/Observer.Tests.Contract.csproj",
+      "size_bytes": 378,
+      "sha256": "f72a8743bb64ad4198454c7964f2f61e2e09bfe947877c44dea5196064abd456"
+    },
+    {
+      "path": "tests/Observer.Tests.Contract/Program.cs",
+      "size_bytes": 7416,
+      "sha256": "24907fa4f03290f1fba34374575e1f27ffb8a67813a25e5b0a0f8b7b2224ed5e"
+    },
+    {
+      "path": "tests/Observer.Tests.Contract/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "tests/Observer.Tests.Integration/EngineFacadeSourceTests.cs",
+      "size_bytes": 1864,
+      "sha256": "645af37cbf3fbd7fbf1ef6348737c1cf137541a306da338c03e88193e349727c"
+    },
+    {
+      "path": "tests/Observer.Tests.Integration/Observer.Tests.Integration.csproj",
+      "size_bytes": 752,
+      "sha256": "31def5deb1dca88aa7df25d17cbe1d1f48ee54e37dd43d94b71a499df2993794"
+    },
+    {
+      "path": "tests/Observer.Tests.Integration/Program.cs",
+      "size_bytes": 12872,
+      "sha256": "e17dda37464ee635576b93a3e0d6726b183f75ed7d66fcac1e0cb4bcb2d7b447"
+    },
+    {
+      "path": "tests/Observer.Tests.Integration/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "tests/Observer.Tests.Security/Observer.Tests.Security.csproj",
+      "size_bytes": 713,
+      "sha256": "5d8b7f30a558c9bad854b4ec06f8b9e012adcce52e1d52366ec526a745967d7c"
+    },
+    {
+      "path": "tests/Observer.Tests.Security/TestProjectMarker.cs",
+      "size_bytes": 252,
+      "sha256": "e4a2a806b7cc05ada57b2f16e980c61aba633eaed4eada72a9bd9c51ccd10402"
+    },
+    {
+      "path": "tests/Observer.Tests.Security/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    },
+    {
+      "path": "tests/Observer.Tests.Unit/Observer.Tests.Unit.csproj",
+      "size_bytes": 554,
+      "sha256": "1b4370f0ec70f1e5c963f0cec068fa5af0ce7d4cfb50cbb4c1d8cdcb974e4bea"
+    },
+    {
+      "path": "tests/Observer.Tests.Unit/Program.cs",
+      "size_bytes": 2990,
+      "sha256": "922784f7d9eb801d4a70300e92cb7ad2fa1b7a0fc96214f38b8a0140ba040136"
+    },
+    {
+      "path": "tests/Observer.Tests.Unit/packages.lock.json",
+      "size_bytes": 62,
+      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "contract": "fs-observer/runtime-configuration-snapshot/1",
+  "snapshot_id": "12345678-1234-4234-8234-123456789abc",
+  "created_at_utc": "value",
+  "engine": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "adapter": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "scenario": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "profile": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "knowledge": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "report_template": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "schema_set": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "serialization": {
+    "id": "FS-OBS-CANON-1",
+    "hash_algorithm": "SHA-256"
+  },
+  "snapshot_sha256": "4ce5d4992e578f038542687c2c438b5052d69705c966ee5963c959df5c2f1710"
+}

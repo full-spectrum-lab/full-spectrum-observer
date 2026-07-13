@@ -1,0 +1,65 @@
+name: Foundation gates
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ig1-ig5:
+    runs-on: windows-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.301
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.11.9
+
+      - name: Install pinned Python test dependencies
+        run: python -m pip install numpy==1.26.4 jsonschema==4.25.1 typing_extensions==4.15.0
+
+      - name: Acquire and verify pinned SQLite runtime
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP "sqlite.zip"
+          $runtime = Join-Path $env:RUNNER_TEMP "sqlite"
+          Invoke-WebRequest https://www.sqlite.org/2025/sqlite-dll-win-x64-3500400.zip -OutFile $archive
+          $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne "56b8751cdbf6dcd8ac9a35508039e456692a402bc5ddf576c2b0eddb0fed8536") {
+            throw "SQLite archive digest mismatch: $actual"
+          }
+          Expand-Archive $archive $runtime
+          "FSP_SQLITE_NATIVE_DIR=$runtime" | Out-File $env:GITHUB_ENV -Append
+          "FSP_PRIVATE_PYTHON=$((Get-Command python).Source)" | Out-File $env:GITHUB_ENV -Append
+
+      - name: Verify locked build
+        shell: pwsh
+        run: ./scripts/build.ps1 -Configuration Release -Locked
+
+      - name: Execute IG1 through IG5
+        shell: pwsh
+        run: |
+          ./scripts/test.ps1 -Gate IG1
+          ./scripts/test.ps1 -Gate IG2
+          ./scripts/test.ps1 -Gate IG3
+          ./scripts/test.ps1 -Gate IG4
+          ./scripts/test.ps1 -Gate IG5
+
+      - name: Upload gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: foundation-gate-evidence
+          path: evidence/

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "FullSpectrum.Observer.Application": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+        }
+      },
+      "FullSpectrum.Observer.Contracts": {
+        "type": "Project"
+      },
+      "FullSpectrum.Observer.EngineFacade": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Application": "[1.0.0, )",
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+        }
+      },
+      "FullSpectrum.Observer.Evidence": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Application": "[1.0.0, )",
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+        }
+      },
+      "FullSpectrum.Observer.Execution": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Application": "[1.0.0, )",
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+        }
+      }
+    }
+  }
+}

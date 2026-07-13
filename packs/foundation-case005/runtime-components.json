@@ -1,0 +1,27 @@
+{
+  "contract": "fs-observer/foundation-runtime-components/1",
+  "version": "1.0.0-alpha.1",
+  "components": {
+    "adapter": {
+      "id": "foundation-scenario-adapter",
+      "version": "1.0.0-alpha.1",
+      "kind": "DIRECT_SCENARIO"
+    },
+    "scenario": {
+      "id": "CASE005_KNOWLEDGE_CONFLICT",
+      "version": "1.0.0-alpha.1"
+    },
+    "profile": {
+      "id": "foundation-reference-profile",
+      "version": "1.0.0-alpha.1"
+    },
+    "knowledge": {
+      "id": "foundation-case005-knowledge",
+      "version": "1.0.0-alpha.1"
+    },
+    "report_template": {
+      "id": "foundation-observer-envelope",
+      "version": "1.0.0-alpha.1"
+    }
+  }
+}

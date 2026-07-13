@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/foundation-case-pack-manifest/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "FoundationCasePackManifest",
+  "type": "object",
+  "required": [
+    "contract",
+    "pack_id",
+    "version",
+    "classification",
+    "engine_source",
+    "engine_artifact",
+    "case",
+    "schemas",
+    "files",
+    "manifest_sha256"
+  ],
+  "properties": {
+    "contract": {
+      "const": "fs-observer/foundation-case-pack-manifest/1"
+    },
+    "pack_id": {
+      "const": "fsp.foundation.case005"
+    },
+    "version": {
+      "const": "1.0.0-alpha.1"
+    },
+    "classification": {
+      "const": "SYNTHETIC"
+    },
+    "engine_source": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "source_commit"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Pinned source commit of the Engine."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Source identity fixed at VG2."
+    },
+    "engine_artifact": {
+      "type": "object",
+      "required": [
+        "status",
+        "sha256"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PENDING_VG3",
+            "AVAILABLE"
+          ]
+        },
+        "sha256": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          ],
+          "description": "Null at VG2; a real packaged Engine artifact SHA-256 is mandatory when status=AVAILABLE."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PENDING_VG3"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sha256": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "AVAILABLE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "case": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "seed",
+        "fixed_time_utc",
+        "input_sha256",
+        "golden_sha256"
+      ],
+      "properties": {
+        "case_id": {
+          "const": "CASE005_KNOWLEDGE_CONFLICT"
+        },
+        "seed": {
+          "const": 42
+        },
+        "fixed_time_utc": {
+          "const": "2026-07-04T00:00:00Z"
+        },
+        "input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "golden_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schemas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "sha256"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+          },
+          "schema_version": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "source_commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "artifact_id",
+          "media_type",
+          "sha256",
+          "size_bytes"
+        ],
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "relative_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "SYNTHETIC",
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "RESTRICTED"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256(FS-OBS-CANON-1(object with manifest_sha256 property removed))",
+      "x-fsp-digest-rule": "SHA-256(FS-OBS-CANON-1(object with manifest_sha256 property removed))",
+      "x-fsp-excluded-fields": [
+        "manifest_sha256"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

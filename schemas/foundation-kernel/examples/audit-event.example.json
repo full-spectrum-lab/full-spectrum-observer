@@ -1,0 +1,18 @@
+{
+  "contract": "fs-observer/audit-event/1",
+  "event_id": "12345678-1234-4234-8234-123456789abc",
+  "stream_id": "GLOBAL",
+  "sequence_no": 1,
+  "event_type": "value",
+  "occurred_at_utc": "value",
+  "actor": {
+    "type": "SYSTEM",
+    "id": "value"
+  },
+  "trace_id": "12345678-1234-4234-8234-123456789abc",
+  "payload_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "payload_media_type": "value",
+  "serialization_id": "FS-OBS-CANON-1",
+  "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_hash": "a9fbb349741cf1ab852cf078ded8817bc8f9985270ba15090fe66f4c47faa282"
+}

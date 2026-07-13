@@ -1,0 +1,35 @@
+{
+  "contract": "fs-observer/release-manifest/1",
+  "system_version": "0.1.0-alpha",
+  "release_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
+  "build": {
+    "dotnet_target": "net10.0",
+    "runtime_identifier": "win-x64",
+    "configuration": "Release",
+    "built_at_utc": "value"
+  },
+  "engine": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "case_pack": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "schema_set": {
+    "id": "value",
+    "version": "1.0.0",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "dependencies": [],
+  "files": [],
+  "sbom": {
+    "format": "CycloneDX-1.6",
+    "relative_path": "examples/sample.json",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "known_limitations": [],
+  "manifest_sha256": "78dbbe2f245bbdcc70c5b3bb75c1baa3e597670c84b7ac3f09b4f595d6ddeec6"
+}

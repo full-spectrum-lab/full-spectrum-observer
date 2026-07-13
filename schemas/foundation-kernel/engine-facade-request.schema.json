@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/engine-facade-request/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "EngineFacadeRequest",
+  "type": "object",
+  "required": [
+    "protocol",
+    "request_id",
+    "operation",
+    "engine",
+    "seed",
+    "fixed_time_utc",
+    "scenario"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "fs-observer-engine-facade/1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "operation": {
+      "const": "evaluate"
+    },
+    "engine": {
+      "type": "object",
+      "required": [
+        "version",
+        "commit"
+      ],
+      "properties": {
+        "version": {
+          "const": "v1.0.0"
+        },
+        "commit": {
+          "const": "09062bae2c7608bda79ee4bfde5779109e8e6197"
+        }
+      },
+      "additionalProperties": false
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "fixed_time_utc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scenario": {
+      "type": "object"
+    },
+    "output_serialization": {
+      "const": "FSE-PYJSON-1"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,31 @@
+{
+  "fragment_set_id": "FS-OBS-COMMON-1",
+  "strategy": "SELF_CONTAINED_GENERATED",
+  "runtime_external_refs": false,
+  "rules": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 1
+    },
+    "classification": [
+      "SYNTHETIC",
+      "PUBLIC",
+      "INTERNAL",
+      "CONFIDENTIAL",
+      "RESTRICTED"
+    ]
+  },
+  "change_rule": "Shared fragments are generated or consistency-tested; they must not be edited independently without updating FS-OBS-COMMON-1."
+}

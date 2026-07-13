@@ -1,0 +1,16 @@
+{
+  "contract": "fs-observer/foundation-analysis-request/1",
+  "request_id": "12345678-1234-4234-8234-123456789abc",
+  "idempotency_key": "value",
+  "input": {
+    "kind": "BUILTIN_CASE",
+    "case_id": "12345678-1234-4234-8234-123456789abc"
+  },
+  "requested_runtime": {
+    "case_pack_id": "12345678-1234-4234-8234-123456789abc",
+    "case_pack_version": "1.0.0",
+    "seed": 1,
+    "fixed_time_utc": "2026-07-12T00:00:00.000Z"
+  },
+  "submitted_at_utc": "value"
+}

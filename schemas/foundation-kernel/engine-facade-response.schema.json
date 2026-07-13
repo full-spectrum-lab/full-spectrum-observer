@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/engine-facade-response/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "EngineFacadeResponse",
+  "type": "object",
+  "required": [
+    "protocol",
+    "request_id",
+    "status",
+    "engine_version",
+    "engine_commit"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "fs-observer-engine-facade/1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "SUCCESS",
+        "ERROR",
+        "CANCELLED",
+        "TIMED_OUT"
+      ]
+    },
+    "engine_version": {
+      "const": "v1.0.0"
+    },
+    "engine_commit": {
+      "const": "09062bae2c7608bda79ee4bfde5779109e8e6197"
+    },
+    "output_serialization": {
+      "oneOf": [
+        {
+          "const": "FSE-PYJSON-1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "output_sha256": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "output": {
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "code",
+            "message",
+            "details_redacted"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "pattern": "^(REQ|INTAKE|ADAPTER|SCHEMA|GOV|SNAPSHOT|FACADE|ENGINE|OUTPUT|STORE|AUDIT|SEC|SYSTEM)_[A-Z0-9_]+$"
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            },
+            "details_redacted": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

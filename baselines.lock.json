@@ -1,0 +1,278 @@
+{
+    "lock_id":  "FS-OBS-V010-IG0-LOCK-1",
+    "generated_at_utc":  "2026-07-12T00:00:00Z",
+    "system_version":  "0.1.0-alpha",
+    "scope_baseline":  "FS-OBS-V010-SCOPE-BL-1.0",
+    "design_baseline":  "FS-OBS-V010-DES-BL-1.0",
+    "schema_baseline":  "FS-OBS-V010-SCHEMA-BL-1.0",
+    "implementation_baseline":  "FS-OBS-V010-IMP-BL-1.0",
+    "sdk":  {
+                "version":  "10.0.301",
+                "target_framework":  "net10.0",
+                "release_rid":  "win-x64",
+                "roll_forward":  "disable"
+            },
+    "engine":  {
+                   "version":  "v1.0.0",
+                   "source_commit":  "09062bae2c7608bda79ee4bfde5779109e8e6197",
+                   "tag":  "v1.0.0"
+               },
+    "floating_references_forbidden":  true,
+    "files":  [
+                  {
+                      "path":  "docs/baselines/README.md",
+                      "size_bytes":  401,
+                      "sha256":  "121178fb270b1a13d25826b207383df57d2854b820f72e39508c30112a2e2b87"
+                  },
+                  {
+                      "path":  "docs/baselines/implementation-plan/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_实施计划基线总包_v1.0.zip",
+                      "size_bytes":  1240577,
+                      "sha256":  "2a1bcccf42a96bcb8e9b1ad1c7de8970406618eac110245a75cb13cee018d5b7"
+                  },
+                  {
+                      "path":  "docs/baselines/implementation-plan/实施计划基线总包_v1.0_外部校验.json",
+                      "size_bytes":  239,
+                      "sha256":  "6aa0fab1e57f94a685690b3f61b1d6187e58eff05a58a4139053ef47071945b3"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1冻结准入与决定_v1.0.docx",
+                      "size_bytes":  38433,
+                      "sha256":  "e29658d3b223ab3a4f3bee2bfda27c7a7d913501380651c6c839de4c5d9dbb84"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1冻结准入与决定_v1.0.md",
+                      "size_bytes":  710,
+                      "sha256":  "2c23f25dec07c963df76ad294a00f9d031481a0b44282f3ecbe04878ec33ba03"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1基线清单_v1.0.json",
+                      "size_bytes":  2244,
+                      "sha256":  "e99b68685a81009b670ffc8f7079fd0a0a9d3ecc2a39a0950da499c009667cf8"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1范围覆盖与设计输入验证报告_v1.0.docx",
+                      "size_bytes":  39199,
+                      "sha256":  "33b4f3af8bd94a449653498cba4f59336e2f70b4e4efa2d7021a5a4a0a85fe21"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG1范围覆盖与设计输入验证报告_v1.0.md",
+                      "size_bytes":  1222,
+                      "sha256":  "0ba79c3b6de40af7bdb3a606dc1473b3ee6d66bd36229bd04a795bbdabdba892"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求分解_v1.0_Scope_Baseline.docx",
+                      "size_bytes":  74195,
+                      "sha256":  "bd72319e36a9d4a73a89c309fe58894b234c085c3391327f327da30ab717f1ef"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求分解_v1.0_Scope_Baseline.md",
+                      "size_bytes":  33455,
+                      "sha256":  "b30123f7f9c2368eabbf9eee70a408dffa7660a1bfda0abc6048e7e471aca77d"
+                  },
+                  {
+                      "path":  "docs/baselines/vg1-scope/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_版本范围与需求矩阵_v1.0_Baseline.xlsx",
+                      "size_bytes":  41321,
+                      "sha256":  "b6433a1f28f67257480ab8e8c96d525fc45bc9d7a8431ba86ba0cf09a32339b1"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_Schema身份依赖与实例验证报告_v1.0.docx",
+                      "size_bytes":  42284,
+                      "sha256":  "338af2bc305d77cfe83b9f235b2bfc90dd642eb6dfb3aebe42fe7515ad3ea3c1"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_Schema身份依赖与实例验证报告_v1.0.md",
+                      "size_bytes":  3683,
+                      "sha256":  "01c4041caa5990bf53fdf02581ef92caa0947315dd271dd6203f0345ae36a409"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2冻结准入与决定_v1.0.docx",
+                      "size_bytes":  41154,
+                      "sha256":  "f7a35f8eb40ab6d6c3090c27d3fba6cbe0b49139c6cad55f3663c394d9e5aa66"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2冻结准入与决定_v1.0.md",
+                      "size_bytes":  610,
+                      "sha256":  "7a2c9f3e7bbd67edd0ee4c2e602056ab2c9a988859ff2179ced8f7a8d0125f60"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2合同Schema基线包_v1.0.zip",
+                      "size_bytes":  32860,
+                      "sha256":  "5971d1a02a2126ae9f6d464e2a9e480278326dfb755ccc770adac065308b41d7"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计决策与ADR记录_v1.0_Baseline.docx",
+                      "size_bytes":  45911,
+                      "sha256":  "ba15bf5514b232f22101c810a51e4cfaff36446975ee043528e66ac47957c752"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计决策与ADR记录_v1.0_Baseline.md",
+                      "size_bytes":  6211,
+                      "sha256":  "7cefdc2be956ab37dae86e509c863c13c226aebc99213409ffcf92b62b83392b"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计合同威胁与测试追踪矩阵_v1.0_Baseline.xlsx",
+                      "size_bytes":  64770,
+                      "sha256":  "105d6cce18a1b0a0dcf46bb94406748e5ecf8a68b9b159adc3b048646e8d3c7e"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计基线清单_v1.0.json",
+                      "size_bytes":  4805,
+                      "sha256":  "67c04fd04998346309650b28654a9d347eeaad5c3c3199f6bca112e3b78591a5"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计基线评审包_v1.0.zip",
+                      "size_bytes":  928875,
+                      "sha256":  "22870ae8d4b8c4e2b7dd20093f75477474cf5f4a731026571cbe3db8d6d27d93"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_威胁模型与安全设计_v1.0_Baseline.docx",
+                      "size_bytes":  43544,
+                      "sha256":  "603f8072f1cca1117acc3d16ecc83842919db6739d0f50ef5855eed61f397f2a"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_威胁模型与安全设计_v1.0_Baseline.md",
+                      "size_bytes":  4341,
+                      "sha256":  "4d455780f5f6f0ed200dcf2e9a78fbddac4fe961a9f4c99354745ec026c56860"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_测试需求与Fixture规范_v1.0_Baseline.docx",
+                      "size_bytes":  53203,
+                      "sha256":  "b602750169622a57089f31a41ac9f200afaf9b870d2fc96260e66aa6748a048f"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_测试需求与Fixture规范_v1.0_Baseline.md",
+                      "size_bytes":  2143,
+                      "sha256":  "72e68d93807a66e1ddc861b3f4e897f1d3c72d1705e33cc7672b1c2b9ad91c8e"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_详细技术设计_v1.0_Design_Baseline.docx",
+                      "size_bytes":  616251,
+                      "sha256":  "bb63058ed923a113587ae252b16aa42b0497c3fae7c6ade3a0e55b196f115ddc"
+                  },
+                  {
+                      "path":  "docs/baselines/vg2-design/全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_详细技术设计_v1.0_Design_Baseline.md",
+                      "size_bytes":  6091,
+                      "sha256":  "00b85ab47fa4b3cc534ebf78e4419f44a229f912ed8c5db16ff7ddd0d4b1f5c7"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/audit-event.schema.json",
+                      "size_bytes":  2902,
+                      "sha256":  "e11358d1503b2ff0b1eb51027a12cd3b7609f5053df1640ead486800e82ab157"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/digest-rules-v1.md",
+                      "size_bytes":  883,
+                      "sha256":  "c29fd67367a31afd4aee11316b24b0ac15d254856448a57a1b47d90987d9e487"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/engine-facade-request.schema.json",
+                      "size_bytes":  1421,
+                      "sha256":  "6248b26e8e0e4d0a1722c4622fbbd208818edde8a44182f89d5aac32fa7c7e45"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/engine-facade-response.schema.json",
+                      "size_bytes":  2267,
+                      "sha256":  "bdd28cd993a88887b443b8c2639ab49d21e33bb865a9eec1ae995fae32cdbf65"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/foundation-analysis-request.schema.json",
+                      "size_bytes":  2807,
+                      "sha256":  "2d4bf2d26f800444ac83f9e72a374796a6aca17ee06b4caea8ef7a529a63e9ff"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/foundation-case-pack-manifest.schema.json",
+                      "size_bytes":  6003,
+                      "sha256":  "1ae8f54d89cc015adc05e9ad204d4ac4bae9584798206559cb43a6464c87e0cc"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/foundation-error-envelope.schema.json",
+                      "size_bytes":  2134,
+                      "sha256":  "142a7a55bb82cb567761efe8bc12cf70a0ab6a999f7f313da6dc4d9b66849d33"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/foundation-operation-status.schema.json",
+                      "size_bytes":  2903,
+                      "sha256":  "a9a5ffd2997a05f536d17459c7bfa32785405cd1642830b348234e65b5d348fe"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/governance-output-envelope.schema.json",
+                      "size_bytes":  5245,
+                      "sha256":  "79d0a85100573b132171e35981b80b2fdefb52852d626858f64715b6140dcfe5"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/observation-record.schema.json",
+                      "size_bytes":  3569,
+                      "sha256":  "356316e4c11a7f3b976a412f1b083ec8fdbb4a55b72afbdba0ed03c40d56b700"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/reason-codes.v1.json",
+                      "size_bytes":  2051,
+                      "sha256":  "0b95f88c2040e8f23d9351ea724b940802d64fdab7c2fd680aff60c79669fe87"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/release-manifest.schema.json",
+                      "size_bytes":  6252,
+                      "sha256":  "708d9667a1ec24103ee647fac2757ea6f9cd95b46271c020af5f6443d9be2725"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/runtime-configuration-snapshot.schema.json",
+                      "size_bytes":  6721,
+                      "sha256":  "b3c423b33f87f3ff34beb8ac772910cc5ce93046185fd1ffbe1d4820f5e82d1b"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/schema-common-fragments.v1.json",
+                      "size_bytes":  788,
+                      "sha256":  "f6c1cc327800106f8d55b61123f310f80cbfa0b966dc4b324805a87020607ffc"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/schema-generation-policy-v1.md",
+                      "size_bytes":  526,
+                      "sha256":  "9399ecd0c7d6d6e06f16b1a157ff0b8086b8680359b4f4bbee746ea1d8823d3e"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/schema-validation-report.v1.json",
+                      "size_bytes":  2075,
+                      "sha256":  "3514d4de892ab845ef9cc9aa7c3da05f125282418dd771bbf2e4683b5997d75c"
+                  },
+                  {
+                      "path":  "schemas/foundation-kernel/validation-result.schema.json",
+                      "size_bytes":  2861,
+                      "sha256":  "88c7c100abe46d7c6a29a8efda3e12c3eb260d16d34e561249d51b1cfbb0dde0"
+                  },
+                  {
+                      "path":  "packs/foundation-case005/README.md",
+                      "size_bytes":  308,
+                      "sha256":  "8addcc21f0ec0b581fdf03428aba15ae13a7bacc30bbad5278149e4929769205"
+                  },
+                  {
+                      "path":  "packs/foundation-case005/case005.input.json",
+                      "size_bytes":  828,
+                      "sha256":  "70c5f2c585556fd355ac0f3cb17121a5f9c3dd529d329e2dd2429d28804817da"
+                  },
+                  {
+                      "path":  "packs/foundation-case005/engine-golden.json",
+                      "size_bytes":  9541,
+                      "sha256":  "0b2bbeaeaf784e3b0c38910617ef03a9f02ad4a8b87adc42e84648979d3a365c"
+                  },
+                  {
+                      "path":  "packs/foundation-case005/foundation-case-pack.manifest.json",
+                      "size_bytes":  5749,
+                      "sha256":  "aa9d411a98aed631f98ed7b7ca822f3f3f11c4e6e15a48cc455e31e6aef26c6c"
+                  },
+                  {
+                      "path":  "engine/source.lock.json",
+                      "size_bytes":  316,
+                      "sha256":  "81f27d29f7da77046fc75fb59df122d708aba5a5fc9f9f40728d587d2cb43618"
+                  },
+                  {
+                      "path":  "engine/locks/python-runtime.lock.json",
+                      "size_bytes":  226,
+                      "sha256":  "f2e786519582c67a0711f47769703f94baa98bee3d883c82bcb797a8215e1bd7"
+                  },
+                  {
+                      "path":  "global.json",
+                      "size_bytes":  105,
+                      "sha256":  "a0fc2efcd4cc3a24444007b6e49f5b3c754e9d9e1869052c6ab7bdcba7cb7960"
+                  }
+              ]
+}

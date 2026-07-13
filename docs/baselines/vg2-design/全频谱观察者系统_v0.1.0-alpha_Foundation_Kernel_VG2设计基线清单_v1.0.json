@@ -1,0 +1,120 @@
+{
+  "baseline_id": "FS-OBS-V010-DES-BL-1.0",
+  "decision": "GO",
+  "status": "FROZEN DETAILED DESIGN BASELINE",
+  "freeze_date": "2026-07-12",
+  "target_release": "Observer System v0.1.0-alpha",
+  "requirements_baseline": "FS-OBS-REQ-BL-1.0",
+  "architecture_baseline": "FS-OBS-ARCH-BL-1.0",
+  "version_planning_baseline": "FS-OBS-VRP-BL-1.0",
+  "scope_baseline": "FS-OBS-V010-SCOPE-BL-1.0",
+  "schema_baseline": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "engine_baseline": {
+    "version": "v1.0.0",
+    "commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
+    "regression_evidence": "141 passed"
+  },
+  "approved_adrs": 12,
+  "approved_schema_contracts": 12,
+  "reason_codes": 50,
+  "threat_design_controls": 20,
+  "test_requirements": 60,
+  "fixtures": 12,
+  "schema_validation": {
+    "meta": "12/12 PASS",
+    "instances": "12/12 PASS",
+    "stable_ids": 12,
+    "explicit_refs": 0,
+    "cycles": 0,
+    "fake_zero_digests": 0
+  },
+  "test_execution": {
+    "implemented": 0,
+    "passed": 0
+  },
+  "implementation_authorization": "YES — only within frozen design baseline",
+  "next_gate": "Implementation / Build Phase → VG3 Build Complete",
+  "docx_visual_qa": {
+    "status": "PASS",
+    "page_counts": {
+      "详细技术设计": 26,
+      "ADR": 8,
+      "威胁模型": 5,
+      "测试需求": 12,
+      "Schema验证": 5,
+      "冻结决定": 3
+    }
+  },
+  "files": [
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_详细技术设计_v1.0_Design_Baseline.docx",
+      "size_bytes": 616251,
+      "sha256": "bb63058ed923a113587ae252b16aa42b0497c3fae7c6ade3a0e55b196f115ddc"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_详细技术设计_v1.0_Design_Baseline.md",
+      "size_bytes": 6091,
+      "sha256": "00b85ab47fa4b3cc534ebf78e4419f44a229f912ed8c5db16ff7ddd0d4b1f5c7"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计决策与ADR记录_v1.0_Baseline.docx",
+      "size_bytes": 45911,
+      "sha256": "ba15bf5514b232f22101c810a51e4cfaff36446975ee043528e66ac47957c752"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计决策与ADR记录_v1.0_Baseline.md",
+      "size_bytes": 6211,
+      "sha256": "7cefdc2be956ab37dae86e509c863c13c226aebc99213409ffcf92b62b83392b"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_威胁模型与安全设计_v1.0_Baseline.docx",
+      "size_bytes": 43544,
+      "sha256": "603f8072f1cca1117acc3d16ecc83842919db6739d0f50ef5855eed61f397f2a"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_威胁模型与安全设计_v1.0_Baseline.md",
+      "size_bytes": 4341,
+      "sha256": "4d455780f5f6f0ed200dcf2e9a78fbddac4fe961a9f4c99354745ec026c56860"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_测试需求与Fixture规范_v1.0_Baseline.docx",
+      "size_bytes": 53203,
+      "sha256": "b602750169622a57089f31a41ac9f200afaf9b870d2fc96260e66aa6748a048f"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_测试需求与Fixture规范_v1.0_Baseline.md",
+      "size_bytes": 2143,
+      "sha256": "72e68d93807a66e1ddc861b3f4e897f1d3c72d1705e33cc7672b1c2b9ad91c8e"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_Schema身份依赖与实例验证报告_v1.0.docx",
+      "size_bytes": 42284,
+      "sha256": "338af2bc305d77cfe83b9f235b2bfc90dd642eb6dfb3aebe42fe7515ad3ea3c1"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_Schema身份依赖与实例验证报告_v1.0.md",
+      "size_bytes": 3683,
+      "sha256": "01c4041caa5990bf53fdf02581ef92caa0947315dd271dd6203f0345ae36a409"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2设计合同威胁与测试追踪矩阵_v1.0_Baseline.xlsx",
+      "size_bytes": 64770,
+      "sha256": "105d6cce18a1b0a0dcf46bb94406748e5ecf8a68b9b159adc3b048646e8d3c7e"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2合同Schema基线包_v1.0.zip",
+      "size_bytes": 32860,
+      "sha256": "5971d1a02a2126ae9f6d464e2a9e480278326dfb755ccc770adac065308b41d7"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2冻结准入与决定_v1.0.docx",
+      "size_bytes": 41154,
+      "sha256": "f7a35f8eb40ab6d6c3090c27d3fba6cbe0b49139c6cad55f3663c394d9e5aa66"
+    },
+    {
+      "filename": "全频谱观察者系统_v0.1.0-alpha_Foundation_Kernel_VG2冻结准入与决定_v1.0.md",
+      "size_bytes": 610,
+      "sha256": "7a2c9f3e7bbd67edd0ee4c2e602056ab2c9a988859ff2179ced8f7a8d0125f60"
+    }
+  ]
+}

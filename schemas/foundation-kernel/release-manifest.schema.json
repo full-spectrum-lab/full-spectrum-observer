@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/release-manifest/1.0.0-alpha.1",
+  "x-fsp-status": "APPROVED_DESIGN_BASELINE",
+  "x-fsp-schema-set": "FS-OBS-V010-SCHEMA-BL-1.0",
+  "x-fsp-common-fragment-policy": "SELF_CONTAINED_GENERATED_FS_OBS_COMMON_1",
+  "title": "ReleaseManifest",
+  "type": "object",
+  "required": [
+    "contract",
+    "system_version",
+    "release_commit",
+    "build",
+    "engine",
+    "case_pack",
+    "schema_set",
+    "dependencies",
+    "files",
+    "sbom",
+    "known_limitations",
+    "manifest_sha256"
+  ],
+  "properties": {
+    "contract": {
+      "const": "fs-observer/release-manifest/1"
+    },
+    "system_version": {
+      "const": "0.1.0-alpha"
+    },
+    "release_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "build": {
+      "type": "object",
+      "required": [
+        "dotnet_target",
+        "runtime_identifier",
+        "configuration",
+        "built_at_utc"
+      ],
+      "properties": {
+        "dotnet_target": {
+          "const": "net10.0"
+        },
+        "runtime_identifier": {
+          "const": "win-x64"
+        },
+        "configuration": {
+          "const": "Release"
+        },
+        "built_at_utc": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "engine": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "case_pack": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schema_set": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "sha256"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "license": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "artifact_id",
+          "media_type",
+          "sha256",
+          "size_bytes"
+        ],
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "relative_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "SYNTHETIC",
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "RESTRICTED"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sbom": {
+      "type": "object",
+      "required": [
+        "format",
+        "relative_path",
+        "sha256"
+      ],
+      "properties": {
+        "format": {
+          "const": "CycloneDX-1.6"
+        },
+        "relative_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "known_limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256(FS-OBS-CANON-1(object with manifest_sha256 property removed))",
+      "x-fsp-digest-rule": "SHA-256(FS-OBS-CANON-1(object with manifest_sha256 property removed))",
+      "x-fsp-excluded-fields": [
+        "manifest_sha256"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

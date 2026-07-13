@@ -1,0 +1,28 @@
+{
+  "simulation_id": "CASE005_KNOWLEDGE_CONFLICT",
+  "input_query": "An AI assistant and enterprise knowledge sources returned conflicting answers to the same question. The system must determine which source should be treated as authoritative.",
+  "sensitivity_level": "medium",
+  "enterprise_id": "knowledge-service",
+  "rule_version": "v0.3",
+  "initial_state": {
+    "survival": 0.8,
+    "coordination": 0.5,
+    "meaning": 0.35
+  },
+  "agents": [
+    { "type": "AI", "weight": 0.35 },
+    { "type": "Human", "weight": 0.25 },
+    { "type": "Regulator", "weight": 0.2 },
+    { "type": "Enterprise", "weight": 0.2 }
+  ],
+  "weights": {
+    "survival": 0.35,
+    "coordination": 0.35,
+    "meaning": 0.3
+  },
+  "ess_horizon": 7,
+  "ess_candidates": 15,
+  "conflict_density": 0.4,
+  "reversibility": 0.7,
+  "diffusivity": 0.3
+}
