@@ -28,7 +28,7 @@ IG7 离线客户端制品 Gate 正式通过。打包脚本生成了包含私有 
 
 ## 版本边界
 
-本制品固定 Engine `v1.0.0`，不支持 Engine v1.4。Engine v1.4 Compatibility Adapter 规划在 Observer `v0.2.0-alpha`，不能将本次 IG7 结果描述成已与 Engine v1.4 打通。
+本制品固定 Engine `v1.0.0`，不支持 Engine v1.5。Engine v1.0/v1.5 Compatibility Adapter 规划在 Observer `v0.2.0-alpha`，不能将本次 IG7 结果描述成已与 Engine v1.5 打通。
 
 ## 剩余发布门
 
