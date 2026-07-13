@@ -16,13 +16,14 @@ IG4 Engine Bridge:         PASS (private Python 3.11)
 WP-04 Execution Source:    IMPLEMENTED
 WP-05 CLI Source:          IMPLEMENTED
 IG5 Minimum Loop:          PASS
-IG6/IG7/IG8:               NOT IMPLEMENTED / NOT EXECUTED
+IG6 Security/Fault Gate:   PASS
+IG7 Offline Package Gate:  PASS
+IG8 Independent Repro:     PENDING
 ```
 
-The formal repository has migrated and repaired the IG5 source candidate. IG1
-through IG5 pass locally, but this is still an implementation candidate: IG6
-automation, IG7 packaging and IG8 independent clean-machine reproduction remain
-release blockers.
+The formal repository now passes IG1 through IG7 locally. An offline IG7 package
+candidate, SBOM, ReleaseManifest and SHA256SUMS are reproducibly generated and
+verified. IG8 independent clean-machine reproduction remains the release blocker.
 
 ## Fixed toolchain
 
@@ -75,4 +76,3 @@ The `feat/IMP-0301-engine-bridge-candidate` branch vendors the fixed Engine depe
 ## IG3/IG4 source integration candidate
 
 The current `integration/IG3-IG4-source-candidate` branch contains both independently developed candidates. It is a source-compatibility branch only; it does not start WP-04 or claim IG3/IG4 Gate approval.
-
