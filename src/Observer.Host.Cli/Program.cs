@@ -86,14 +86,14 @@ static int Version(string[] args)
     var value = new
     {
         system_version = BuildIdentity.SystemVersion,
-        implementation_gate = "IG5_SOURCE_CANDIDATE",
+        implementation_gate = BuildIdentity.ImplementationGate,
         scope_baseline = BuildIdentity.ScopeBaseline,
         design_baseline = BuildIdentity.DesignBaseline,
         implementation_baseline = BuildIdentity.ImplementationBaseline,
         schema_baseline = BuildIdentity.SchemaBaseline,
         engine_version = BuildIdentity.EngineVersion,
         engine_commit = BuildIdentity.EngineCommit,
-        maturity = "SOURCE_CANDIDATE_ONLY",
+        maturity = "IG7_PACKAGE_CANDIDATE_IG8_PENDING",
     };
     Console.WriteLine(json
         ? JsonSerializer.Serialize(value, FoundationJson.CreateOptions())
