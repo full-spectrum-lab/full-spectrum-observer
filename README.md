@@ -17,13 +17,15 @@ WP-04 Execution Source:    IMPLEMENTED
 WP-05 CLI Source:          IMPLEMENTED
 IG5 Minimum Loop:          PASS
 IG6 Security/Fault Gate:   PASS
-IG7 Offline Package Gate:  PASS
-IG8 Independent Repro:     PENDING
+IG7 Offline Package Gate:  NOT_READY (license owner decision required)
+IG8 Independent Repro:     FAILED_ON_OLD_PACKAGE / RERUN_REQUIRED
 ```
 
-The formal repository now passes IG1 through IG7 locally. An offline IG7 package
-candidate, SBOM, ReleaseManifest and SHA256SUMS are reproducibly generated and
-verified. IG8 independent clean-machine reproduction remains the release blocker.
+IG0 through IG6 pass. The first IG7 package passed functional verification, but
+independent IG8 review found a blocking LICENSE/SBOM contradiction. Packaging now
+records the pending license honestly, inventories every payload file and includes
+all bundled Python distributions. A corrected formal package remains blocked until
+the project owner explicitly selects the Observer license; IG8 must then be rerun.
 
 ## Fixed toolchain
 

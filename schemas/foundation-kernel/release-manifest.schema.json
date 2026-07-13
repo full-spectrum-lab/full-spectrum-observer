@@ -187,6 +187,8 @@
           "media_type",
           "sha256",
           "size_bytes"
+          ,"relative_path"
+          ,"classification"
         ],
         "properties": {
           "artifact_id": {

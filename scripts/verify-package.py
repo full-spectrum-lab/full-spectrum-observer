@@ -20,8 +20,15 @@ def main():
  schema=json.loads((root/'schemas/foundation-kernel/release-manifest.schema.json').read_text(encoding='utf-8'))
  schema_errors=sorted(Draft202012Validator(schema).iter_errors(manifest_with_digest),key=lambda e:list(e.absolute_path))
  errors.extend(f"ReleaseManifest schema: {error.message}" for error in schema_errors)
+ for item in manifest.get('files',[]):
+  relative=item.get('relative_path',''); target=(root/pathlib.PurePosixPath(relative)).resolve()
+  if not relative or root not in target.parents or not target.is_file(): errors.append(f'ReleaseManifest unsafe/missing: {relative}');continue
+  if sha(target)!=item.get('sha256'): errors.append(f'ReleaseManifest digest mismatch: {relative}')
  sbom=manifest['sbom'];
  if sha(root/sbom['relative_path'])!=sbom['sha256']: errors.append('SBOM digest mismatch')
+ sbom_doc=json.loads((root/sbom['relative_path']).read_text(encoding='utf-8'))
+ observer_props={p.get('name'):p.get('value') for p in sbom_doc.get('metadata',{}).get('component',{}).get('properties',[])}
+ if observer_props.get('license_status')!='DECIDED': errors.append('project license pending explicit owner decision')
  if manifest['engine']['version']!='v1.0.0': errors.append('unexpected Engine version')
  print(json.dumps({'status':'PASS' if not errors else 'FAIL','checked':len(sums.read_text(encoding='utf-8').splitlines()),'errors':errors},ensure_ascii=False,indent=2))
  return 0 if not errors else 1
