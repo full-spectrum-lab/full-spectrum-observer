@@ -20,6 +20,7 @@
 observer.cmd version --json
 observer.cmd health --data-dir acceptance-data --json
 observer.cmd analyze --case CASE005_KNOWLEDGE_CONFLICT --data-dir acceptance-data --json
+observer.cmd show --observation-id <analyze返回的observation_id> --data-dir acceptance-data --json
 observer.cmd verify-audit --from 1 --data-dir acceptance-data --json
 ```
 
