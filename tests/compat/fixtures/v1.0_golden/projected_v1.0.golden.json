@@ -1,0 +1,38 @@
+{
+  "canonical_digest": "e37ffe011b5505cb39405b03f5d0c50635ff13a229913e91bb0b5d366143a24c",
+  "connector": "UNKNOWN",
+  "desensitization": "UNKNOWN",
+  "envelope_version": "obs-1.0",
+  "evaluation_events": "UNKNOWN",
+  "external_effect": false,
+  "hard_gate": "UNKNOWN",
+  "profile_scenario": {
+    "gate": {
+      "result": "PASS",
+      "score": 0.73
+    },
+    "profile": {
+      "ess": 0.21,
+      "fshi": 0.12,
+      "risk": 0.34
+    },
+    "scenario_ref": "local-priority-narrow"
+  },
+  "rbac": "UNKNOWN",
+  "replay_bundle": "UNKNOWN",
+  "resilience": "UNKNOWN",
+  "review": "UNKNOWN",
+  "source_version": "1.0.0",
+  "subject_declaration": "UNKNOWN",
+  "unknowns": [
+    "subject_declaration",
+    "evaluation_events",
+    "replay_bundle",
+    "rbac",
+    "desensitization",
+    "review",
+    "resilience",
+    "connector",
+    "hard_gate"
+  ]
+}

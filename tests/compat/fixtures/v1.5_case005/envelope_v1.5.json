@@ -1,0 +1,58 @@
+{
+  "envelope_version": "1.2",
+  "source_version": "1.5.0",
+  "observation_id": "obs-v15-case005-001",
+  "canonical_digest": "sha256:case005-envelope-placeholder",
+  "profile_scenario": {
+    "profile": { "fshi": 0.18, "risk": 0.42, "ess": 0.27 },
+    "scenario_ref": "ecommerce-customer-service",
+    "scenario_id": "SC-EC-CS-005"
+  },
+  "subject_declaration": {
+    "local_subject_id": "subj-ec-cs-005",
+    "subject_type": "human_agent",
+    "mode": "assisted",
+    "concentration_tier": "tier-2"
+  },
+  "evaluation_events": [
+    { "event_id": "evt-005-a", "event_digest": "sha256:evt-005-a", "capability": "v1.4:evaluation_event", "outcome": "logged" },
+    { "event_id": "evt-005-b", "event_digest": "sha256:evt-005-b", "capability": "v1.4:evaluation_event", "outcome": "logged" }
+  ],
+  "replay_bundle": {
+    "bundle_id": "rb-005",
+    "capability_level": "L3",
+    "missing_deps": []
+  },
+  "rbac": {
+    "operator": "op-ec-cs",
+    "service_principal": "sp-observer-bridge",
+    "granted": ["read", "export"]
+  },
+  "desensitization": {
+    "visible_to_authorized_only": true,
+    "mapping": [ { "field": "customer_pii", "masked": true } ]
+  },
+  "review": {
+    "review_id": "rev-005",
+    "original_event_ref": "evt-005-a",
+    "reviewer": "auditor-2",
+    "decision": "approved"
+  },
+  "resilience": {
+    "idempotency_key": "idm-005",
+    "timeout_ms": 5000,
+    "health": "healthy",
+    "metrics": { "retries": 0, "latency_ms": 42 }
+  },
+  "connector": {
+    "write_enabled": false,
+    "contracts": [ { "name": "crm-sync", "exported": false } ]
+  },
+  "hard_gate": {
+    "result": "PASS",
+    "rule": "RG-EC-CS-005",
+    "score": 0.81
+  },
+  "external_effect": false,
+  "unknowns": []
+}

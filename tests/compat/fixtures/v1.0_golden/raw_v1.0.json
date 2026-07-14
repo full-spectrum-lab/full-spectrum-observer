@@ -1,0 +1,13 @@
+{
+  "observation_id": "obs-v01-reg-0001",
+  "scenario": "local-priority-narrow",
+  "profile": {
+    "fshi": 0.12,
+    "risk": 0.34,
+    "ess": 0.21
+  },
+  "gate": {
+    "result": "PASS",
+    "score": 0.73
+  }
+}

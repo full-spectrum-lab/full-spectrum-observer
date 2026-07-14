@@ -1,0 +1,87 @@
+{
+  "canonical_digest": "b279445bfb2baf27dcfcb4922de95877b11efc5d362620b45a2805da4a004976",
+  "connector": {
+    "contracts": [
+      {
+        "exported": false,
+        "name": "crm-sync"
+      }
+    ],
+    "write_enabled": false
+  },
+  "desensitization": {
+    "mapping": [
+      {
+        "field": "customer_pii",
+        "masked": true
+      }
+    ],
+    "visible_to_authorized_only": true
+  },
+  "envelope_version": "obs-1.0",
+  "evaluation_events": [
+    {
+      "capability": "v1.4:evaluation_event",
+      "event_digest": "sha256:evt-005-a",
+      "event_id": "evt-005-a",
+      "outcome": "logged"
+    },
+    {
+      "capability": "v1.4:evaluation_event",
+      "event_digest": "sha256:evt-005-b",
+      "event_id": "evt-005-b",
+      "outcome": "logged"
+    }
+  ],
+  "external_effect": false,
+  "hard_gate": {
+    "result": "PASS",
+    "rule": "RG-EC-CS-005",
+    "score": 0.81
+  },
+  "profile_scenario": {
+    "profile": {
+      "ess": 0.27,
+      "fshi": 0.18,
+      "risk": 0.42
+    },
+    "scenario_id": "SC-EC-CS-005",
+    "scenario_ref": "ecommerce-customer-service"
+  },
+  "rbac": {
+    "granted": [
+      "read",
+      "export"
+    ],
+    "operator": "op-ec-cs",
+    "service_principal": "sp-observer-bridge"
+  },
+  "replay_bundle": {
+    "bundle_id": "rb-005",
+    "capability_level": "L3",
+    "missing_deps": []
+  },
+  "resilience": {
+    "health": "healthy",
+    "idempotency_key": "idm-005",
+    "metrics": {
+      "latency_ms": 42,
+      "retries": 0
+    },
+    "timeout_ms": 5000
+  },
+  "review": {
+    "decision": "approved",
+    "original_event_ref": "evt-005-a",
+    "review_id": "rev-005",
+    "reviewer": "auditor-2"
+  },
+  "source_version": "1.5.0",
+  "subject_declaration": {
+    "concentration_tier": "tier-2",
+    "local_subject_id": "subj-ec-cs-005",
+    "mode": "assisted",
+    "subject_type": "human_agent"
+  },
+  "unknowns": []
+}

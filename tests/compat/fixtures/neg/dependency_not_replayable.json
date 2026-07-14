@@ -1,0 +1,35 @@
+{
+  "envelope_version": "1.2",
+  "source_version": "1.5.0",
+  "observation_id": "obs-neg-dep-001",
+  "profile_scenario": {
+    "profile": { "fshi": 0.10, "risk": 0.20, "ess": 0.15 },
+    "scenario_ref": "negative-replay"
+  },
+  "subject_declaration": {
+    "local_subject_id": "subj-neg",
+    "subject_type": "service",
+    "mode": "autonomous",
+    "concentration_tier": "tier-1"
+  },
+  "evaluation_events": [
+    { "event_id": "evt-real", "event_digest": "sha256:evt-real" }
+  ],
+  "replay_bundle": {
+    "bundle_id": "rb-neg",
+    "capability_level": "L3",
+    "missing_deps": []
+  },
+  "rbac": { "operator": "op-neg", "service_principal": "sp-neg" },
+  "desensitization": { "visible_to_authorized_only": true },
+  "review": {
+    "review_id": "rev-neg",
+    "original_event_ref": "evt-fabricated",
+    "reviewer": "x"
+  },
+  "resilience": { "idempotency_key": "idm-neg", "timeout_ms": 3000, "health": "healthy" },
+  "connector": { "write_enabled": false },
+  "hard_gate": { "result": "PASS", "score": 0.90 },
+  "external_effect": false,
+  "unknowns": []
+}

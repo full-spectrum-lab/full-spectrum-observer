@@ -1,0 +1,22 @@
+{
+  "envelope_version": "1.2",
+  "kind": "EvidenceEnvelope",
+  "observation_id": "obs-v15-case005-001",
+  "source_version": "1.5.0",
+  "integrity": {
+    "canonical_digest": "sha256:case005-envelope-placeholder",
+    "signer": "engine-v1.5.0",
+    "algorithm": "sha256"
+  },
+  "evidence": [
+    { "ref": "evt-005-a", "type": "evaluation_event", "digest": "sha256:evt-005-a" },
+    { "ref": "evt-005-b", "type": "evaluation_event", "digest": "sha256:evt-005-b" },
+    { "ref": "rb-005", "type": "replay_bundle", "digest": "sha256:rb-005" }
+  ],
+  "attestation": {
+    "reviewer": "auditor-2",
+    "review_id": "rev-005",
+    "original_event_ref": "evt-005-a"
+  },
+  "external_effect": false
+}
