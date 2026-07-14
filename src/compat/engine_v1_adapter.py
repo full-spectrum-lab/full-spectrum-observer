@@ -63,7 +63,7 @@ class EngineV1Adapter(IEngineAdapter):
             unknowns.append("profile_scenario")
 
         projected = ObserverEnvelope(
-            source_version="1.0.0",
+            source_version=ctx.source_version,
             profile_scenario=profile_scenario,
             subject_declaration=UNKNOWN,
             evaluation_events=UNKNOWN,
@@ -81,7 +81,7 @@ class EngineV1Adapter(IEngineAdapter):
         raw_env = EngineEnvelope.build(envelope_version="raw-v1.0", payload=raw)
 
         return AdapterResult(
-            source_version="1.0.0",
+            source_version=ctx.source_version,
             digest=projected.canonical_digest,
             raw_envelope=raw_env,
             projected_envelope=projected,

@@ -86,7 +86,7 @@ class EngineV15Adapter(IEngineAdapter):
         external_effect = bool(raw.get("external_effect", False))
 
         projected = ObserverEnvelope(
-            source_version=raw.get("source_version", "1.5.0"),
+            source_version=ctx.source_version,
             profile_scenario=profile_scenario,
             subject_declaration=subject_declaration,
             evaluation_events=evaluation_events,
@@ -112,7 +112,7 @@ class EngineV15Adapter(IEngineAdapter):
         review_refs = self._build_review_refs(review)
 
         return AdapterResult(
-            source_version=projected.source_version,
+            source_version=ctx.source_version,
             digest=projected.canonical_digest,
             raw_envelope=raw_env,
             projected_envelope=projected,

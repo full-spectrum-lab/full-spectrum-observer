@@ -49,10 +49,10 @@ import tempfile
 from datetime import datetime, timezone
 
 # --- Identity of the v0.2.0-alpha.1 source package -------------------------
-SYSTEM_VERSION = "0.2.0-alpha.1"
-PACKAGE_ID = "full-spectrum-observer-source-v0.2.0-alpha.1"
+SYSTEM_VERSION = "0.2.0-alpha.2"
+PACKAGE_ID = "full-spectrum-observer-source-v0.2.0-alpha.2"
 REPOSITORY = "full-spectrum/full-spectrum-observer"
-DEFAULT_RELEASE_TAG = "v0.2.0-alpha.1"
+DEFAULT_RELEASE_TAG = "v0.2.0-alpha.2"
 MANIFEST_FILENAME = "SOURCE_PACKAGE_MANIFEST.json"
 
 # Substrings that must never appear in the emitted file list.
@@ -242,8 +242,8 @@ def verify(manifest: dict, tracked: list[str]) -> None:
         ".git directory must not appear in the manifest"
     )
 
-    assert manifest["system_version"] == "0.2.0-alpha.1", (
-        f"system_version must be 0.2.0-alpha.1, got {manifest['system_version']!r}"
+    assert manifest["system_version"] == "0.2.0-alpha.2", (
+        f"system_version must be 0.2.0-alpha.2, got {manifest['system_version']!r}"
     )
 
     # Every digest must be a 64-char hex SHA-256.

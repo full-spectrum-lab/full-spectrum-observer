@@ -36,6 +36,7 @@ from .version_resolver import (
     REASON_REFERENCE_UNRESOLVABLE,
     REASON_SCHEMA_ENGINE_INVALID,
     REASON_SCHEMA_OBSERVER_INVALID,
+    REASON_VERSION_UNSUPPORTED,
     EngineVersionResolver,
     UnsupportedVersionError,
 )
@@ -130,6 +131,23 @@ class EngineFacade:
         except UnsupportedVersionError:
             raise  # fail-closed: propagate the structured error as-is.
 
+        # 1b) Gate — F-04 / P1 (three-way version binding, defence in depth).
+        #     The raw Engine Envelope MUST NOT self-declare a ``source_version``
+        #     that disagrees with the trusted, *resolved* Engine contract. The
+        #     facade trusts the resolver's verdict, never the raw output's own
+        #     claim. A conflicting self-declaration is fail-closed. Raw outputs
+        #     that omit ``source_version`` entirely are trusted to the resolved
+        #     version (no false rejection of declaration-less legacy payloads).
+        raw_sv = raw_output.get("source_version")
+        if raw_sv is not None and raw_sv != version.version:
+            raise self._resolver.fail_unsupported(
+                version.version,
+                REASON_VERSION_UNSUPPORTED,
+                f"Raw Envelope source_version {raw_sv!r} disagrees with the "
+                f"resolved engine version {version.version!r}; the raw output is "
+                "not trusted to override the negotiated contract (fail-closed).",
+            )
+
         # 2) Adapter dispatch — missing adapter is a hard failure.
         adapter = self._adapters.get(version.version)
         if adapter is None:
@@ -165,6 +183,22 @@ class EngineFacade:
             enabled_capabilities=list(version.capabilities),
         )
         result = adapter.adapt(raw_output, ctx)
+
+        # 3b) Full-chain invariant — P1 defence-in-depth backstop. The adapted
+        #     result and its projected envelope MUST both carry the trusted
+        #     resolved version, never a raw self-declared value. If the Gate
+        #     above was somehow bypassed this aborts before dual attestation.
+        if (
+            result.source_version != version.version
+            or result.projected_envelope.source_version != version.version
+        ):
+            raise self._resolver.fail_unsupported(
+                version.version,
+                REASON_VERSION_UNSUPPORTED,
+                "Adapted result/projected envelope source_version does not match "
+                f"the resolved engine version {version.version!r}; aborting before "
+                "dual attestation (fail-closed).",
+            )
 
         # 4) Dual Schema validation (format only; UNKNOWN is not an error).
         engine_check = self._validator.validate_engine(result.raw_envelope)

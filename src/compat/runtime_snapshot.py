@@ -39,7 +39,7 @@ __all__ = [
 
 # Observer system version for this release (kept in sync with
 # Directory.Build.props / baselines.lock.json / SOURCE_PACKAGE_MANIFEST.json).
-SYSTEM_VERSION = "0.2.0-alpha.1"
+SYSTEM_VERSION = "0.2.0-alpha.2"
 
 
 @dataclass(frozen=True)

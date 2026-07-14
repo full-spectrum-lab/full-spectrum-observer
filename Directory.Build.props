@@ -18,7 +18,7 @@
          suggestions and must not block the deterministic Foundation build. -->
     <NoWarn>$(NoWarn);CS1591;CA1707;CA1711;CA1822;CA1859;CA2101</NoWarn>
     <IsPackable>false</IsPackable>
-    <ObserverSystemVersion>0.2.0-alpha.1</ObserverSystemVersion>
+    <ObserverSystemVersion>0.2.0-alpha.2</ObserverSystemVersion>
     <ObserverTargetRuntimeIdentifier>win-x64</ObserverTargetRuntimeIdentifier>
   </PropertyGroup>
 

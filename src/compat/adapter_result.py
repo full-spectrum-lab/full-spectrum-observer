@@ -195,6 +195,12 @@ class AdapterResult:
         A reference is resolvable when it points at an entity that actually
         exists in the raw Engine output. A fabricated / empty
         ``original_event_ref`` therefore fails (ownership rule R08).
+
+        F-08 / P2 (evidence integrity): the mandatory reference fields
+        ``event_digest`` (per :class:`EvaluationEventRef`) and ``review_id``
+        (per :class:`ReviewRef`) MUST be non-empty. An empty value means the
+        evidence cannot be independently verified and is rejected fail-closed
+        (never silently passed through).
         """
         raw: Dict[str, Any] = self.raw_envelope.payload or {}
         events = raw.get("evaluation_events") or []
@@ -204,6 +210,11 @@ class AdapterResult:
 
         for ref in self.event_refs:
             if not ref.event_id or ref.event_id not in valid_event_ids:
+                return False
+            # F-08 / P2: event_digest is a mandatory reference field. An empty
+            # digest means the evaluation event cannot be independently verified
+            # and is rejected fail-closed (never silently passed through).
+            if not ref.event_digest:
                 return False
 
         replay = raw.get("replay_bundle") or {}
@@ -216,6 +227,10 @@ class AdapterResult:
 
         for ref in self.review_refs:
             if not ref.original_event_ref or ref.original_event_ref not in valid_event_ids:
+                return False
+            # F-08 / P2: review_id is a mandatory reference field. An empty id
+            # means the review record is unidentifiable and is rejected.
+            if not ref.review_id:
                 return False
 
         return True
