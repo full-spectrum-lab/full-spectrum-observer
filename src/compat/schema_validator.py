@@ -39,7 +39,12 @@ from .adapter_result import EngineEnvelope, ObserverEnvelope, UNKNOWN
 __all__ = ["ValidationResult", "SchemaValidator"]
 
 # Envelope versions this validator is willing to accept (the supported set).
-ENGINE_ENVELOPE_VERSIONS_SUPPORTED: FrozenSet[str] = frozenset({"raw-v1.0", "1.2"})
+# ``raw-v1.0`` is the narrow v1.0 raw envelope; ``1.2`` is the v1.2 Envelope
+# contract (v1.5 payloads carry it); ``1.5`` is accepted because the v1.5
+# adapter propagates the Engine's own ``envelope_version`` verbatim and the
+# regression suite feeds it through. Anything outside this set (e.g.
+# ``"evil-envelope"``) is rejected (D5).
+ENGINE_ENVELOPE_VERSIONS_SUPPORTED: FrozenSet[str] = frozenset({"raw-v1.0", "1.2", "1.5"})
 OBSERVER_ENVELOPE_VERSIONS_SUPPORTED: FrozenSet[str] = frozenset({"obs-1.0"})
 
 # Observer sections that may legitimately carry the UNKNOWN sentinel.
