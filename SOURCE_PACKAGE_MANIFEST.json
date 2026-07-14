@@ -1,9 +1,9 @@
 {
   "package_id": "full-spectrum-observer-source-v0.2.0-alpha",
-  "generated_at_utc": "2026-07-14T09:06:17Z",
+  "generated_at_utc": "2026-07-14T09:16:35Z",
   "repository": "full-spectrum/full-spectrum-observer",
   "branch": "feature/v0.2.0-alpha",
-  "source_head": "07bfeeaf47fef08758a5c02b0c8c9a3a55f1fad7",
+  "source_head": "f7fdb06d398d5c5fece360cf87b98a63635b9602",
   "system_version": "0.2.0-alpha",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
@@ -110,8 +110,8 @@
     },
     {
       "path": "SOURCE_PACKAGE_MANIFEST.json",
-      "size_bytes": 47671,
-      "sha256": "16d32723b4f959c78c0f09e808b4ac33faab97f70fc0b8359011f17044f466aa"
+      "size_bytes": 58049,
+      "sha256": "c32d9398290123535b5dfffc663c70f833176caba29001e8817b4fe0906f50e9"
     },
     {
       "path": "artifacts/.gitkeep",
@@ -822,6 +822,11 @@
       "path": "scripts/generate-release-metadata.py",
       "size_bytes": 7125,
       "sha256": "f23370778377c74b2712a662f60f6d00c851e15da159f98f517e5d07e1022c9c"
+    },
+    {
+      "path": "scripts/generate_source_manifest.py",
+      "size_bytes": 7085,
+      "sha256": "761bab763a5566ab854d61d1cf365e1c6318fee96827ff477b90e9e98b8e6a97"
     },
     {
       "path": "scripts/ig2-reference-validator.py",
