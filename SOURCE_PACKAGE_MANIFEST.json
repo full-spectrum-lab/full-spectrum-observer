@@ -1,10 +1,10 @@
 {
-  "package_id": "full-spectrum-observer-source-v0.2.0-alpha.1",
-  "generated_at_utc": "2026-07-14T14:10:42Z",
+  "package_id": "full-spectrum-observer-source-v0.2.0-alpha.2",
+  "generated_at_utc": "2026-07-14T15:20:48Z",
   "repository": "full-spectrum/full-spectrum-observer",
-  "branch": "v0.2.0-alpha.1",
-  "source_head": "5762cc15e322cef7aa97d1755379780ed512a442",
-  "system_version": "0.2.0-alpha.1",
+  "branch": "v0.2.0-alpha.2",
+  "source_head": "a9ac2fa197244e98be76b2bd98ee4890bea78302",
+  "system_version": "0.2.0-alpha.2",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
   "files": [
@@ -36,7 +36,7 @@
     {
       "path": "Directory.Build.props",
       "size_bytes": 1364,
-      "sha256": "ba5c91582882c7010c37299955ee8d76e697345e0b60ea2075d7f5d87280ca96"
+      "sha256": "ddb73ae6c06c7e227e333743343559d2c4d1f8d13e8dfae97bb697ca4a92fba7"
     },
     {
       "path": "Directory.Build.targets",
@@ -116,7 +116,7 @@
     {
       "path": "baselines.lock.json",
       "size_bytes": 16441,
-      "sha256": "e143c59f0b1eaae91cb78ab85b35cfff432fa398e01ef905f733fcceaf5840a9"
+      "sha256": "e557bd3086d18d2010ff044ccf242bce3c201846075f588ce75a793e7661d554"
     },
     {
       "path": "conftest.py",
@@ -660,8 +660,8 @@
     },
     {
       "path": "qa_manifest_verify.py",
-      "size_bytes": 3789,
-      "sha256": "966dc9d67220142d4f179f72518ed20e03a72a5b7f8de6b9455e48eebb47cfe9"
+      "size_bytes": 6818,
+      "sha256": "2ef82f9293a17e5bf3affca708709fb8c71583f25a82fd9f6d193438e7f57249"
     },
     {
       "path": "schemas/foundation-kernel/audit-event.schema.json",
@@ -831,7 +831,7 @@
     {
       "path": "scripts/generate_source_manifest.py",
       "size_bytes": 11623,
-      "sha256": "cc19c624906ab0bdd01d7ea16977063819d8863a6911e39ed44c8fc95d08b74f"
+      "sha256": "d7123ab666c346736df1df430863e7fe35acb65006f35dc56001829f79f7e7d1"
     },
     {
       "path": "scripts/ig2-reference-validator.py",
@@ -1266,7 +1266,7 @@
     {
       "path": "src/compat/__init__.py",
       "size_bytes": 2261,
-      "sha256": "9cbf7ca18f336c1c2a2f0fb7ed123231294ad2f854587fb092af477649d35d63"
+      "sha256": "229d7cbfe31f44cc400fe49fd864ba74ab4474f3d15985840673358192972246"
     },
     {
       "path": "src/compat/adapter_interface.py",
@@ -1275,8 +1275,8 @@
     },
     {
       "path": "src/compat/adapter_result.py",
-      "size_bytes": 7900,
-      "sha256": "7d1ab4b6d3ae264a8896536169287b5c94a3cffa11a2405c39735bbfacdddb83"
+      "size_bytes": 8761,
+      "sha256": "da0320ab8f200f420c0e1eeebec6a01155da494dba3702aedd3e0e517d04a319"
     },
     {
       "path": "src/compat/canonical.py",
@@ -1295,18 +1295,18 @@
     },
     {
       "path": "src/compat/engine_facade.py",
-      "size_bytes": 8551,
-      "sha256": "fe7c3f189fb7f8e8670c12250e10e535c9cb44870ad19065f9fd179a2b8f0adb"
+      "size_bytes": 10465,
+      "sha256": "186535ce8a2d56f9616843c17352561028f74fa53a0def8a734f7c04f10f9d7a"
     },
     {
       "path": "src/compat/engine_v15_adapter.py",
-      "size_bytes": 6636,
-      "sha256": "a96b86b34958013bdd40ff523bca74f89d6a60b79cad5f5f3429586a6249e66e"
+      "size_bytes": 6614,
+      "sha256": "b2a269d69c24e38ee0dfed7a1c4234a8bf65a09bffb766fbcfa9c9f6326695cf"
     },
     {
       "path": "src/compat/engine_v1_adapter.py",
-      "size_bytes": 3052,
-      "sha256": "4796cfb1b6618c1b5e3a1cda05610c050f46ce09c0d2d69394c8839f404aad91"
+      "size_bytes": 3074,
+      "sha256": "02300b8372ad0a5be0ec62e127b577a755208455a772714d1a7545953bbda6d3"
     },
     {
       "path": "src/compat/engine_version.py",
@@ -1316,7 +1316,7 @@
     {
       "path": "src/compat/runtime_snapshot.py",
       "size_bytes": 8567,
-      "sha256": "6d68495b1533df2d01011ae95c7f54b1b0623b3870edd5cc6a2910b93e0104b5"
+      "sha256": "edeecab9205a173e32e59784fcd1495cd93133eb473c294d5db5d88d0e069093"
     },
     {
       "path": "src/compat/schema_validator.py",
@@ -1467,6 +1467,11 @@
       "path": "tests/compat/test_defect_fixes_v0_2_0_alpha1.py",
       "size_bytes": 8041,
       "sha256": "408994886948e23b8e4045eb379e8f35f49a7b6efa00434f36f3b9f7dee1097e"
+    },
+    {
+      "path": "tests/compat/test_defect_fixes_v0_2_0_alpha2.py",
+      "size_bytes": 5275,
+      "sha256": "24861b4682638d6c33fc1866e3ce5a7641fd3c33ff406170b874f09e8b7733ed"
     },
     {
       "path": "tests/compat/test_fail_closed_supplement.py",
