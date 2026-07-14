@@ -5,12 +5,21 @@ Engine tag / commit / digest, the Adapter versions, the Schema references and
 the fixture digests. The snapshot MUST NOT track ``main``, a floating branch or
 ``latest``. Any deviation fails :meth:`RuntimeConfigurationSnapshot.validate_self`.
 
-Frozen Engine baselines (authoritative, override any design/README drift):
+Frozen Engine baselines (authoritative, taken from the formally published
+full-spectrum-engine releases):
 
-* Engine v1.0.0 — tag ``v1.0.0``, commit ``09062ba``.
-* Engine v1.5.0 — tag ``v1.5.0``, commit ``28ac9ad``. The real digest is
-  pending v1.5 sealing; the placeholder below is frozen and MUST be replaced
-  with the real digest after v1.5 is sealed (tracked as an open item).
+* Engine v1.0.0 — tag ``v1.0.0``, commit
+  ``09062bae2c7608bda79ee4bfde5779109e8e6197``,
+  digest ``sha256:b38aabad7be19abf96acaeb7dd622a3c47eead1436e4cd274c3d862ff25dace6``.
+* Engine v1.5.0 — tag ``v1.5.0``, commit
+  ``f6eb92aee24a706f1b71dc073de6a760fca31092``,
+  digest ``sha256:f1836bb56245c1f5cd7f6496aef504e1bdd3bb16b2255ee5af94ced215ac73cb``.
+
+These are **real, verified** release anchors. The previously frozen
+``pending-real-digest`` placeholder has been removed; the compat layer now
+fails closed unless the declared Engine tag/commit/digest exactly match a
+trusted release (see :data:`TRUSTED_ENGINE_RELEASES` and
+:meth:`RuntimeConfigurationSnapshot.validate_engine_pin`).
 """
 
 from __future__ import annotations
@@ -18,18 +27,80 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List
 
-__all__ = ["RuntimeConfigurationSnapshot"]
+__all__ = [
+    "SYSTEM_VERSION",
+    "TrustedEngineRelease",
+    "TRUSTED_ENGINE_RELEASES",
+    "TRUSTED_ENGINE_BY_TAG",
+    "TRUSTED_ENGINE_BY_VERSION",
+    "TRUSTED_ENGINE_TAGS",
+    "RuntimeConfigurationSnapshot",
+]
 
-# Frozen Engine v1.0.0 baseline (commit 09062ba is sealed).
+# Observer system version for this release (kept in sync with
+# Directory.Build.props / baselines.lock.json / SOURCE_PACKAGE_MANIFEST.json).
+SYSTEM_VERSION = "0.2.0-alpha.1"
+
+
+@dataclass(frozen=True)
+class TrustedEngineRelease:
+    """An immutable, formally published Engine baseline.
+
+    A release is only trustworthy when all three identity fields (``tag``,
+    ``commit`` and ``digest``) match exactly. The compat layer treats any
+    deviation as a forgery and fails closed.
+    """
+
+    tag: str
+    version: str
+    commit: str
+    digest: str
+
+    def matches(self, tag: str, commit: str, digest: str) -> bool:
+        """Return ``True`` iff *all three* identity fields are equal."""
+        return tag == self.tag and commit == self.commit and digest == self.digest
+
+
+# ---------------------------------------------------------------------------
+# Trusted Engine release manifest (authoritative, verified).
+# Source: full-spectrum-engine v1.0.0 / v1.5.0 formal releases.
+# ---------------------------------------------------------------------------
+TRUSTED_ENGINE_RELEASES: tuple[TrustedEngineRelease, ...] = (
+    TrustedEngineRelease(
+        tag="v1.0.0",
+        version="1.0.0",
+        commit="09062bae2c7608bda79ee4bfde5779109e8e6197",
+        digest="sha256:b38aabad7be19abf96acaeb7dd622a3c47eead1436e4cd274c3d862ff25dace6",
+    ),
+    TrustedEngineRelease(
+        tag="v1.5.0",
+        version="1.5.0",
+        commit="f6eb92aee24a706f1b71dc073de6a760fca31092",
+        digest="sha256:f1836bb56245c1f5cd7f6496aef504e1bdd3bb16b2255ee5af94ced215ac73cb",
+    ),
+)
+
+TRUSTED_ENGINE_BY_TAG: dict[str, TrustedEngineRelease] = {
+    r.tag: r for r in TRUSTED_ENGINE_RELEASES
+}
+TRUSTED_ENGINE_BY_VERSION: dict[str, TrustedEngineRelease] = {
+    r.version: r for r in TRUSTED_ENGINE_RELEASES
+}
+TRUSTED_ENGINE_TAGS: frozenset[str] = frozenset(r.tag for r in TRUSTED_ENGINE_RELEASES)
+
+# Frozen Engine v1.0.0 baseline (commit 09062bae… is sealed & published).
 ENGINE_V1_0_0_TAG = "v1.0.0"
-ENGINE_V1_0_0_COMMIT = "09062ba"
-ENGINE_V1_0_0_DIGEST = "sha256:frozen-09062ba-v1.0.0-baseline"  # frozen; replace with real v1.0.0 digest from Engine release manifest
+ENGINE_V1_0_0_COMMIT = "09062bae2c7608bda79ee4bfde5779109e8e6197"
+ENGINE_V1_0_0_DIGEST = (
+    "sha256:b38aabad7be19abf96acaeb7dd622a3c47eead1436e4cd274c3d862ff25dace6"
+)
 
-# Frozen Engine v1.5.0 baseline (commit 28ac9ad, enterprise-pilot on v1.4).
+# Frozen Engine v1.5.0 baseline (commit f6eb92ae… is sealed & published).
 ENGINE_V1_5_0_TAG = "v1.5.0"
-ENGINE_V1_5_0_COMMIT = "28ac9ad"
-# 待 v1.5 正式封板后回填真实 digest（当前为冻结占位值，非 latest/浮动）。
-ENGINE_V1_5_0_DIGEST = "sha256:frozen-28ac9ad-v1.5.0-pending-real-digest"
+ENGINE_V1_5_0_COMMIT = "f6eb92aee24a706f1b71dc073de6a760fca31092"
+ENGINE_V1_5_0_DIGEST = (
+    "sha256:f1836bb56245c1f5cd7f6496aef504e1bdd3bb16b2255ee5af94ced215ac73cb"
+)
 
 # Tokens that are forbidden in any pinned field (floating / untracked).
 _FORBIDDEN_TOKENS = frozenset({"", "latest", "main", "master", "HEAD", "floating", "None", None})
@@ -42,6 +113,11 @@ class RuntimeConfigurationSnapshot:
     Every field is a pinned, frozen value. :meth:`validate_self` rejects any
     floating/latest/empty value so that a run can never silently drift to a
     different Engine. This is the ADR-002 (C7) pinning guarantee.
+
+    Additionally, :meth:`validate_engine_pin` enforces that the declared
+    Engine tag/commit/digest exactly match a trusted, published release —
+    this is the fail-closed defence against forged / mismatched Engine
+    configurations (D3).
     """
 
     engine_version_declared: str
@@ -77,6 +153,38 @@ class RuntimeConfigurationSnapshot:
             if ref in _FORBIDDEN_TOKENS:
                 return False
         return True
+
+    def engine_release(self) -> "TrustedEngineRelease | None":
+        """Return the trusted release matching :attr:`engine_tag`, if any."""
+        return TRUSTED_ENGINE_BY_TAG.get(self.engine_tag)
+
+    def validate_engine_pin(self) -> List[str]:
+        """Strictly verify the Engine identity against the trusted manifest.
+
+        Returns a list of structured error codes (empty list == passed). The
+        checks are:
+
+        * ``ENGINE_TAG_UNTRUSTED``   — :attr:`engine_tag` is not a published tag.
+        * ``ENGINE_VERSION_DECLARED_MISMATCH`` — the declared version does not
+          agree with the trusted release's version.
+        * ``ENGINE_COMMIT_MISMATCH`` — :attr:`engine_commit` != trusted commit.
+        * ``ENGINE_DIGEST_MISMATCH`` — :attr:`engine_digest` != trusted digest.
+
+        Any non-empty result means the Snapshot is forged / mismatched and must
+        fail closed.
+        """
+        errors: List[str] = []
+        release = TRUSTED_ENGINE_BY_TAG.get(self.engine_tag)
+        if release is None:
+            errors.append("ENGINE_TAG_UNTRUSTED")
+            return errors
+        if self.engine_version_declared != release.version:
+            errors.append("ENGINE_VERSION_DECLARED_MISMATCH")
+        if self.engine_commit != release.commit:
+            errors.append("ENGINE_COMMIT_MISMATCH")
+        if self.engine_digest != release.digest:
+            errors.append("ENGINE_DIGEST_MISMATCH")
+        return errors
 
     @classmethod
     def frozen_v1_0_0(cls) -> "RuntimeConfigurationSnapshot":

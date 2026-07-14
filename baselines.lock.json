@@ -1,7 +1,7 @@
 {
     "lock_id":  "FS-OBS-V010-IG0-LOCK-1",
     "generated_at_utc":  "2026-07-12T00:00:00Z",
-    "system_version":  "0.2.0-alpha",
+    "system_version":  "0.2.0-alpha.1",
     "scope_baseline":  "FS-OBS-V010-SCOPE-BL-1.0",
     "design_baseline":  "FS-OBS-V010-DES-BL-1.0",
     "schema_baseline":  "FS-OBS-V010-SCHEMA-BL-1.0",

@@ -1,29 +1,42 @@
 #!/usr/bin/env python3
 """Generate ``SOURCE_PACKAGE_MANIFEST.json`` for full-spectrum-observer.
 
-This script regenerates the machine-readable source-package manifest from the
-current git working tree of the Observer repository.
+This script regenerates the machine-readable source-package manifest from a
+specific git release commit of the Observer repository.
 
-Design notes
-------------
-* The file list is derived **exclusively** from ``git ls-files``. Git already
-  honours ``.gitignore`` (and ``.git/info/exclude``), so untracked artifacts such
-  as ``__pycache__/*.pyc`` files, temporary evidence, and the ``.git`` directory
-  are never enumerated. As a second, defensive guard the script still refuses to
-  emit any path containing ``__pycache__`` or ending in ``.pyc``.
-* For every tracked file we record ``size_bytes`` and a SHA-256 digest computed
-  over the raw bytes (valid for both UTF-8 text and binary payloads).
-* The manifest is deterministic: it is sorted by path and uses a fixed JSON
-  layout so a clean checkout always yields a byte-identical manifest.
+Design notes (D1 / D2 — release-blocking defect fixes)
+-----------------------------------------------------
+* **D1 — source identity**: ``source_head`` is written as the *commit the
+  release tag points to* (``git rev-parse <release-tag>^{commit}``) and
+  ``branch`` is written as the *release tag name* (e.g. ``v0.2.0-alpha.1``) —
+  never the current working branch and never an intermediate commit. The
+  release tag is supplied via ``--release-tag`` (default ``v0.2.0-alpha.1``).
+  If the tag does not yet exist locally (the release tag is cut by the
+  release owner *after* this manifest is generated), the script anchors
+  ``source_head`` to ``HEAD`` and still records the intended ``branch``; the
+  release process must then create the tag exactly on that commit so the
+  manifest stays consistent.
 
-Usage
------
-    python scripts/generate_source_manifest.py [repo_root]
+* **D2 — reproducible per-file digests**: every digest is computed over the
+  *git-normalized* bytes of the file, obtained by extracting the tree with
+  ``git archive``. Because ``git archive`` applies the repository's
+  ``.gitattributes`` EOL rules (e.g. ``* text=auto eol=lf``), the bytes are
+  byte-identical to what a third party obtains when they ``git archive`` the
+  same release commit and recompute SHA-256 — closing the Windows-CRLF vs
+  Gitee-ZIP(LF) mismatch. (``git hash-object`` also normalizes EOL but yields
+  a SHA-1; the manifest field is ``sha256``, so we extract the normalized
+  bytes and hash them with SHA-256 to match the third-party recomputation
+  exactly.)
 
-If ``repo_root`` is omitted it is auto-detected via
-``git rev-parse --show-toplevel`` (so the script works from any cwd inside the
-repository).
+* **D2 — self-exclusion**: the manifest file itself is *not* part of the file
+  list and is never hashed against itself, so the manifest is self-consistent
+  (no self-referential, unverifiable entry).
+
+* The file list is derived exclusively from ``git ls-files`` (honouring
+  ``.gitignore`` / ``.git/info/exclude``). ``__pycache__`` / ``.pyc`` are
+  excluded as a defensive guard and the ``.git`` directory is never listed.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -31,13 +44,15 @@ import json
 import os
 import subprocess
 import sys
+import tarfile
+import tempfile
 from datetime import datetime, timezone
 
-# --- Identity of the v0.2.0-alpha source package ---------------------------
-SYSTEM_VERSION = "0.2.0-alpha"
-PACKAGE_ID = "full-spectrum-observer-source-v0.2.0-alpha"
+# --- Identity of the v0.2.0-alpha.1 source package -------------------------
+SYSTEM_VERSION = "0.2.0-alpha.1"
+PACKAGE_ID = "full-spectrum-observer-source-v0.2.0-alpha.1"
 REPOSITORY = "full-spectrum/full-spectrum-observer"
-BRANCH = "feature/v0.2.0-alpha"
+DEFAULT_RELEASE_TAG = "v0.2.0-alpha.1"
 MANIFEST_FILENAME = "SOURCE_PACKAGE_MANIFEST.json"
 
 # Substrings that must never appear in the emitted file list.
@@ -47,7 +62,11 @@ EXCLUDED_PREFIXES = (".git/",)
 
 
 def _run_git(repo: str, *args: str) -> str:
-    """Run a git command inside ``repo`` and return trimmed stdout."""
+    """Run a git command inside ``repo`` and return trimmed stdout.
+
+    Raises ``subprocess.CalledProcessError`` on non-zero exit so callers can
+    decide how to fall back (e.g. when a release tag is not yet present).
+    """
     completed = subprocess.run(
         ["git", "-C", repo, *args],
         capture_output=True,
@@ -92,27 +111,73 @@ def _is_forbidden(rel_path: str) -> bool:
     return any(sub in rel_path for sub in FORBIDDEN_SUBSTRINGS)
 
 
-def compute_size_and_sha256(repo: str, rel_path: str) -> tuple[int, str]:
-    """Return ``(size_bytes, sha256_hex)`` for a tracked file."""
-    abs_path = os.path.join(repo, rel_path)
-    size = os.path.getsize(abs_path)
+def resolve_source_identity(repo: str, release_tag: str) -> tuple[str, str, bool]:
+    """Resolve ``(source_head, branch, tag_resolved)`` for the manifest (D1).
+
+    ``source_head`` is the commit the release tag points to; ``branch`` is the
+    release tag name. When the tag does not yet exist locally, ``source_head``
+    falls back to ``HEAD`` and ``tag_resolved`` is ``False`` (the release
+    owner must cut the tag on exactly that commit).
+    """
+    try:
+        source_head = _run_git(repo, "rev-parse", f"{release_tag}^{{commit}}")
+        tag_resolved = True
+    except subprocess.CalledProcessError:
+        source_head = _run_git(repo, "rev-parse", "HEAD")
+        tag_resolved = False
+    return source_head, release_tag, tag_resolved
+
+
+def _extract_tree(repo: str, commit: str, dest: str) -> None:
+    """Extract the git-normalized tree of *commit* into *dest* via git archive.
+
+    ``git archive`` applies ``.gitattributes`` EOL conversion, so the written
+    bytes are byte-identical to a third-party ``git archive`` extraction.
+    """
+    completed = subprocess.run(
+        ["git", "-C", repo, "archive", "--format=tar", commit],
+        capture_output=True,
+        check=True,
+    )
+    with tempfile.TemporaryFile() as tmp:
+        tmp.write(completed.stdout)
+        tmp.seek(0)
+        with tarfile.open(fileobj=tmp, mode="r:") as tar:
+            tar.extractall(dest)
+
+
+def compute_size_and_sha256(path: str) -> tuple[int, str]:
+    """Return ``(size_bytes, sha256_hex)`` for a file on disk."""
+    size = os.path.getsize(path)
     digest = hashlib.sha256()
-    with open(abs_path, "rb") as handle:
+    with open(path, "rb") as handle:
         for chunk in iter(lambda: handle.read(1 << 20), b""):
             digest.update(chunk)
     return size, digest.hexdigest()
 
 
-def build_manifest(repo: str) -> dict:
-    """Build the full manifest dictionary for ``repo``."""
+def build_manifest(repo: str, release_tag: str) -> dict:
+    """Build the full manifest dictionary for ``repo`` (D1 / D2)."""
+    # Eligible files = git-tracked, not forbidden, and not the manifest itself
+    # (self-exclusion, D2).
     tracked = list_tracked_files(repo)
+    eligible = [
+        p
+        for p in tracked
+        if not _is_forbidden(p) and os.path.basename(p) != MANIFEST_FILENAME
+    ]
+
+    # Resolve source identity from the release tag (D1).
+    source_head, branch, tag_resolved = resolve_source_identity(repo, release_tag)
+
+    # Compute per-file digests over the git-normalized bytes (D2).
     files: list[dict] = []
-    for rel_path in tracked:
-        if _is_forbidden(rel_path):
-            # Defensive guard; normally git already excludes these.
-            continue
-        size, sha = compute_size_and_sha256(repo, rel_path)
-        files.append({"path": rel_path, "size_bytes": size, "sha256": sha})
+    with tempfile.TemporaryDirectory() as tmp:
+        _extract_tree(repo, source_head, tmp)
+        for rel_path in eligible:
+            abs_path = os.path.join(tmp, rel_path)
+            size, sha = compute_size_and_sha256(abs_path)
+            files.append({"path": rel_path, "size_bytes": size, "sha256": sha})
 
     # Deterministic ordering by path.
     files.sort(key=lambda entry: entry["path"])
@@ -121,8 +186,9 @@ def build_manifest(repo: str) -> dict:
         "package_id": PACKAGE_ID,
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "repository": REPOSITORY,
-        "branch": _run_git(repo, "rev-parse", "--abbrev-ref", "HEAD"),
-        "source_head": _run_git(repo, "rev-parse", "HEAD"),
+        "branch": branch,
+        "source_head": source_head,
+        "release_tag_resolved": tag_resolved,
         "system_version": SYSTEM_VERSION,
         "scope": (
             "Engine v1.0/v1.5 Compatibility Adapter (Python layer); "
@@ -140,9 +206,12 @@ def verify(manifest: dict, tracked: list[str]) -> None:
     """Run the T3 consistency assertions. Raises ``AssertionError`` on failure."""
     manifest_paths = [entry["path"] for entry in manifest["files"]]
 
-    # Allowed set = git-tracked files minus anything forbidden. On a clean
-    # checkout this equals the full ``git ls-files`` set.
-    allowed = [p for p in tracked if not _is_forbidden(p)]
+    # Allowed set = git-tracked files minus forbidden minus the manifest itself.
+    allowed = [
+        p
+        for p in tracked
+        if not _is_forbidden(p) and os.path.basename(p) != MANIFEST_FILENAME
+    ]
 
     assert len(manifest_paths) == len(allowed), (
         f"file count mismatch: manifest={len(manifest_paths)} "
@@ -163,15 +232,36 @@ def verify(manifest: dict, tracked: list[str]) -> None:
         ".git directory must not appear in the manifest"
     )
 
-    assert manifest["system_version"] == "0.2.0-alpha", (
-        f"system_version must be 0.2.0-alpha, got {manifest['system_version']!r}"
+    assert manifest["system_version"] == "0.2.0-alpha.1", (
+        f"system_version must be 0.2.0-alpha.1, got {manifest['system_version']!r}"
     )
+
+    # Every digest must be a 64-char hex SHA-256.
+    for entry in manifest["files"]:
+        assert isinstance(entry["sha256"], str) and len(entry["sha256"]) == 64, (
+            f"invalid sha256 for {entry['path']!r}: {entry['sha256']!r}"
+        )
 
 
 def main() -> int:
-    repo = detect_repo_root(sys.argv[1] if len(sys.argv) > 1 else None)
+    args = sys.argv[1:]
+    release_tag = DEFAULT_RELEASE_TAG
+    repo_arg: str | None = None
+    i = 0
+    while i < len(args):
+        if args[i] in ("-t", "--release-tag"):
+            i += 1
+            release_tag = args[i]
+        elif args[i] in ("-h", "--help"):
+            print(__doc__)
+            return 0
+        elif not args[i].startswith("-"):
+            repo_arg = args[i]
+        i += 1
+
+    repo = detect_repo_root(repo_arg)
     tracked = list_tracked_files(repo)
-    manifest = build_manifest(repo)
+    manifest = build_manifest(repo, release_tag)
     verify(manifest, tracked)
 
     out_path = os.path.join(repo, MANIFEST_FILENAME)
@@ -184,6 +274,8 @@ def main() -> int:
     print(f"  tracked (git ls-files)  : {len(tracked)}")
     print(f"  forbidden (__pycache__) : 0")
     print(f"  system_version          : {manifest['system_version']}")
+    print(f"  release_tag             : {release_tag}")
+    print(f"  release_tag_resolved    : {manifest['release_tag_resolved']}")
     print(f"  source_head             : {manifest['source_head']}")
     print(f"  branch                  : {manifest['branch']}")
     return 0

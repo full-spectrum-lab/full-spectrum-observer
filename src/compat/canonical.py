@@ -27,6 +27,13 @@ def canonical_json(obj: Any) -> str:
 
     Uses ``sort_keys=True`` and compact separators, with ``ensure_ascii=False``
     so that Unicode content is byte-stable regardless of the host platform.
+
+    ``allow_nan=False`` (D7) makes the serializer reject ``NaN`` / ``Infinity`` /
+    ``-Infinity`` — these are not valid JSON (RFC 8259) and would otherwise be
+    emitted as ``NaN`` / ``Infinity`` literals, which are unparseable by strict
+    cross-language JSON readers and break deterministic re-play / verification.
+    A non-finite float therefore raises ``ValueError`` instead of silently
+    producing a non-conformant payload.
     """
     return json.dumps(
         obj,
@@ -34,6 +41,7 @@ def canonical_json(obj: Any) -> str:
         ensure_ascii=False,
         separators=(",", ":"),
         default=_json_default,
+        allow_nan=False,
     )
 
 

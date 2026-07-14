@@ -55,23 +55,32 @@ class EngineV15Adapter(IEngineAdapter):
         connector = raw.get("connector", UNKNOWN)
         hard_gate = raw.get("hard_gate", UNKNOWN)
 
-        # Preserve any UNKNOWN markers the Engine already declared.
-        engine_unknowns = raw.get("unknowns") or []
-        unknowns: List[str] = list(engine_unknowns)
-        for name, value in (
-            ("profile_scenario", profile_scenario),
-            ("subject_declaration", subject_declaration),
-            ("evaluation_events", evaluation_events),
-            ("replay_bundle", replay_bundle),
-            ("rbac", rbac),
-            ("desensitization", desensitization),
-            ("review", review),
-            ("resilience", resilience),
-            ("connector", connector),
-            ("hard_gate", hard_gate),
-        ):
-            if value == UNKNOWN and name not in unknowns:
-                unknowns.append(name)
+        # Preserve any UNKNOWN markers the Engine already declared. Only a real
+        # list is accepted; a malformed value (e.g. a bare string "abc") is NOT
+        # silently coerced into a per-character list — it is preserved as-is so
+        # the downstream schema validator rejects it explicitly (D5, fail-closed).
+        raw_unknowns = raw.get("unknowns")
+        if isinstance(raw_unknowns, list):
+            unknowns: List[str] = list(raw_unknowns)
+        else:
+            unknowns = raw_unknowns  # type: ignore[assignment]
+
+        # Only append discovered UNKNOWN sections when we hold a real list.
+        if isinstance(unknowns, list):
+            for name, value in (
+                ("profile_scenario", profile_scenario),
+                ("subject_declaration", subject_declaration),
+                ("evaluation_events", evaluation_events),
+                ("replay_bundle", replay_bundle),
+                ("rbac", rbac),
+                ("desensitization", desensitization),
+                ("review", review),
+                ("resilience", resilience),
+                ("connector", connector),
+                ("hard_gate", hard_gate),
+            ):
+                if value == UNKNOWN and name not in unknowns:
+                    unknowns.append(name)
 
         # external_effect is transparently passed through; Engine sets False.
         external_effect = bool(raw.get("external_effect", False))
