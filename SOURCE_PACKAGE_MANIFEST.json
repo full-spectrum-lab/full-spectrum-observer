@@ -1,9 +1,9 @@
 {
   "package_id": "full-spectrum-observer-source-v0.2.0-alpha.1",
-  "generated_at_utc": "2026-07-14T13:40:04Z",
+  "generated_at_utc": "2026-07-14T13:48:42Z",
   "repository": "full-spectrum/full-spectrum-observer",
   "branch": "v0.2.0-alpha.1",
-  "source_head": "be26e638881d588f112c7ff1895f9fc811a32d13",
+  "source_head": "785a0120556a8538626147e847f942461c4bdbbc",
   "system_version": "0.2.0-alpha.1",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
@@ -820,8 +820,8 @@
     },
     {
       "path": "scripts/generate_source_manifest.py",
-      "size_bytes": 11745,
-      "sha256": "e83c674e057d5d27e2ab6913a5cb14ef4ee8e9f0768a5c3a849cdbdf040e68ca"
+      "size_bytes": 11623,
+      "sha256": "cc19c624906ab0bdd01d7ea16977063819d8863a6911e39ed44c8fc95d08b74f"
     },
     {
       "path": "scripts/ig2-reference-validator.py",
@@ -1310,8 +1310,8 @@
     },
     {
       "path": "src/compat/schema_validator.py",
-      "size_bytes": 6898,
-      "sha256": "979aaecbd0a607786e72ac4103373fcb3d4725cf3ec7de534f04701165869117"
+      "size_bytes": 7242,
+      "sha256": "0fc721eb7dab898a2fe761dfdfc80af51d8287c70b06d33b5f568699c1ab65ce"
     },
     {
       "path": "src/compat/version_resolver.py",
