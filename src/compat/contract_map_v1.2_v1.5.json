@@ -1,0 +1,98 @@
+{
+  "contract_baseline": "v1.2-v1.5",
+  "authority": "2_Engine兼容与版本协商策略.md (ADR-001)",
+  "note": "Subject Declaration is v1.5, NOT v1.1. Envelope is v1.2. Profile/Scenario/UNKNOWN/hard-gate is v1.3. EvaluationEvent/ReplayBundle is v1.4.",
+  "mappings": [
+    {
+      "capability": "Envelope",
+      "engine_contract_version": "v1.2",
+      "observer_field": "raw_envelope + projected_envelope (obs-1.0)",
+      "fidelity_rule": "Dual Schema validation; retain raw/canonical/output triple",
+      "supported": true
+    },
+    {
+      "capability": "Profile",
+      "engine_contract_version": "v1.3",
+      "observer_field": "profile_scenario.profile",
+      "fidelity_rule": "Fixed id/version/digest; never downgrade",
+      "supported": true
+    },
+    {
+      "capability": "Scenario",
+      "engine_contract_version": "v1.3",
+      "observer_field": "profile_scenario.scenario_ref",
+      "fidelity_rule": "Fixed scenario_ref; never downgrade",
+      "supported": true
+    },
+    {
+      "capability": "UNKNOWN",
+      "engine_contract_version": "v1.3",
+      "observer_field": "unknowns / * section == UNKNOWN",
+      "fidelity_rule": "Explicit UNKNOWN; never silently dropped",
+      "supported": true
+    },
+    {
+      "capability": "HardGate",
+      "engine_contract_version": "v1.3",
+      "observer_field": "hard_gate",
+      "fidelity_rule": "Hard gate not overridden by composite score",
+      "supported": true
+    },
+    {
+      "capability": "EvaluationEvent",
+      "engine_contract_version": "v1.4",
+      "observer_field": "evaluation_events + EvaluationEventRef",
+      "fidelity_rule": "Reference passing; ownership NOT merged into Observation",
+      "supported": true
+    },
+    {
+      "capability": "ReplayBundle",
+      "engine_contract_version": "v1.4",
+      "observer_field": "replay_bundle + ReplayBundleRef",
+      "fidelity_rule": "Reference passing; missing deps passed explicitly",
+      "supported": true
+    },
+    {
+      "capability": "SubjectDeclaration",
+      "engine_contract_version": "v1.5",
+      "observer_field": "subject_declaration",
+      "fidelity_rule": "Reuse declaration; never re-implement principal; NOT an auth principal",
+      "supported": true
+    },
+    {
+      "capability": "RBAC",
+      "engine_contract_version": "v1.5",
+      "observer_field": "rbac",
+      "fidelity_rule": "Operator/Service only; identity surface separated from ObservedSubject",
+      "supported": true
+    },
+    {
+      "capability": "Desensitization",
+      "engine_contract_version": "v1.5",
+      "observer_field": "desensitization",
+      "fidelity_rule": "Preserve mapping visibility",
+      "supported": true
+    },
+    {
+      "capability": "Review",
+      "engine_contract_version": "v1.5",
+      "observer_field": "review + ReviewRef",
+      "fidelity_rule": "original_event_ref must be resolvable; no forged evidence",
+      "supported": true
+    },
+    {
+      "capability": "Resilience",
+      "engine_contract_version": "v1.5",
+      "observer_field": "resilience",
+      "fidelity_rule": "Error code/idempotency/timeout/health/metrics mapping testable",
+      "supported": true
+    },
+    {
+      "capability": "Connector",
+      "engine_contract_version": "v1.5",
+      "observer_field": "connector",
+      "fidelity_rule": "Write-back default OFF; contract export is NOT business execution",
+      "supported": true
+    }
+  ]
+}

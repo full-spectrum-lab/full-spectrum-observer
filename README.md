@@ -1,6 +1,6 @@
 # Full Spectrum Observer
 
-Observer System `0.1.0-alpha` Foundation Kernel repository bootstrap.
+Observer System `0.2.0-alpha` — Engine v1.0/v1.5 Compatibility Adapter: a Python `src/compat/` layer layered on the v0.1 Foundation Kernel.
 
 ## Current implementation status
 
@@ -26,9 +26,9 @@ independent IG8 review found a blocking LICENSE/SBOM contradiction. The owner ha
 now selected `MulanPSL-2.0 OR Apache-2.0`; packaging records that expression,
 inventories every payload file and includes all bundled Python distributions.
 The corrected R2 package passed complete payload verification and clean-directory
-IG8 replay. The `v0.1.0-alpha` tag denotes this exact Foundation Kernel release;
-it does not claim a graphical Console, Engine v1.5 compatibility or enterprise
-production readiness.
+IG8 replay. The `v0.2.0-alpha` tag denotes this Engine v1.0/v1.5 Compatibility Adapter release
+(Python `src/compat/` layer); it does not re-execute or re-claim the v0.1 Foundation
+Kernel .NET gates (IG0–IG8), which remain authoritative from the v0.1 release.
 
 ## Fixed toolchain
 

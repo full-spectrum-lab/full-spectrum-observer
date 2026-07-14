@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+# Standalone Python Compatibility Adapter test configuration.
+# The repo is otherwise a .NET solution; this only affects `pytest` runs.
+pythonpath = ["src"]
+testpaths = ["tests/compat"]

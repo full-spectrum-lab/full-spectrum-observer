@@ -1,0 +1,58 @@
+{
+  "connector": {
+    "write_enabled": false
+  },
+  "desensitization": {
+    "visible_to_authorized_only": true
+  },
+  "envelope_version": "1.2",
+  "evaluation_events": [
+    {
+      "event_digest": "sha256:evt-xplat-1",
+      "event_id": "evt-xplat-1"
+    }
+  ],
+  "expected_digest": "422c90b1b8b338e842468acd1f18e7c56d1e40339e96c62ee1789c8a3cffe2eb",
+  "external_effect": false,
+  "hard_gate": {
+    "result": "PASS",
+    "score": 0.88
+  },
+  "observation_id": "obs-xplat-001",
+  "profile_scenario": {
+    "profile": {
+      "ess": 0.25,
+      "fshi": 0.2,
+      "risk": 0.3
+    },
+    "scenario_ref": "cross-platform-worker"
+  },
+  "rbac": {
+    "operator": "op-xplat",
+    "service_principal": "sp-xplat"
+  },
+  "replay_bundle": {
+    "bundle_id": "rb-xplat",
+    "capability_level": "L2",
+    "missing_deps": [
+      "dep-optional"
+    ]
+  },
+  "resilience": {
+    "health": "healthy",
+    "idempotency_key": "idm-xplat",
+    "timeout_ms": 4000
+  },
+  "review": {
+    "original_event_ref": "evt-xplat-1",
+    "review_id": "rev-xplat"
+  },
+  "source_version": "1.5.0",
+  "subject_declaration": {
+    "concentration_tier": "tier-1",
+    "local_subject_id": "subj-xplat",
+    "mode": "autonomous",
+    "subject_type": "service"
+  },
+  "unknowns": []
+}
