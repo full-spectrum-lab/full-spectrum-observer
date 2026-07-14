@@ -1,10 +1,11 @@
 {
-  "package_id": "full-spectrum-observer-source-v0.2.0-alpha",
-  "generated_at_utc": "2026-07-14T09:16:35Z",
+  "package_id": "full-spectrum-observer-source-v0.2.0-alpha.1",
+  "generated_at_utc": "2026-07-14T13:29:47Z",
   "repository": "full-spectrum/full-spectrum-observer",
-  "branch": "feature/v0.2.0-alpha",
-  "source_head": "f7fdb06d398d5c5fece360cf87b98a63635b9602",
-  "system_version": "0.2.0-alpha",
+  "branch": "v0.2.0-alpha.1",
+  "source_head": "b20721b1ed3d3791828f2575f436488c0a950438",
+  "release_tag_resolved": false,
+  "system_version": "0.2.0-alpha.1",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
   "files": [
@@ -35,8 +36,8 @@
     },
     {
       "path": "Directory.Build.props",
-      "size_bytes": 1362,
-      "sha256": "76065e5754569212f2c038de82807ff8d0c9fb16969275c864518a042f346231"
+      "size_bytes": 1364,
+      "sha256": "ba5c91582882c7010c37299955ee8d76e697345e0b60ea2075d7f5d87280ca96"
     },
     {
       "path": "Directory.Build.targets",
@@ -109,19 +110,14 @@
       "sha256": "c387794ea12c4cb9d5eb1ec200ee93b13d85a466f9fd8edd83d9232de27d85f0"
     },
     {
-      "path": "SOURCE_PACKAGE_MANIFEST.json",
-      "size_bytes": 58049,
-      "sha256": "c32d9398290123535b5dfffc663c70f833176caba29001e8817b4fe0906f50e9"
-    },
-    {
       "path": "artifacts/.gitkeep",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "path": "baselines.lock.json",
-      "size_bytes": 16439,
-      "sha256": "e130027cfc282861d019b45fef0e5e2cd6136a3a7f1225322cc90ec94e150cc8"
+      "size_bytes": 16441,
+      "sha256": "e143c59f0b1eaae91cb78ab85b35cfff432fa398e01ef905f733fcceaf5840a9"
     },
     {
       "path": "conftest.py",
@@ -825,8 +821,8 @@
     },
     {
       "path": "scripts/generate_source_manifest.py",
-      "size_bytes": 7085,
-      "sha256": "761bab763a5566ab854d61d1cf365e1c6318fee96827ff477b90e9e98b8e6a97"
+      "size_bytes": 10897,
+      "sha256": "9cc43121e8c635cd2dd44978a8921361907d09c58a44a3915740e31b081d47b3"
     },
     {
       "path": "scripts/ig2-reference-validator.py",
@@ -1260,8 +1256,8 @@
     },
     {
       "path": "src/compat/__init__.py",
-      "size_bytes": 2259,
-      "sha256": "d6db137002c16eac17b8ee4e1136540301e23d3268e589da1188f3d6e3818c0f"
+      "size_bytes": 2261,
+      "sha256": "9cbf7ca18f336c1c2a2f0fb7ed123231294ad2f854587fb092af477649d35d63"
     },
     {
       "path": "src/compat/adapter_interface.py",
@@ -1275,8 +1271,8 @@
     },
     {
       "path": "src/compat/canonical.py",
-      "size_bytes": 1908,
-      "sha256": "cb4337ff54b01818d98fece0599479109b28110585da24fed3d760061122e206"
+      "size_bytes": 2372,
+      "sha256": "cabd6581a4255c6e0809cb576b1018062eb72d6129c3e7ffaf8971f8efa1a884"
     },
     {
       "path": "src/compat/compatibility_matrix.py",
@@ -1290,13 +1286,13 @@
     },
     {
       "path": "src/compat/engine_facade.py",
-      "size_bytes": 5742,
-      "sha256": "b2f03a5ebc085c192c1704cf907dbed6997358b740e818260c892f899115a90f"
+      "size_bytes": 8551,
+      "sha256": "fe7c3f189fb7f8e8670c12250e10e535c9cb44870ad19065f9fd179a2b8f0adb"
     },
     {
       "path": "src/compat/engine_v15_adapter.py",
-      "size_bytes": 6094,
-      "sha256": "27ee5587b809ff79412103554e41d1ff58b7cab8ab580344dff4d21a96911ce0"
+      "size_bytes": 6636,
+      "sha256": "a96b86b34958013bdd40ff523bca74f89d6a60b79cad5f5f3429586a6249e66e"
     },
     {
       "path": "src/compat/engine_v1_adapter.py",
@@ -1310,18 +1306,18 @@
     },
     {
       "path": "src/compat/runtime_snapshot.py",
-      "size_bytes": 4366,
-      "sha256": "9fc5908304bfc1fecffbf0a8bf720b4d36952ce8eb46f7bdd539b4384d6ae1b3"
+      "size_bytes": 8567,
+      "sha256": "6d68495b1533df2d01011ae95c7f54b1b0623b3870edd5cc6a2910b93e0104b5"
     },
     {
       "path": "src/compat/schema_validator.py",
-      "size_bytes": 4370,
-      "sha256": "2a72ca55159bbdf4d9329ad8ecae763e5074812b9608d646352301fd3fc0d950"
+      "size_bytes": 6898,
+      "sha256": "979aaecbd0a607786e72ac4103373fcb3d4725cf3ec7de534f04701165869117"
     },
     {
       "path": "src/compat/version_resolver.py",
-      "size_bytes": 5192,
-      "sha256": "6e2a410e1c8f226b4b781a3128874da5aac1d463f5966182105e2af774e0315d"
+      "size_bytes": 6768,
+      "sha256": "a6e3bd31535dcc28df836122ddb09b3b6a43682ccbdc9cf4e2a167e669353541"
     },
     {
       "path": "tests/Observer.Tests.Architecture/Observer.Tests.Architecture.csproj",
@@ -1420,8 +1416,8 @@
     },
     {
       "path": "tests/compat/fixtures/cross_platform/xplat_sample.json",
-      "size_bytes": 1311,
-      "sha256": "94888e2e7f7fbe15e0d76e9ab3c2b4a676c1f1887455f64b43e7d561515fc5ab"
+      "size_bytes": 1254,
+      "sha256": "c3bc483e082428c552ed11f1531fa52724760cc6a98f234f39e1bfa97c02cde3"
     },
     {
       "path": "tests/compat/fixtures/neg/dependency_not_replayable.json",
@@ -1430,8 +1426,8 @@
     },
     {
       "path": "tests/compat/fixtures/v1.0_golden/projected_v1.0.golden.json",
-      "size_bytes": 888,
-      "sha256": "f457ee2cbfc4de64af6714b1d1892d42d983ccda8bf85a5a78ba01916bce853f"
+      "size_bytes": 851,
+      "sha256": "5aea581f69249615958dc3636fa821d7bea23bfbb7dccec18b23b8a28e95202f"
     },
     {
       "path": "tests/compat/fixtures/v1.0_golden/raw_v1.0.json",
@@ -1450,8 +1446,8 @@
     },
     {
       "path": "tests/compat/fixtures/v1.5_case005/projected_v1.5.golden.json",
-      "size_bytes": 1954,
-      "sha256": "b130c5078aa05af13f3f47aeee3d639f08624a5815d6a85b5bfc331d89fad0d1"
+      "size_bytes": 1868,
+      "sha256": "cb7e60fd65ff7515853a3e62d65403a3882db94245219eb60763397c7d2a4567"
     },
     {
       "path": "tests/compat/test_compatibility_matrix.py",

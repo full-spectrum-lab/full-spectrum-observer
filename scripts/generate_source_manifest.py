@@ -143,7 +143,9 @@ def _extract_tree(repo: str, commit: str, dest: str) -> None:
         tmp.write(completed.stdout)
         tmp.seek(0)
         with tarfile.open(fileobj=tmp, mode="r:") as tar:
-            tar.extractall(dest)
+            # ``filter="data"`` is safe (no path traversal) and avoids the
+            # Python 3.12+ DeprecationWarning / 3.14 default-reject behaviour.
+            tar.extractall(dest, filter="data")
 
 
 def compute_size_and_sha256(path: str) -> tuple[int, str]:
