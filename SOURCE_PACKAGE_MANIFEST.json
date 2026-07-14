@@ -1,18 +1,12 @@
 {
-  "package_id": "FS-OBS-V010-IG5-SOURCE-CANDIDATE-1",
-  "generated_at_utc": "2026-07-12T16:59:04.753892+00:00",
-  "repository": "full-spectrum-observer",
-  "branch": "integration/IG5-source-candidate",
-  "source_head_before_manifest": "e6b164f1000b228d00c08d262f3f70d8bea252be",
-  "formal_status": "SOURCE_CANDIDATE_ONLY",
-  "wp04_source": "COMPLETE_CANDIDATE",
-  "wp05_source": "COMPLETE_CANDIDATE",
-  "python_reference_pipeline": "PASS",
-  "source_static": "PASS",
-  "dotnet_build": "NOT_EXECUTED",
-  "formal_ig3": "NOT_PASSED",
-  "formal_ig4": "NOT_PASSED",
-  "formal_ig5": "NOT_PASSED",
+  "package_id": "full-spectrum-observer-source-v0.2.0-alpha",
+  "generated_at_utc": "2026-07-14T09:06:17Z",
+  "repository": "full-spectrum/full-spectrum-observer",
+  "branch": "feature/v0.2.0-alpha",
+  "source_head": "07bfeeaf47fef08758a5c02b0c8c9a3a55f1fad7",
+  "system_version": "0.2.0-alpha",
+  "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
+  "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
   "files": [
     {
       "path": ".editorconfig",
@@ -25,9 +19,14 @@
       "sha256": "ab943f438b9442f341207911861b2c06551ead4efbf965651ac2fbf25db7e9c9"
     },
     {
+      "path": ".github/workflows/foundation-gates.yml",
+      "size_bytes": 1999,
+      "sha256": "adc2108c3352e0bb41f4e047085ea8bec8ccc98586d4bbf5845639ba0baee02a"
+    },
+    {
       "path": ".gitignore",
-      "size_bytes": 307,
-      "sha256": "6f40db32b17241a910c16d7c31cf25fd4389a3b6ea2942ea0538aa1b8582ed26"
+      "size_bytes": 337,
+      "sha256": "c11f027bb8bcfb959a7ec661295ab9999babb382d7a627725e89ba090602af4c"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -36,8 +35,8 @@
     },
     {
       "path": "Directory.Build.props",
-      "size_bytes": 1083,
-      "sha256": "65992ae270c11c9467c9eef3f97da7ffcb0d89542587e813289c170b43b79c05"
+      "size_bytes": 1362,
+      "sha256": "76065e5754569212f2c038de82807ff8d0c9fb16969275c864518a042f346231"
     },
     {
       "path": "Directory.Build.targets",
@@ -86,8 +85,13 @@
     },
     {
       "path": "LICENSE",
-      "size_bytes": 269,
-      "sha256": "da9132ce91ec9c8214b6c6bbbf12511e9d310577b21f37513f9dfeac5409fda2"
+      "size_bytes": 2091,
+      "sha256": "91dc60001f7df448bdda91df2fad5af38ed79642caebdc3248f0af3a2c5d9807"
+    },
+    {
+      "path": "NOTICE",
+      "size_bytes": 288,
+      "sha256": "195c8ed071851a94c5fe99cff0bbed7fc92156d93d36c2f9dd8b645d294706da"
     },
     {
       "path": "NuGet.Config",
@@ -96,13 +100,18 @@
     },
     {
       "path": "README.md",
-      "size_bytes": 3019,
-      "sha256": "da63bd30719c5eae797f146d871e71edc5a91ce1c484564b0d0fb069ba2257a3"
+      "size_bytes": 3778,
+      "sha256": "a181dc9d720d4abcb011a905a862b1334c3daec44042f82c550ac72dced71205"
     },
     {
       "path": "SECURITY.md",
       "size_bytes": 428,
       "sha256": "c387794ea12c4cb9d5eb1ec200ee93b13d85a466f9fd8edd83d9232de27d85f0"
+    },
+    {
+      "path": "SOURCE_PACKAGE_MANIFEST.json",
+      "size_bytes": 47671,
+      "sha256": "16d32723b4f959c78c0f09e808b4ac33faab97f70fc0b8359011f17044f466aa"
     },
     {
       "path": "artifacts/.gitkeep",
@@ -111,8 +120,23 @@
     },
     {
       "path": "baselines.lock.json",
-      "size_bytes": 12240,
-      "sha256": "8fcd454ca1680bbd2c611f8e4ea8bc0833705da3b3be4564dd24c56563635b4d"
+      "size_bytes": 16439,
+      "sha256": "e130027cfc282861d019b45fef0e5e2cd6136a3a7f1225322cc90ec94e150cc8"
+    },
+    {
+      "path": "conftest.py",
+      "size_bytes": 516,
+      "sha256": "ac59b03f94f37e2246fc52bc1a4f8ee3f97c3f608bf52206240cf84f19123bd8"
+    },
+    {
+      "path": "docs/acceptance/USER_ACCEPTANCE_GUIDE.md",
+      "size_bytes": 1657,
+      "sha256": "75d2d616dcf46d2d059bb07175bd6e66a4fcee10ea8deba17c24f516d1f3288a"
+    },
+    {
+      "path": "docs/architecture/IG0-IG5_IMPLEMENTATION_ARCHITECTURE.md",
+      "size_bytes": 7168,
+      "sha256": "aaa0f58ae9ab3befcff86a4a320f0e52b8dc64f7bfc6b35d60048f52a9d0fb14"
     },
     {
       "path": "docs/baselines/README.md",
@@ -250,6 +274,16 @@
       "sha256": "00b85ab47fa4b3cc534ebf78e4419f44a229f912ed8c5db16ff7ddd0d4b1f5c7"
     },
     {
+      "path": "docs/compat/contract-mapping-v1.2-v1.5.md",
+      "size_bytes": 4065,
+      "sha256": "9c6c6452e6a178a1284f6cfec37b9ad301ecee3f88a9a90a421cb3fb0f2fd1b1"
+    },
+    {
+      "path": "docs/compat/ownership-rules-evaluationevent-replaybundle.md",
+      "size_bytes": 3791,
+      "sha256": "0de82f4a5bdb0ccb970cdd8d0358af394ee6adebd4ce1eefd6d80c4d2ef6d12a"
+    },
+    {
       "path": "docs/decisions/IG1-bootstrap-decisions.md",
       "size_bytes": 442,
       "sha256": "e3ecc559e32db2415be42f3d2bb423501ddfedc8075fd007e7c03db579633320"
@@ -260,6 +294,16 @@
       "sha256": "d29a3aeb43c08f091418c09248feb661e25d3c0e3611090228faa51e22195c58"
     },
     {
+      "path": "docs/engineering/SOURCE_MIGRATION.md",
+      "size_bytes": 2052,
+      "sha256": "98517e434730c452b82111b30f8296b08b17eb98f5a7289e8434a95805a28692"
+    },
+    {
+      "path": "docs/release-v0.1.0-alpha.md",
+      "size_bytes": 973,
+      "sha256": "b82ecf1cccdcc07a996cc832bb4a0c05e90977f0f11815d2ef040ca86c17337b"
+    },
+    {
       "path": "docs/runbooks/IG0-IG1.md",
       "size_bytes": 446,
       "sha256": "d22a36b3a942cd186993147d2e6d4907efdebd01eb6e97732e7fb0c38cfe678c"
@@ -268,6 +312,31 @@
       "path": "docs/runbooks/IG2.md",
       "size_bytes": 594,
       "sha256": "fae382c0a30dd8bf90c174e1d74c26af348fb4d86f1fe8066bde4ee10e4a17fc"
+    },
+    {
+      "path": "docs/testing/IG0-IG5_TEST_EXECUTION_REPORT.md",
+      "size_bytes": 4095,
+      "sha256": "c24f7821f1bea5ea80b89ea3ab06bdfd1c2a8a179184ccf1f6e818d350ea5d76"
+    },
+    {
+      "path": "docs/testing/IG6_TEST_EXECUTION_REPORT.md",
+      "size_bytes": 1858,
+      "sha256": "1d4270e1aeb6adf235fd6a5ffa579682e444303be15321eb99e547a86c766895"
+    },
+    {
+      "path": "docs/testing/IG7_PACKAGE_EXECUTION_REPORT.md",
+      "size_bytes": 1437,
+      "sha256": "961d4457016cd6d7fdcd16ea0b088dffc306e5c2b152e7d01f0a56bfa43a90c2"
+    },
+    {
+      "path": "docs/testing/IG8_INDEPENDENT_RESULT_2026-07-13.md",
+      "size_bytes": 2286,
+      "sha256": "ed85047937cfd533c26d55ef84025df4f7ac1035f29c81e31d397173ffe81810"
+    },
+    {
+      "path": "docs/testing/IG8_R2_INDEPENDENT_RESULT_2026-07-13.md",
+      "size_bytes": 946,
+      "sha256": "96f5a8e29f07d3e4e04b8aad3ad9af8a8790fe0d0c4cf409ebad59bfa6f2fd17"
     },
     {
       "path": "engine/bridge-source-manifest.json",
@@ -410,24 +479,34 @@
       "sha256": "c9bcd31dc06cbe59b083dcff7ff4be12cb7b67f3ecd6bc034776e1eb24ae176d"
     },
     {
+      "path": "engine/worker.lock.json",
+      "size_bytes": 7042,
+      "sha256": "08fa6a9b17c6e9128a8837fad02ee0c66c44b77541637ff9633f0d5d310f23ef"
+    },
+    {
+      "path": "engine/worker/offline_guard.py",
+      "size_bytes": 849,
+      "sha256": "5db763b2a078e992dc31a3bce8d268c71882cd450f61741892fdf0e5c2a3a6eb"
+    },
+    {
       "path": "engine/worker/requirements.lock",
       "size_bytes": 117,
       "sha256": "9980cdda2173d5cc0f8ea87c0d51e21dcb9eff93593859622b24c0b1ee77c82f"
     },
     {
       "path": "engine/worker/worker.py",
-      "size_bytes": 4729,
-      "sha256": "c36d977c9e0ac3651291f1410328d9069b8753939ab34c7bc32396038fefc646"
-    },
-    {
-      "path": "engine/worker.lock.json",
-      "size_bytes": 4803,
-      "sha256": "5081dd0538ecd4fbee3ae9fdd2a7bec2c8298979dd4895825862d960562feea8"
+      "size_bytes": 4879,
+      "sha256": "5dc1adf8e9683b502f2f387079c90f1de919439672b5ee29b2e10d1da341eff6"
     },
     {
       "path": "evidence/ig0/baseline-verify.json",
-      "size_bytes": 20000,
-      "sha256": "92839166b20c704354dbaf3af2d6e7b5640ebf0a32202dd5d0ba352c13af6c81"
+      "size_bytes": 26591,
+      "sha256": "4682da9ccc19edb78c64c428e16f215e6622e4e6f646e8d2424be3ad2803b8ec"
+    },
+    {
+      "path": "evidence/ig1/build-log.txt",
+      "size_bytes": 4275,
+      "sha256": "10b1e9a12d5851f114de62cbbddc0ca09bc7b2116af0626b11a8409e55df3d76"
     },
     {
       "path": "evidence/ig1/repository-commit.json",
@@ -441,8 +520,8 @@
     },
     {
       "path": "evidence/ig2/architecture-static.json",
-      "size_bytes": 1607,
-      "sha256": "7f0a6035138c553118973a544f04b15b670cccaf0ad753f1fed468467bda244a"
+      "size_bytes": 1780,
+      "sha256": "752f1756f031e0ddc1a5347b93efcd529d2ece9422ea6f2a75982eac78a1527d"
     },
     {
       "path": "evidence/ig2/canonical-vectors.json",
@@ -470,16 +549,6 @@
       "sha256": "e3ac6a30de10ed790ff5bd53d84414b9221e262f982546611eeb2109d74ba6e5"
     },
     {
-      "path": "evidence/ig3/reference-validation.json",
-      "size_bytes": 596,
-      "sha256": "4769459349ff43780b10e1f2fd59b0f7d50d2041f1db24c4457c14d44191ffc4"
-    },
-    {
-      "path": "evidence/ig3/source-static.json",
-      "size_bytes": 475,
-      "sha256": "73d5c0d04f79f277f9436fa4cc67163c68572d5ffbdc256cb63d56c3e3eac1f0"
-    },
-    {
       "path": "evidence/ig3-ig4/candidate-status.json",
       "size_bytes": 869,
       "sha256": "ce093d221103a761d478f7eae4014e7a5a2c1cec3ece940e8df805bd48c4c35b"
@@ -495,14 +564,24 @@
       "sha256": "0a72526c728c38967b7ff51b87d0695042c565c7ab1f65a96cfde3bd600a5ab6"
     },
     {
+      "path": "evidence/ig3/reference-validation.json",
+      "size_bytes": 569,
+      "sha256": "48819ad2ff2d5d941efadd9a409a8df9b262bebe52fb5e5e634350f5984fff9c"
+    },
+    {
+      "path": "evidence/ig3/source-static.json",
+      "size_bytes": 475,
+      "sha256": "73d5c0d04f79f277f9436fa4cc67163c68572d5ffbdc256cb63d56c3e3eac1f0"
+    },
+    {
       "path": "evidence/ig4/source-static.json",
       "size_bytes": 499,
       "sha256": "d5203d0576df5ceb2c7593a5a7d2a2c5754dd1601a6ab675e02c61145a150c9a"
     },
     {
       "path": "evidence/ig4/worker-smoke.json",
-      "size_bytes": 1067,
-      "sha256": "940a2854ceaaf1ad630644fa44ad0acc40aad32e9490f90aa638ce3771295cac"
+      "size_bytes": 1050,
+      "sha256": "0d44553471edaaf3cb8356729421d079be330cc2c01c62f500ed91118976d3fa"
     },
     {
       "path": "evidence/ig5/candidate-status.json",
@@ -511,13 +590,23 @@
     },
     {
       "path": "evidence/ig5/reference-pipeline.json",
-      "size_bytes": 1952,
-      "sha256": "aed5d54995f2c735e6b46f8fc58b94706c302cd4c02cfb18bcec8c81c9316969"
+      "size_bytes": 1943,
+      "sha256": "8abdeb4f4c52ca73c101b92cc4328ad5fd3e1bb353c5507fe1aa95d15e77da4d"
     },
     {
       "path": "evidence/ig5/source-static.json",
       "size_bytes": 2935,
       "sha256": "49f50677e703d50e9d0fe98e21825fd48f02abaeef713b4d62faa8b47675e877"
+    },
+    {
+      "path": "evidence/ig6/IG6_Result.json",
+      "size_bytes": 5776,
+      "sha256": "29c9419430324e19168974592d9214a5d1b348442385f98a4d2a30451a54cc4f"
+    },
+    {
+      "path": "evidence/ig7/IG7_Result.json",
+      "size_bytes": 511,
+      "sha256": "b511ebbf2464500435daf49432f405fd9a633ec5dbccc59cb94d7e9e1953d668"
     },
     {
       "path": "evidence/templates/README.md",
@@ -563,6 +652,11 @@
       "path": "packs/foundation-case005/runtime-components.json",
       "size_bytes": 662,
       "sha256": "d214ae8df20029e84599225c76f9f835f5c429cb4ae19af24ef5a7c5484cf994"
+    },
+    {
+      "path": "pyproject.toml",
+      "size_bytes": 212,
+      "sha256": "0e5483e49588b389d49776a21f009d20bf9c6dcb3f203a813e9ed4950b22d9b5"
     },
     {
       "path": "schemas/foundation-kernel/audit-event.schema.json",
@@ -681,8 +775,8 @@
     },
     {
       "path": "schemas/foundation-kernel/release-manifest.schema.json",
-      "size_bytes": 6252,
-      "sha256": "708d9667a1ec24103ee647fac2757ea6f9cd95b46271c020af5f6443d9be2725"
+      "size_bytes": 6307,
+      "sha256": "dc688ff41e603a736557e176eaf92d29d438d77bd318b374c36041b41fb188d9"
     },
     {
       "path": "schemas/foundation-kernel/runtime-configuration-snapshot.schema.json",
@@ -706,8 +800,8 @@
     },
     {
       "path": "schemas/foundation-kernel/schemas.lock.json",
-      "size_bytes": 7262,
-      "sha256": "251073953e84b1e18b23be520f17c136d7be186c2e11c4e28c020c83fa2687f2"
+      "size_bytes": 7264,
+      "sha256": "4b9aecc43e03ca4896cc8e9c4d13c5701fe985d9209da0122be225bad68cd53a"
     },
     {
       "path": "schemas/foundation-kernel/validation-result.schema.json",
@@ -720,19 +814,14 @@
       "sha256": "d881b4193cc00d17fa7f75d0f6711834218637f98b9fdd5fe0630d52e2d95f3c"
     },
     {
-      "path": "scripts/__pycache__/ig5-reference-pipeline.cpython-313.pyc",
-      "size_bytes": 10185,
-      "sha256": "71ffcf7b1c9f21dba6d059e7091ccd7c540811f25e3be28505bd5528c5083d8e"
-    },
-    {
-      "path": "scripts/__pycache__/verify-ig5-source.cpython-313.pyc",
-      "size_bytes": 7206,
-      "sha256": "832b788d433ae85193c93cbe575166a5e4a0bd1841e69a70bbad3f9c579289fd"
-    },
-    {
       "path": "scripts/build.ps1",
-      "size_bytes": 1535,
-      "sha256": "c438f1c589e0f8ac2ddd1c5c430c77c8bdbb3d13c78cdd5ef20e10c9f7737688"
+      "size_bytes": 1586,
+      "sha256": "134303dd63ac52e97eaab5daedade4353195c0e3680a3aabaee9aca6e0178853"
+    },
+    {
+      "path": "scripts/generate-release-metadata.py",
+      "size_bytes": 7125,
+      "sha256": "f23370778377c74b2712a662f60f6d00c851e15da159f98f517e5d07e1022c9c"
     },
     {
       "path": "scripts/ig2-reference-validator.py",
@@ -741,28 +830,33 @@
     },
     {
       "path": "scripts/ig3-reference-validator.py",
-      "size_bytes": 3869,
-      "sha256": "a96801fc8c767639fae6d91a5670aed09e75ac196297558b071953fe6b046e24"
+      "size_bytes": 4036,
+      "sha256": "b44ffe8f1742b3dad1fc013666dda52b44cc4c4a8dca5860680aa9d3562fcb38"
     },
     {
       "path": "scripts/ig4-worker-smoke.py",
-      "size_bytes": 2636,
-      "sha256": "7754aaae4971884dddbea3fcfbeeb24198b57316960cf09d2414a3a23e3ca049"
+      "size_bytes": 2771,
+      "sha256": "55afd1afe44af0619bfe755a52079f46ea59ba79cc780faee31dcd93579c14b0"
     },
     {
       "path": "scripts/ig5-reference-pipeline.py",
-      "size_bytes": 8606,
-      "sha256": "6c1ad9ea357705b65881ca64e754d544fddab568ffff7cb0f7a2bffe9b290058"
+      "size_bytes": 8791,
+      "sha256": "b97383e4f59be2ce3556b93b77429cf975163627d6e26f39bb315ff589050baa"
+    },
+    {
+      "path": "scripts/ig6-harness.py",
+      "size_bytes": 10050,
+      "sha256": "8db083a8e51726261046d49793467e08063cb87bf0ee9942e3b5833eb7489193"
     },
     {
       "path": "scripts/package.ps1",
-      "size_bytes": 151,
-      "sha256": "ba8e7ea4dd2a470676ba763eea7661b0d053d0f894dee1ec35ee6b3af1ad06fe"
+      "size_bytes": 4444,
+      "sha256": "0a01816d68fa1d5b123fe6b1a269a296e2f2c487fb7992a45a95df8c2e183912"
     },
     {
       "path": "scripts/test.ps1",
-      "size_bytes": 3649,
-      "sha256": "59f8b781dac282d438f0ae2945fdeb89e8adb514a0abeba0052e85ca686a05bf"
+      "size_bytes": 5465,
+      "sha256": "ed4b2276c42af64e03d606a0c4db19311eb2327be938494f0646307e93216ba2"
     },
     {
       "path": "scripts/verify-architecture.py",
@@ -771,8 +865,8 @@
     },
     {
       "path": "scripts/verify-baseline.ps1",
-      "size_bytes": 2704,
-      "sha256": "23333e2db97b5388116a4a0f16b31bbee183ca9be2939de7cd4300cb131cf871"
+      "size_bytes": 2785,
+      "sha256": "8364c9d0a5404ec881276a477f0466c7bac2d294955a7fb0a2ecbf1b9b7aee2f"
     },
     {
       "path": "scripts/verify-ig3-ig4-source.py",
@@ -786,8 +880,13 @@
     },
     {
       "path": "scripts/verify-package.ps1",
-      "size_bytes": 192,
-      "sha256": "9aa914c2d1276a807d365549d11e4ca5546b304e9fd74a40b86ddce44f49aa66"
+      "size_bytes": 3020,
+      "sha256": "3e265efa0393ba4c750ca141be3559b666a9fe672e8dbccf0a7cd196ded6547d"
+    },
+    {
+      "path": "scripts/verify-package.py",
+      "size_bytes": 3036,
+      "sha256": "82e846526dafec73725af5a391ab28e060ceb96868ef6c2884ec6dcca0011ad3"
     },
     {
       "path": "src/Observer.Application/AnalysisPorts.cs",
@@ -821,23 +920,23 @@
     },
     {
       "path": "src/Observer.Application/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 143,
+      "sha256": "031d43dd0319390e74b1062de0cc3ad7c4bdd39b86459ad7c6226e193f44c74b"
     },
     {
       "path": "src/Observer.Contracts/BuildIdentity.cs",
-      "size_bytes": 800,
-      "sha256": "6ba605c33bb7c23fae1c8ededf1144b5ef5fa24136e06345a5859a4e79cc9a14"
+      "size_bytes": 785,
+      "sha256": "88c71207765a897f28379fb3cc0149d10fcfee0e8109fd59c97767839002259a"
     },
     {
       "path": "src/Observer.Contracts/Canonicalization/CanonicalizationException.cs",
-      "size_bytes": 411,
-      "sha256": "342e579856541a15b7d9d8ba89ecd9b0a2d5e4dee85f86623b6bb2ced3504d6c"
+      "size_bytes": 402,
+      "sha256": "7bf7a417a205c8e13566a57773d19a8cf08dcba8d802f27029a2d67e77b4ee96"
     },
     {
       "path": "src/Observer.Contracts/Canonicalization/FsObsCanonicalizer.cs",
-      "size_bytes": 4103,
-      "sha256": "104567bce068b538fdabab43a035660e4e2bf16363115aaab0a48286813501d1"
+      "size_bytes": 4113,
+      "sha256": "dcaa9d654609e5a9d226e123c2d4008f668dc31c4a677fe1b97171861509bbd6"
     },
     {
       "path": "src/Observer.Contracts/Canonicalization/SelfDigestCalculator.cs",
@@ -891,8 +990,8 @@
     },
     {
       "path": "src/Observer.Contracts/Schema/FoundationSchemaBundle.cs",
-      "size_bytes": 5835,
-      "sha256": "3290ea3e0b34c3162fc8c5b8952c925756ae3d2fe0e8b5e9777e15b9b9c9f9fd"
+      "size_bytes": 5845,
+      "sha256": "9cedd6c1bc900ec8576df6f727b678d4d22b85a951894990d704f689c1121a48"
     },
     {
       "path": "src/Observer.Contracts/Schema/FoundationSchemaValidator.cs",
@@ -916,8 +1015,8 @@
     },
     {
       "path": "src/Observer.Contracts/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 61,
+      "sha256": "a29c6aa8cfb81874ff8bb78dc369d7416f28c9b8cc47e99592bfc019b20c41eb"
     },
     {
       "path": "src/Observer.EngineFacade/EngineFacadeComposition.cs",
@@ -951,8 +1050,8 @@
     },
     {
       "path": "src/Observer.EngineFacade/PythonWorkerEngineFacade.cs",
-      "size_bytes": 10946,
-      "sha256": "cc359564b832f1b9d73ea8b7530e0e8a0acb63e0d7e993d6af27c6807a4235d9"
+      "size_bytes": 10919,
+      "sha256": "bb79288d839df935e89e9dd93c7f29f342884352e5533f3ecd14aa511a62e63d"
     },
     {
       "path": "src/Observer.EngineFacade/WorkerIntegrityVerifier.cs",
@@ -961,13 +1060,13 @@
     },
     {
       "path": "src/Observer.EngineFacade/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 317,
+      "sha256": "106a01d1109917fb4cdd79b30fc27afb8b6986b25cb65b53ba7bdadbf0505a6c"
     },
     {
       "path": "src/Observer.Evidence/ContentAddressedArtifactStore.cs",
-      "size_bytes": 5593,
-      "sha256": "3114b8c15acd7fc4db1deb06ec2cf06dfa4448c5554f71ae91004d197112a4cc"
+      "size_bytes": 6026,
+      "sha256": "45304e1c05a0a26d74879c92178b8c9ac9d8e7788ede09d2de4a891fc093f5a6"
     },
     {
       "path": "src/Observer.Evidence/EvidenceComposition.cs",
@@ -1056,8 +1155,8 @@
     },
     {
       "path": "src/Observer.Evidence/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 317,
+      "sha256": "106a01d1109917fb4cdd79b30fc27afb8b6986b25cb65b53ba7bdadbf0505a6c"
     },
     {
       "path": "src/Observer.Execution/ExecutionComposition.cs",
@@ -1086,8 +1185,8 @@
     },
     {
       "path": "src/Observer.Execution/FoundationScenarioAdapter.cs",
-      "size_bytes": 1260,
-      "sha256": "e6357ac4f12fa1c253a3d8c368c825cebc473a65c5799e8c9bf05cc91d1ab096"
+      "size_bytes": 1251,
+      "sha256": "df4741ba2a40f9b3efe06f1991335e53b0264bd6195803244ec3ef4152d27fbf"
     },
     {
       "path": "src/Observer.Execution/FoundationValidationPipeline.cs",
@@ -1096,8 +1195,8 @@
     },
     {
       "path": "src/Observer.Execution/GovernanceOutputAssembler.cs",
-      "size_bytes": 3770,
-      "sha256": "a164226a34b596dabc27f8c54e74f87ae39da6786e50a4a89a1d0f93e32adcb4"
+      "size_bytes": 3761,
+      "sha256": "d9a6fce5adb4d4798c9e6261c5b8a518c8860f51c53ded80986922c85e54b7ae"
     },
     {
       "path": "src/Observer.Execution/ModuleMarker.cs",
@@ -1111,13 +1210,13 @@
     },
     {
       "path": "src/Observer.Execution/RuntimeConfigurationResolver.cs",
-      "size_bytes": 4627,
-      "sha256": "61012fb2da487539632b03664d1cf7c76830c06ff28aa39dfafaa1d490393197"
+      "size_bytes": 4618,
+      "sha256": "855ecbda5166e38c1bdfc01872e3433db8839e5ed1700a5e4a9f2c9aed11f7f4"
     },
     {
       "path": "src/Observer.Execution/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 317,
+      "sha256": "106a01d1109917fb4cdd79b30fc27afb8b6986b25cb65b53ba7bdadbf0505a6c"
     },
     {
       "path": "src/Observer.Host.Cli/CliOptions.cs",
@@ -1136,13 +1235,13 @@
     },
     {
       "path": "src/Observer.Host.Cli/Program.cs",
-      "size_bytes": 6862,
-      "sha256": "9eb894ec94e6d20dc4d35bc0aa75a16f1bfcd40e2ea008e4e5e94897e08bead7"
+      "size_bytes": 6874,
+      "sha256": "9e8cd0958b4af2087a447b7927b1e95644974ea7c4856b49500bb1d74133ea35"
     },
     {
       "path": "src/Observer.Host.Cli/Properties/PublishProfiles/win-x64-self-contained.pubxml",
-      "size_bytes": 480,
-      "sha256": "47be6dd5c3f1fea1e5efcca7358a65ce31a5d5791c24441e5197f2c853876fee"
+      "size_bytes": 468,
+      "sha256": "a3f7259ee161f92a27b260f617165d5cd23687671afb8ad78d5f68a586568a67"
     },
     {
       "path": "src/Observer.Host.Cli/UnavailableEngineFacade.cs",
@@ -1151,8 +1250,73 @@
     },
     {
       "path": "src/Observer.Host.Cli/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 1015,
+      "sha256": "8297167798915bf437ba1ecd7390585c55e2edf1d6a5a7eca44a61281b994178"
+    },
+    {
+      "path": "src/compat/__init__.py",
+      "size_bytes": 2259,
+      "sha256": "d6db137002c16eac17b8ee4e1136540301e23d3268e589da1188f3d6e3818c0f"
+    },
+    {
+      "path": "src/compat/adapter_interface.py",
+      "size_bytes": 1955,
+      "sha256": "d3930fc1341be497deb7bb2c31c71fb81736650f20eeaee7d1c0fa5b0146be43"
+    },
+    {
+      "path": "src/compat/adapter_result.py",
+      "size_bytes": 7900,
+      "sha256": "7d1ab4b6d3ae264a8896536169287b5c94a3cffa11a2405c39735bbfacdddb83"
+    },
+    {
+      "path": "src/compat/canonical.py",
+      "size_bytes": 1908,
+      "sha256": "cb4337ff54b01818d98fece0599479109b28110585da24fed3d760061122e206"
+    },
+    {
+      "path": "src/compat/compatibility_matrix.py",
+      "size_bytes": 3438,
+      "sha256": "06c7c3504ca96feede2e0eb1be36c92edfbdc3458c9c7b4b2dca67e4f22796f0"
+    },
+    {
+      "path": "src/compat/contract_map_v1.2_v1.5.json",
+      "size_bytes": 3398,
+      "sha256": "77fefa3b323f32ccfac44273267914479dc8f74f278b2018e1e6cef36637486d"
+    },
+    {
+      "path": "src/compat/engine_facade.py",
+      "size_bytes": 5742,
+      "sha256": "b2f03a5ebc085c192c1704cf907dbed6997358b740e818260c892f899115a90f"
+    },
+    {
+      "path": "src/compat/engine_v15_adapter.py",
+      "size_bytes": 6094,
+      "sha256": "27ee5587b809ff79412103554e41d1ff58b7cab8ab580344dff4d21a96911ce0"
+    },
+    {
+      "path": "src/compat/engine_v1_adapter.py",
+      "size_bytes": 3052,
+      "sha256": "4796cfb1b6618c1b5e3a1cda05610c050f46ce09c0d2d69394c8839f404aad91"
+    },
+    {
+      "path": "src/compat/engine_version.py",
+      "size_bytes": 3749,
+      "sha256": "c0668d2649d2585998f171e5f60bc19e8b89b1371e821185bf719c37554128aa"
+    },
+    {
+      "path": "src/compat/runtime_snapshot.py",
+      "size_bytes": 4366,
+      "sha256": "9fc5908304bfc1fecffbf0a8bf720b4d36952ce8eb46f7bdd539b4384d6ae1b3"
+    },
+    {
+      "path": "src/compat/schema_validator.py",
+      "size_bytes": 4370,
+      "sha256": "2a72ca55159bbdf4d9329ad8ecae763e5074812b9608d646352301fd3fc0d950"
+    },
+    {
+      "path": "src/compat/version_resolver.py",
+      "size_bytes": 5192,
+      "sha256": "6e2a410e1c8f226b4b781a3128874da5aac1d463f5966182105e2af774e0315d"
     },
     {
       "path": "tests/Observer.Tests.Architecture/Observer.Tests.Architecture.csproj",
@@ -1166,8 +1330,8 @@
     },
     {
       "path": "tests/Observer.Tests.Architecture/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 1422,
+      "sha256": "1c35c3914fb8fc06bb2b57128be5be14f5bdde91d5dc4ad2b3a1b5b01ce2bd88"
     },
     {
       "path": "tests/Observer.Tests.Contract/Observer.Tests.Contract.csproj",
@@ -1181,8 +1345,8 @@
     },
     {
       "path": "tests/Observer.Tests.Contract/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 143,
+      "sha256": "031d43dd0319390e74b1062de0cc3ad7c4bdd39b86459ad7c6226e193f44c74b"
     },
     {
       "path": "tests/Observer.Tests.Integration/EngineFacadeSourceTests.cs",
@@ -1196,13 +1360,13 @@
     },
     {
       "path": "tests/Observer.Tests.Integration/Program.cs",
-      "size_bytes": 12872,
-      "sha256": "e17dda37464ee635576b93a3e0d6726b183f75ed7d66fcac1e0cb4bcb2d7b447"
+      "size_bytes": 29572,
+      "sha256": "f40f1b2775d813c4547e4fa63ae8ea616148d2d5becfcf9fdede83f3a7b1d599"
     },
     {
       "path": "tests/Observer.Tests.Integration/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 1015,
+      "sha256": "8297167798915bf437ba1ecd7390585c55e2edf1d6a5a7eca44a61281b994178"
     },
     {
       "path": "tests/Observer.Tests.Security/Observer.Tests.Security.csproj",
@@ -1216,8 +1380,8 @@
     },
     {
       "path": "tests/Observer.Tests.Security/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 1015,
+      "sha256": "8297167798915bf437ba1ecd7390585c55e2edf1d6a5a7eca44a61281b994178"
     },
     {
       "path": "tests/Observer.Tests.Unit/Observer.Tests.Unit.csproj",
@@ -1231,8 +1395,93 @@
     },
     {
       "path": "tests/Observer.Tests.Unit/packages.lock.json",
-      "size_bytes": 62,
-      "sha256": "98540f8c8005e000cc83cffb4598281f61900a13426b470f1d1114c62b54a63d"
+      "size_bytes": 549,
+      "sha256": "ff6a1fc581dac4ca788b6014aeb963fab5961ec94d8a9bfa3ac4b33b640e2209"
+    },
+    {
+      "path": "tests/__init__.py",
+      "size_bytes": 317,
+      "sha256": "3c7bb7154ffe13cd65e6ba83fcb4cbde482ee968e66b000a8f8e579bab2fbffe"
+    },
+    {
+      "path": "tests/compat/__init__.py",
+      "size_bytes": 42,
+      "sha256": "05b3c1d5205d4a22e547c7b16b828c088f84b55ad4671f535a6b6cde7ba6f861"
+    },
+    {
+      "path": "tests/compat/conftest.py",
+      "size_bytes": 2267,
+      "sha256": "998b9358e06c1ff3a8a1859b93c9ca27dcbc73308c0e329b092e6bce104a152c"
+    },
+    {
+      "path": "tests/compat/fixtures/cross_platform/xplat_sample.json",
+      "size_bytes": 1311,
+      "sha256": "94888e2e7f7fbe15e0d76e9ab3c2b4a676c1f1887455f64b43e7d561515fc5ab"
+    },
+    {
+      "path": "tests/compat/fixtures/neg/dependency_not_replayable.json",
+      "size_bytes": 1060,
+      "sha256": "ab5bbbf654ed5b691666c7f9e4033f356d3e5a51f2fc46876b82766164c78a09"
+    },
+    {
+      "path": "tests/compat/fixtures/v1.0_golden/projected_v1.0.golden.json",
+      "size_bytes": 888,
+      "sha256": "f457ee2cbfc4de64af6714b1d1892d42d983ccda8bf85a5a78ba01916bce853f"
+    },
+    {
+      "path": "tests/compat/fixtures/v1.0_golden/raw_v1.0.json",
+      "size_bytes": 211,
+      "sha256": "a8f3a06bb1ab864229492942fde615d25654316141b60d886746bec91eec467b"
+    },
+    {
+      "path": "tests/compat/fixtures/v1.5_case005/envelope_v1.5.json",
+      "size_bytes": 1703,
+      "sha256": "0510a78dc590fd9847d3eb537260c7281b67477dbc5656ccf9c5d0946ed44080"
+    },
+    {
+      "path": "tests/compat/fixtures/v1.5_case005/evidence_envelope_v1.5.json",
+      "size_bytes": 692,
+      "sha256": "0240e07aefaa6f161cee770126694731a243deccc8eb0b27d5101324c5b4f92e"
+    },
+    {
+      "path": "tests/compat/fixtures/v1.5_case005/projected_v1.5.golden.json",
+      "size_bytes": 1954,
+      "sha256": "b130c5078aa05af13f3f47aeee3d639f08624a5815d6a85b5bfc331d89fad0d1"
+    },
+    {
+      "path": "tests/compat/test_compatibility_matrix.py",
+      "size_bytes": 1669,
+      "sha256": "faee0ed77d2287eec946af2158b0d7bf757b861f09a1c9c68b6bf15e3a890632"
+    },
+    {
+      "path": "tests/compat/test_fail_closed_supplement.py",
+      "size_bytes": 3973,
+      "sha256": "0863a2ba0f493f7786939304a67f35fb8ca4fa1982183c7d8698e3ffcebf78db"
+    },
+    {
+      "path": "tests/compat/test_ownership_rules.py",
+      "size_bytes": 3255,
+      "sha256": "8a2d0f28a21ff9f323cfbb2650f2fa7b004601e26b71fae36c2e76819b1b8aba"
+    },
+    {
+      "path": "tests/compat/test_schema_validator.py",
+      "size_bytes": 3518,
+      "sha256": "85af6f7505615b76d81833c8b0956df55ff454d72e7b7543405a67c13cfc90b9"
+    },
+    {
+      "path": "tests/compat/test_v15_adapter.py",
+      "size_bytes": 4611,
+      "sha256": "164560230e217425d55d4b0537682e7c6f988a8f0a00771e7d72bf78614a715e"
+    },
+    {
+      "path": "tests/compat/test_v1_adapter.py",
+      "size_bytes": 3233,
+      "sha256": "effa12d7dfb2262f872f43d157e3ea2e2aa27075c004b6f95b38c7693f3b11d4"
+    },
+    {
+      "path": "tests/compat/test_version_resolver.py",
+      "size_bytes": 3743,
+      "sha256": "4a78a172b16fba9c1809c87ead95560d8aa34bf975865f189ffbad6a469cdec5"
     }
   ]
 }
