@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import pytest
 
+from compat.adapter_interface import AdaptationContext
 from compat.engine_facade import EngineFacade
 from compat.engine_v15_adapter import EngineV15Adapter
 from compat.runtime_snapshot import RuntimeConfigurationSnapshot
@@ -107,6 +108,38 @@ def test_p1_matching_raw_source_version_ok():
     result = facade.execute(_snapshot_v1_5(), _base_raw(source_version="1.5.0"))
     assert result.source_version == "1.5.0"
     assert result.projected_envelope.source_version == "1.5.0"
+
+
+def test_p1_adapter_projects_trusted_version():
+    """P1 layer-2 defence at the adapter unit level (independent of the facade
+    Gate).
+
+    Directly drives ``EngineV15Adapter.adapt`` with a raw that self-declares a
+    *conflicting* ``source_version="9.9.9"`` while the trusted
+    ``AdaptationContext.source_version`` is ``"1.5.0"``. The projection MUST
+    use the trusted version, never the raw's conflicting value — proving the
+    adapter fix is real even when the facade Gate pre-empts the call (QA
+    mutation m2: the Gate hides this layer from facade-level tests, so the
+    adapter unit layer is the durable backstop).
+    """
+    raw = {
+        "source_version": "9.9.9",  # conflicting raw self-declaration
+        "observation_id": "obs-unit-p1-001",
+        "evaluation_events": [
+            {"event_id": "evt-1", "event_digest": "sha256:evt-1"}
+        ],
+    }
+    ctx = AdaptationContext(
+        observation_id="obs-unit-p1-001",
+        source_version="1.5.0",  # trusted resolved version
+    )
+    result = EngineV15Adapter().adapt(raw, ctx)
+    # The projected envelope and the result carry the trusted version.
+    assert result.source_version == "1.5.0"
+    assert result.projected_envelope.source_version == "1.5.0"
+    # Explicitly prove the conflicting raw value did NOT leak through.
+    assert result.source_version != raw["source_version"]
+    assert result.projected_envelope.source_version != raw["source_version"]
 
 
 # --------------------------------------------------------------------------
