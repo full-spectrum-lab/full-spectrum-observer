@@ -1,9 +1,9 @@
 {
   "package_id": "full-spectrum-observer-source-v0.2.0-alpha.1",
-  "generated_at_utc": "2026-07-14T13:48:42Z",
+  "generated_at_utc": "2026-07-14T14:10:42Z",
   "repository": "full-spectrum/full-spectrum-observer",
   "branch": "v0.2.0-alpha.1",
-  "source_head": "785a0120556a8538626147e847f942461c4bdbbc",
+  "source_head": "5762cc15e322cef7aa97d1755379780ed512a442",
   "system_version": "0.2.0-alpha.1",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
@@ -652,6 +652,16 @@
       "path": "pyproject.toml",
       "size_bytes": 212,
       "sha256": "0e5483e49588b389d49776a21f009d20bf9c6dcb3f203a813e9ed4950b22d9b5"
+    },
+    {
+      "path": "qa_independent_repro.py",
+      "size_bytes": 13224,
+      "sha256": "7dc071630c2b6d33b8722b81322462ad577a2aa5508bdefedcd49f5df046ab32"
+    },
+    {
+      "path": "qa_manifest_verify.py",
+      "size_bytes": 3789,
+      "sha256": "966dc9d67220142d4f179f72518ed20e03a72a5b7f8de6b9455e48eebb47cfe9"
     },
     {
       "path": "schemas/foundation-kernel/audit-event.schema.json",
@@ -1467,6 +1477,11 @@
       "path": "tests/compat/test_ownership_rules.py",
       "size_bytes": 3255,
       "sha256": "8a2d0f28a21ff9f323cfbb2650f2fa7b004601e26b71fae36c2e76819b1b8aba"
+    },
+    {
+      "path": "tests/compat/test_qa_supplement_v0_2_0_alpha1.py",
+      "size_bytes": 4838,
+      "sha256": "3354785843726f02c3076bbcd12d1f2be57ae277b408159d5a8f0cf91b35d893"
     },
     {
       "path": "tests/compat/test_schema_validator.py",
