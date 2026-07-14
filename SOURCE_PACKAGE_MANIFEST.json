@@ -1,9 +1,9 @@
 {
   "package_id": "full-spectrum-observer-source-v0.2.0-alpha.1",
-  "generated_at_utc": "2026-07-14T13:31:22Z",
+  "generated_at_utc": "2026-07-14T13:33:02Z",
   "repository": "full-spectrum/full-spectrum-observer",
   "branch": "v0.2.0-alpha.1",
-  "source_head": "7cfde121757ef9acf7e5c4d91b9a1cedd1b0ad55",
+  "source_head": "b20721b1ed3d3791828f2575f436488c0a950438",
   "release_tag_resolved": false,
   "system_version": "0.2.0-alpha.1",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
@@ -821,8 +821,8 @@
     },
     {
       "path": "scripts/generate_source_manifest.py",
-      "size_bytes": 11066,
-      "sha256": "337144c9332674db77507f800ba6f4f9a8e12527993505448715d96625eeef72"
+      "size_bytes": 10897,
+      "sha256": "9cc43121e8c635cd2dd44978a8921361907d09c58a44a3915740e31b081d47b3"
     },
     {
       "path": "scripts/ig2-reference-validator.py",

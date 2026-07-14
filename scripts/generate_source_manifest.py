@@ -111,14 +111,21 @@ def _is_forbidden(rel_path: str) -> bool:
     return any(sub in rel_path for sub in FORBIDDEN_SUBSTRINGS)
 
 
-def resolve_source_identity(repo: str, release_tag: str) -> tuple[str, str, bool]:
+def resolve_source_identity(
+    repo: str, release_tag: str, source_commit: str | None = None
+) -> tuple[str, str, bool]:
     """Resolve ``(source_head, branch, tag_resolved)`` for the manifest (D1).
 
     ``source_head`` is the commit the release tag points to; ``branch`` is the
-    release tag name. When the tag does not yet exist locally, ``source_head``
-    falls back to ``HEAD`` and ``tag_resolved`` is ``False`` (the release
-    owner must cut the tag on exactly that commit).
+    release tag name. A ``--source-commit`` override pins ``source_head`` to a
+    specific commit explicitly (used to lock the manifest to the actual
+    source-code commit). When the tag does not yet exist locally and no
+    override is given, ``source_head`` falls back to ``HEAD`` and
+    ``tag_resolved`` is ``False`` (the release owner must cut the tag on
+    exactly that commit).
     """
+    if source_commit:
+        return source_commit, release_tag, False
     try:
         source_head = _run_git(repo, "rev-parse", f"{release_tag}^{{commit}}")
         tag_resolved = True
@@ -158,7 +165,7 @@ def compute_size_and_sha256(path: str) -> tuple[int, str]:
     return size, digest.hexdigest()
 
 
-def build_manifest(repo: str, release_tag: str) -> dict:
+def build_manifest(repo: str, release_tag: str, source_commit: str | None = None) -> dict:
     """Build the full manifest dictionary for ``repo`` (D1 / D2)."""
     # Eligible files = git-tracked, not forbidden, and not the manifest itself
     # (self-exclusion, D2).
@@ -170,7 +177,9 @@ def build_manifest(repo: str, release_tag: str) -> dict:
     ]
 
     # Resolve source identity from the release tag (D1).
-    source_head, branch, tag_resolved = resolve_source_identity(repo, release_tag)
+    source_head, branch, tag_resolved = resolve_source_identity(
+        repo, release_tag, source_commit
+    )
 
     # Compute per-file digests over the git-normalized bytes (D2).
     files: list[dict] = []
@@ -248,12 +257,16 @@ def verify(manifest: dict, tracked: list[str]) -> None:
 def main() -> int:
     args = sys.argv[1:]
     release_tag = DEFAULT_RELEASE_TAG
+    source_commit: str | None = None
     repo_arg: str | None = None
     i = 0
     while i < len(args):
         if args[i] in ("-t", "--release-tag"):
             i += 1
             release_tag = args[i]
+        elif args[i] in ("-c", "--source-commit"):
+            i += 1
+            source_commit = args[i]
         elif args[i] in ("-h", "--help"):
             print(__doc__)
             return 0
@@ -263,7 +276,7 @@ def main() -> int:
 
     repo = detect_repo_root(repo_arg)
     tracked = list_tracked_files(repo)
-    manifest = build_manifest(repo, release_tag)
+    manifest = build_manifest(repo, release_tag, source_commit)
     verify(manifest, tracked)
 
     out_path = os.path.join(repo, MANIFEST_FILENAME)
