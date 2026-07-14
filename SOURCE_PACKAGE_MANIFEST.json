@@ -1,10 +1,9 @@
 {
   "package_id": "full-spectrum-observer-source-v0.2.0-alpha.1",
-  "generated_at_utc": "2026-07-14T13:33:02Z",
+  "generated_at_utc": "2026-07-14T13:40:04Z",
   "repository": "full-spectrum/full-spectrum-observer",
   "branch": "v0.2.0-alpha.1",
-  "source_head": "b20721b1ed3d3791828f2575f436488c0a950438",
-  "release_tag_resolved": false,
+  "source_head": "be26e638881d588f112c7ff1895f9fc811a32d13",
   "system_version": "0.2.0-alpha.1",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
@@ -821,8 +820,8 @@
     },
     {
       "path": "scripts/generate_source_manifest.py",
-      "size_bytes": 10897,
-      "sha256": "9cc43121e8c635cd2dd44978a8921361907d09c58a44a3915740e31b081d47b3"
+      "size_bytes": 11745,
+      "sha256": "e83c674e057d5d27e2ab6913a5cb14ef4ee8e9f0768a5c3a849cdbdf040e68ca"
     },
     {
       "path": "scripts/ig2-reference-validator.py",
@@ -1453,6 +1452,11 @@
       "path": "tests/compat/test_compatibility_matrix.py",
       "size_bytes": 1669,
       "sha256": "faee0ed77d2287eec946af2158b0d7bf757b861f09a1c9c68b6bf15e3a890632"
+    },
+    {
+      "path": "tests/compat/test_defect_fixes_v0_2_0_alpha1.py",
+      "size_bytes": 8041,
+      "sha256": "408994886948e23b8e4045eb379e8f35f49a7b6efa00434f36f3b9f7dee1097e"
     },
     {
       "path": "tests/compat/test_fail_closed_supplement.py",

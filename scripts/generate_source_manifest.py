@@ -177,7 +177,7 @@ def build_manifest(repo: str, release_tag: str, source_commit: str | None = None
     ]
 
     # Resolve source identity from the release tag (D1).
-    source_head, branch, tag_resolved = resolve_source_identity(
+    source_head, branch, _tag_resolved = resolve_source_identity(
         repo, release_tag, source_commit
     )
 
@@ -199,7 +199,6 @@ def build_manifest(repo: str, release_tag: str, source_commit: str | None = None
         "repository": REPOSITORY,
         "branch": branch,
         "source_head": source_head,
-        "release_tag_resolved": tag_resolved,
         "system_version": SYSTEM_VERSION,
         "scope": (
             "Engine v1.0/v1.5 Compatibility Adapter (Python layer); "
@@ -292,7 +291,6 @@ def main() -> int:
     print(f"  forbidden (__pycache__) : 0")
     print(f"  system_version          : {manifest['system_version']}")
     print(f"  release_tag             : {release_tag}")
-    print(f"  release_tag_resolved    : {manifest['release_tag_resolved']}")
     print(f"  source_head             : {manifest['source_head']}")
     print(f"  branch                  : {manifest['branch']}")
     return 0
