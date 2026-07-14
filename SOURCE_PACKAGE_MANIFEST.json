@@ -1,9 +1,9 @@
 {
   "package_id": "full-spectrum-observer-source-v0.2.0-alpha.2",
-  "generated_at_utc": "2026-07-14T15:20:48Z",
+  "generated_at_utc": "2026-07-14T15:46:46Z",
   "repository": "full-spectrum/full-spectrum-observer",
   "branch": "v0.2.0-alpha.2",
-  "source_head": "a9ac2fa197244e98be76b2bd98ee4890bea78302",
+  "source_head": "b70826a766eed7f3887d8c8a8e3199d5622ea397",
   "system_version": "0.2.0-alpha.2",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
@@ -1470,8 +1470,8 @@
     },
     {
       "path": "tests/compat/test_defect_fixes_v0_2_0_alpha2.py",
-      "size_bytes": 5275,
-      "sha256": "24861b4682638d6c33fc1866e3ce5a7641fd3c33ff406170b874f09e8b7733ed"
+      "size_bytes": 6785,
+      "sha256": "f5dff033333609657cbbf40c8686ca85c5bd4075b03fc69a1425fec5c2b12d31"
     },
     {
       "path": "tests/compat/test_fail_closed_supplement.py",
