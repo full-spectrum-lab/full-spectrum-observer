@@ -267,7 +267,9 @@ def main() -> int:
     verify(manifest, tracked)
 
     out_path = os.path.join(repo, MANIFEST_FILENAME)
-    with open(out_path, "w", encoding="utf-8") as handle:
+    # Force LF line endings in the working copy so it matches the git-normalized
+    # (eol=lf) blob and avoids spurious CRLF-normalization warnings.
+    with open(out_path, "w", encoding="utf-8", newline="\n") as handle:
         json.dump(manifest, handle, ensure_ascii=False, indent=2)
         handle.write("\n")
 
