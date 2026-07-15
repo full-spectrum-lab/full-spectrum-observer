@@ -1,0 +1,99 @@
+@page "/system"
+@rendermode InteractiveServer
+@inject SystemDiagnostics Diagnostics
+
+<PageTitle>系统信息 — Observer 控制台</PageTitle>
+
+<h1>系统信息</h1>
+
+@if (_loading)
+{
+    <p class="muted">正在加载…</p>
+}
+else if (_error is not null)
+{
+    <div class="error-state" role="alert">加载失败：@_error</div>
+}
+else
+{
+    <div class="card">
+        <h2>版本与锚定标识</h2>
+        <div class="region engine">
+            <table>
+                <tbody>
+                    <tr><td>engine_tag</td><td><code>@_ver.EngineTag</code></td></tr>
+                    <tr><td>engine_commit</td><td><code>@_ver.EngineCommit</code></td></tr>
+                    <tr><td>engine_artifact_digest</td><td><code>@_ver.EngineArtifactDigest</code></td></tr>
+                    <tr><td>adapter_version</td><td><code>@_ver.AdapterVersion</code></td></tr>
+                    <tr><td>analyzer_version / profile_version</td><td><code>@EngineV15Contract.AnalyzerVersion / @EngineV15Contract.ProfileVersion</code></td></tr>
+                    <tr><td>schema_version</td><td><code>@_ver.SchemaVersion</code></td></tr>
+                    <tr><td>schema_digest</td><td><code>@_ver.SchemaDigest</code></td></tr>
+                    <tr><td>compatibility_matrix_id</td><td><code>@_ver.CompatibilityMatrixId</code></td></tr>
+                </tbody>
+            </table>
+        </div>
+        @if (_ver.EngineArtifactDigest.Contains("PLACEHOLDER"))
+        {
+            <div class="error-state" role="alert">
+                引擎制品摘要（engine_artifact_digest）为占位符，GO-6 签署前须由已发布制品的真实 sha256 填充，不得伪造（红线 #4）。
+            </div>
+        }
+    </div>
+
+    <div class="card">
+        <h2>运行时</h2>
+        <div class="region observer">
+            <table>
+                <tbody>
+                    <tr><td>应用版本</td><td><code>@_ver.AppVersion</code></td></tr>
+                    <tr><td>.NET 运行时</td><td><code>@_ver.DotNetVersion</code></td></tr>
+                    <tr><td>网络绑定</td><td><code>@_ver.LoopbackBinding</code></td></tr>
+                </tbody>
+            </table>
+            <p class="muted">仅环回（127.0.0.1 / ::1），绝不暴露 0.0.0.0（网络边界红线）。</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>存储统计</h2>
+        <table>
+            <tbody>
+                <tr><td>主体</td><td>@_diag.SubjectCount</td></tr>
+                <tr><td>知识源</td><td>@_diag.KnowledgeSourceCount</td></tr>
+                <tr><td>分析任务</td><td>@_diag.AnalysisTaskCount</td></tr>
+                <tr><td>审计记录</td><td>@_diag.AuditCount</td></tr>
+                <tr><td>活动主体版本</td><td>@_diag.ActiveSubjectVersions</td></tr>
+                <tr><td>活动知识版本</td><td>@_diag.ActiveKnowledgeVersions</td></tr>
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="sr-only" aria-live="polite">@_live</div>
+
+@code {
+    private bool _loading = true;
+    private string? _error;
+    private string _live = "";
+
+    private VersionInfo _ver = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+    private StoreDiagnostics _diag = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _ver = Diagnostics.GetVersionInfo();
+            _diag = await Diagnostics.GetStoreDiagnosticsAsync();
+            _live = "系统信息已加载。";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

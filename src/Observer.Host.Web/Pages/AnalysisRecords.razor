@@ -1,0 +1,215 @@
+@page "/records"
+@rendermode InteractiveServer
+@using FullSpectrum.Observer.Store
+@inject ObserverStore Store
+@inject AuditViewer Audit
+
+<PageTitle>分析记录 — Observer 控制台</PageTitle>
+
+<h1>分析记录</h1>
+<p class="muted">列出全部分析任务及其 R1-D 提交链状态。点击任一任务查看结论（按原样，含 UNKNOWN / 硬门禁）。</p>
+
+@if (_error is not null)
+{
+    <div class="error-state" role="alert">@_error</div>
+}
+
+@if (_loading)
+{
+    <p class="muted">正在加载…</p>
+}
+else if (_tasks.Count == 0)
+{
+    <div class="empty-state">暂无分析任务。请先在「新建分析」发起一次分析。</div>
+}
+else
+{
+    <div class="card">
+        <table>
+            <thead><tr><th>任务</th><th>主体版本</th><th>保留模式</th><th>状态</th><th>创建</th><th>操作</th></tr></thead>
+            <tbody>
+                @foreach (var t in _tasks)
+                {
+                    <tr>
+                        <td><code>@t.TaskId</code></td>
+                        <td><code>@t.SubjectVersionId</code></td>
+                        <td>@t.RetentionMode</td>
+                        <td>@StatusBadge(t.Status)</td>
+                        <td>@t.CreatedAt</td>
+                        <td><button type="button" class="btn" @onclick="() => SelectAsync(t.TaskId)">查看</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (_selectedTaskId is not null)
+{
+    <div class="card">
+        <h2>任务 <code>@_selectedTaskId</code> 详情</h2>
+
+        @if (_result is null)
+        {
+            <div class="error-state" role="alert">
+                该任务尚无结论。当前状态：<code>@_selectedStatus</code>。
+                @if (_selectedStatus is "ENGINE_FAILED" or "OUTPUT_VALIDATION_FAILED" or "RECOVERY_REQUIRED" or "PREFLIGHT_FAILED")
+                {
+                    <span> 分析未通过提交链，结论被阻断（按原样，不重算）。</span>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="region engine">
+                <p>未知状态：
+                    @if (_result.UnknownState == "UNKNOWN") { <span class="badge unknown">UNKNOWN</span> }
+                    else if (_result.UnknownState == "KNOWN") { <span class="badge known">KNOWN</span> }
+                    else if (_result.UnknownState == "PARTIAL") { <span class="badge partial">PARTIAL</span> }
+                    else { <span class="badge unknown">@_result.UnknownState</span> }
+                </p>
+                <p>硬门禁：@if (_result.HardGate) { <span class="badge hardgate">HARD_GATE</span> } else { <span class="badge known">无</span> }</p>
+            </div>
+
+            <h2>结论（Engine 原文，不重算）</h2>
+            <pre>@_result.ConclusionPayload</pre>
+
+            @if (_conflicts.Count > 0)
+            {
+                <h2>冲突观察（按原样）</h2>
+                <table>
+                    <thead><tr><th>类型</th><th>涉及主体</th><th>严重度</th><th>需人工</th><th>原因码</th><th>缺失上下文</th></tr></thead>
+                    <tbody>
+                        @foreach (var c in _conflicts)
+                        {
+                            <tr>
+                                <td>@c.ConflictType</td>
+                                <td>@string.Join(", ", c.InvolvedSubjects)</td>
+                                <td>@c.Severity</td>
+                                <td>@(c.HumanReviewRequired ? "是" : "否")</td>
+                                <td>@(c.ReasonCode ?? "—")</td>
+                                <td>@(c.MissingContext is { } m ? string.Join(", ", m) : "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @if (_snapshot is not null)
+            {
+                <h2>运行时快照（重放锚点）</h2>
+                <div class="region observer">
+                    <p>engine_version = <code>@_snapshot.EngineVersion</code> · analyzer = <code>@_snapshot.AnalyzerVersion</code></p>
+                    <p>input_digest = <code>@_snapshot.InputDigest</code></p>
+                    <p>runtime_digest = <code>@_snapshot.RuntimeDigest</code></p>
+                </div>
+            }
+
+            @if (_evidence is not null)
+            {
+                <h2>证据包（摘要按原样）</h2>
+                <div class="region engine">
+                    <p>evidence_digest = <code>@_evidence.EvidenceDigest</code></p>
+                    <p>references = @(_evidence.References.Length == 0 ? "—" : string.Join(", ", _evidence.References))</p>
+                </div>
+            }
+
+            <h2>证据导出</h2>
+            <button type="button" class="btn" @onclick="ExportAsync">导出证据 JSON</button>
+            @if (_exportJson is not null)
+            {
+                <pre>@_exportJson</pre>
+            }
+        }
+    </div>
+}
+
+<div class="sr-only" aria-live="polite">@_live</div>
+
+@code {
+    private bool _loading = true;
+    private string? _error;
+    private string _live = "";
+
+    private List<AnalysisTask> _tasks = new();
+    private string? _selectedTaskId;
+    private string? _selectedStatus;
+    private AnalysisResult? _result;
+    private List<ConflictObservation> _conflicts = new();
+    private RuntimeSnapshot? _snapshot;
+    private EvidenceBundle? _evidence;
+    private string? _exportJson;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        try
+        {
+            _tasks = await Store.GetAnalysisTasksAsync();
+            _tasks.Reverse(); // newest first
+            _error = null;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task SelectAsync(string taskId)
+    {
+        _selectedTaskId = taskId;
+        _exportJson = null;
+        _result = null;
+        _conflicts = new List<ConflictObservation>();
+        _snapshot = null;
+        _evidence = null;
+        try
+        {
+            AnalysisTask? task = await Store.GetAnalysisTaskAsync(taskId);
+            _selectedStatus = task?.Status;
+            _result = await Store.GetAnalysisResultByTaskAsync(taskId);
+            if (_result is not null)
+            {
+                _conflicts = await Store.GetConflictObservationsByResultAsync(_result.ResultId);
+                _snapshot = await Store.GetRuntimeSnapshotByResultAsync(_result.ResultId);
+                _evidence = await Store.GetEvidenceBundleByResultAsync(_result.ResultId);
+            }
+            _live = $"已加载任务 {taskId} 详情。";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private async Task ExportAsync()
+    {
+        if (_selectedTaskId is null)
+        {
+            return;
+        }
+        try
+        {
+            _exportJson = await Audit.ExportEvidenceAsync(_selectedTaskId);
+            _live = "证据已导出（摘要按原样）。";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+
+    private static RenderFragment StatusBadge(string status) => @<span class="badge @StatusClass(status)">@status</span>;
+
+    private static string StatusClass(string status) => status switch
+    {
+        "Completed" => "known",
+        "Draft" => "draft",
+        "RECOVERY_REQUIRED" or "ENGINE_FAILED" or "OUTPUT_VALIDATION_FAILED" or "PREFLIGHT_FAILED" => "hardgate",
+        _ => "draft",
+    };
+}

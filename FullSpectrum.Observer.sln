@@ -24,6 +24,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer.Tests.Integration"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer.Tests.Security", "tests\Observer.Tests.Security\Observer.Tests.Security.csproj", "{604E7968-A36E-5D76-8453-FD1DAFDE1BBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer.Store", "src\Observer.Store\Observer.Store.csproj", "{7C5E1F2A-9B3D-4E8A-9C1F-2D4B6A8E0C11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer.Host.Web", "src\Observer.Host.Web\Observer.Host.Web.csproj", "{3F8A2C1B-6D4E-4A9B-8C2D-5E1F3A7B9C0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +78,14 @@ Global
 		{604E7968-A36E-5D76-8453-FD1DAFDE1BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{604E7968-A36E-5D76-8453-FD1DAFDE1BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{604E7968-A36E-5D76-8453-FD1DAFDE1BBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C5E1F2A-9B3D-4E8A-9C1F-2D4B6A8E0C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C5E1F2A-9B3D-4E8A-9C1F-2D4B6A8E0C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C5E1F2A-9B3D-4E8A-9C1F-2D4B6A8E0C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C5E1F2A-9B3D-4E8A-9C1F-2D4B6A8E0C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F8A2C1B-6D4E-4A9B-8C2D-5E1F3A7B9C0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F8A2C1B-6D4E-4A9B-8C2D-5E1F3A7B9C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F8A2C1B-6D4E-4A9B-8C2D-5E1F3A7B9C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F8A2C1B-6D4E-4A9B-8C2D-5E1F3A7B9C0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

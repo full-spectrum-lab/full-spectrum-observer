@@ -1,0 +1,228 @@
+@page "/subjects"
+@rendermode InteractiveServer
+@inject SubjectCatalog Subjects
+
+<PageTitle>主体管理 — Observer 控制台</PageTitle>
+
+<h1>主体管理</h1>
+<p class="muted">主体仅为分析上下文，不含任何登录/鉴权字段（红线 #1）。编辑活动版本会生成新草稿并激活，原活动版本进入不可变状态。</p>
+
+@if (_error is not null)
+{
+    <div class="error-state" role="alert">@_error</div>
+}
+
+<div class="card">
+    <h2>新建主体（含首版草稿）</h2>
+    <div class="region human">
+        <label for="sub-id">主体标识（LocalSubjectId）</label>
+        <input id="sub-id" @bind="_newId" placeholder="SUBJ-2026-0007" />
+
+        <label for="sub-type">主体类型（SubjectType）</label>
+        <input id="sub-type" @bind="_newType" placeholder="AI_AGENT / DATASET / PIPELINE" />
+
+        <label for="sub-mode">业务场景（Mode）</label>
+        <input id="sub-mode" @bind="_newMode" placeholder="CROSS_BORDER_PAYMENT" />
+
+        <label for="sub-tier">集中度层级（ConcentrationTier，可选）</label>
+        <input id="sub-tier" @bind="_newTier" placeholder="TIER_1 / TIER_2 / TIER_3" />
+
+        <label for="sub-decl">声明 JSON（display_name / boundary / owner_operator）</label>
+        <textarea id="sub-decl" rows="5" @bind="_newDeclaration"></textarea>
+    </div>
+    <button type="button" class="btn" disabled="@_busy" @onclick="CreateAsync">创建主体</button>
+    <p class="shortcut-hint">键盘：<span class="kbd">Tab</span> 在各字段间移动，<span class="kbd">Enter</span> 在输入框外不可提交，请使用“创建主体”按钮。</p>
+</div>
+
+@if (_loading)
+{
+    <p class="muted">正在加载…</p>
+}
+else if (_subjects.Count == 0)
+{
+    <div class="empty-state">暂无主体。请使用上方表单创建第一个主体。</div>
+}
+else
+{
+    @foreach (var subject in _subjects)
+    {
+        <div class="card">
+            <h2>@subject.LocalSubjectId</h2>
+            <p class="muted">类型：@subject.SubjectType · 场景：@subject.Mode @(subject.ConcentrationTier is not null ? "· 层级：" + subject.ConcentrationTier : "") · 创建：@subject.CreatedAt</p>
+            <table>
+                <thead><tr><th>版本</th><th>状态</th><th>声明摘要</th><th>操作</th></tr></thead>
+                <tbody>
+                    @foreach (var v in _versions.Where(x => x.SubjectId == subject.LocalSubjectId))
+                    {
+                        <tr>
+                            <td>#@v.Seq <code>@v.VersionId</code></td>
+                            <td>@StatusBadge(v.Status)</td>
+                            <td>@DeclField(v.Payload, "display_name") / @DeclField(v.Payload, "boundary")</td>
+                            <td>
+                                @if (v.Status == "Draft")
+                                {
+                                    <button type="button" class="btn" disabled="@_busy" @onclick="() => ActivateAsync(subject.LocalSubjectId, v.VersionId)">激活</button>
+                                }
+                                else if (v.Status == "Active")
+                                {
+                                    <button type="button" class="btn secondary" disabled="@_busy" @onclick="() => RetireAsync(subject.LocalSubjectId, v.VersionId)">退役</button>
+                                }
+                                <button type="button" class="btn secondary" disabled="@_busy" @onclick="() => CopyAsync(subject.LocalSubjectId, v.VersionId)">复制为草稿</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<div class="sr-only" aria-live="polite">@_live</div>
+
+@code {
+    private bool _loading = true;
+    private bool _busy;
+    private string? _error;
+    private string _live = "";
+
+    private List<ObservedSubject> _subjects = new();
+    private List<SubjectVersion> _versions = new();
+
+    private string _newId = string.Empty;
+    private string _newType = string.Empty;
+    private string _newMode = string.Empty;
+    private string _newTier = string.Empty;
+    private string _newDeclaration = "{\n  \"display_name\": \"\",\n  \"boundary\": \"\",\n  \"owner_operator\": \"\"\n}";
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        try
+        {
+            _subjects = await Subjects.ListAsync();
+            _versions = new List<SubjectVersion>();
+            foreach (var s in _subjects)
+            {
+                _versions.AddRange(await Subjects.ListVersionsAsync(s.LocalSubjectId));
+            }
+            _error = null;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task CreateAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_newId) || string.IsNullOrWhiteSpace(_newType) || string.IsNullOrWhiteSpace(_newMode))
+        {
+            _error = "主体标识、类型、场景均为必填。";
+            return;
+        }
+        _busy = true;
+        try
+        {
+            await Subjects.CreateWithDraftAsync(
+                _newId,
+                _newType,
+                _newMode,
+                string.IsNullOrWhiteSpace(_newTier) ? null : _newTier,
+                _newDeclaration);
+            _live = $"已创建主体 {_newId} 及首版草稿。";
+            _newId = _newType = _newMode = _newTier = string.Empty;
+            _newDeclaration = "{\n  \"display_name\": \"\",\n  \"boundary\": \"\",\n  \"owner_operator\": \"\"\n}";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task ActivateAsync(string subjectId, string versionId)
+    {
+        _busy = true;
+        try
+        {
+            await Subjects.ActivateAsync(subjectId, versionId);
+            _live = $"已激活版本 {versionId}（原活动版本已退役，审计链已追加）。";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RetireAsync(string subjectId, string versionId)
+    {
+        _busy = true;
+        try
+        {
+            await Subjects.RetireAsync(subjectId, versionId);
+            _live = $"已退役版本 {versionId}。";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task CopyAsync(string subjectId, string versionId)
+    {
+        _busy = true;
+        try
+        {
+            string newId = await Subjects.CopyAsDraftAsync(subjectId, versionId);
+            _live = $"已从 {versionId} 复制为草稿 {newId}。";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string DeclField(string json, string prop)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            if (doc.RootElement.TryGetProperty(prop, out var el) && el.ValueKind == JsonValueKind.String)
+            {
+                return el.GetString() ?? string.Empty;
+            }
+        }
+        catch
+        {
+            // Malformed payload is shown as empty rather than throwing in the view.
+        }
+        return string.Empty;
+    }
+
+    private static RenderFragment StatusBadge(string status) => @<span class="badge @status.ToLowerInvariant()">@status</span>;
+}

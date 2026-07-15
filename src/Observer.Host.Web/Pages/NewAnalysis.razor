@@ -1,0 +1,246 @@
+@page "/new-analysis"
+@rendermode InteractiveServer
+@inject SubjectCatalog Subjects
+@inject KnowledgeCatalog Knowledge
+@inject AnalysisWorkspace Workspace
+
+<PageTitle>新建分析 — Observer 控制台</PageTitle>
+
+<h1>新建分析</h1>
+<p class="muted">创建草稿任务并运行锚定的 Engine v1.5.0。观察者不重算、不下探、不合并治理结论（红线 #6 / #9）；UNKNOWN 与硬门禁按原样呈现。</p>
+
+@if (_error is not null)
+{
+    <div class="error-state" role="alert">@_error</div>
+}
+
+@if (_loading)
+{
+    <p class="muted">正在加载…</p>
+}
+else if (_subjectVersions.Count == 0)
+{
+    <div class="empty-state">尚无可用的主体版本。请先在「主体管理」创建并激活一个主体版本，再发起分析。</div>
+}
+else
+{
+    <div class="card">
+        <h2>分析请求</h2>
+        <div class="region human">
+            <label for="na-subj">主体版本</label>
+            <select id="na-subj" @bind="_subjectVersionId">
+                <option value="">— 选择主体版本 —</option>
+                @foreach (var v in _subjectVersions)
+                {
+                    <option value="@v.VersionId">@v.SubjectId #@v.Seq (@v.Status)</option>
+                }
+            </select>
+
+            <label>知识源版本（可多选，可选）</label>
+            <div class="region observer">
+                @if (_knowledgeVersions.Count == 0)
+                {
+                    <p class="muted">暂无知识源版本（可直接运行，仅不含知识上下文）。</p>
+                }
+                else
+                {
+                    @foreach (var v in _knowledgeVersions)
+                    {
+                        <label class="muted">
+                            <input type="checkbox" value="@v.VersionId" @onchange="(e) => ToggleKv(e, v.VersionId)" /> @v.SourceId #@v.Seq (@v.Status)
+                        </label>
+                    }
+                }
+            </div>
+
+            <label for="na-q">用户问题（user_question）</label>
+            <textarea id="na-q" rows="2" @bind="_question"></textarea>
+
+            <label for="na-a">AI 输出（ai_output）</label>
+            <textarea id="na-a" rows="3" @bind="_answer"></textarea>
+
+            <label for="na-c">上下文（context）</label>
+            <textarea id="na-c" rows="2" @bind="_context"></textarea>
+
+            <label for="na-ret">保留模式（RetentionMode）</label>
+            <select id="na-ret" @bind="_retention">
+                <option value="SanitizedPersistent">SANITIZED_PERSISTENT（默认：脱敏输入 + 轨迹 + 证据）</option>
+                <option value="FullLocal">FULL_LOCAL（另存本地原文，不外传）</option>
+                <option value="Ephemeral">EPHEMERAL（仅摘要与引用，不存输入）</option>
+            </select>
+        </div>
+        <button type="button" class="btn" disabled="@(_busy || string.IsNullOrWhiteSpace(_subjectVersionId))" @onclick="RunAsync">创建并运行</button>
+        <p class="shortcut-hint">键盘：<span class="kbd">Tab</span> 在控件间移动，<span class="kbd">Space</span> 勾选复选框，<span class="kbd">Enter</span> 触发“创建并运行”。</p>
+    </div>
+}
+
+@if (_ran)
+{
+    <div class="card">
+        <h2>运行结果</h2>
+        <p>任务：<code>@_outcome?.TaskId</code> · 状态：<code>@_outcome?.Task?.Status</code></p>
+
+        @if (_outcome is { Succeeded: false })
+        {
+            <div class="error-state" role="alert">分析未成功：@_outcome.ErrorMessage</div>
+            <p class="muted">阻断原因按原样呈现，不重算、不下探。</p>
+        }
+        else if (_outcome is { Succeeded: true, Output: not null })
+        {
+            var result = _outcome.Output.Result;
+            var snap = _outcome.Output.Snapshot;
+            var evid = _outcome.Output.Evidence;
+
+            <div class="region engine">
+                <p>未知状态：
+                    @if (result.UnknownState == "UNKNOWN") { <span class="badge unknown">UNKNOWN</span> }
+                    else if (result.UnknownState == "KNOWN") { <span class="badge known">KNOWN</span> }
+                    else if (result.UnknownState == "PARTIAL") { <span class="badge partial">PARTIAL</span> }
+                    else { <span class="badge unknown">@result.UnknownState</span> }
+                </p>
+                <p>硬门禁：@if (result.HardGate) { <span class="badge hardgate">HARD_GATE</span> } else { <span class="badge known">无</span> }</p>
+            </div>
+
+            <h2>结论（Engine 原文，不重算）</h2>
+            <pre>@result.ConclusionPayload</pre>
+
+            @if (_outcome.Output.Conflicts.Count > 0)
+            {
+                <h2>冲突观察（按原样）</h2>
+                <table>
+                    <thead><tr><th>类型</th><th>涉及主体</th><th>严重度</th><th>需人工</th><th>原因码</th><th>缺失上下文</th></tr></thead>
+                    <tbody>
+                        @foreach (var c in _outcome.Output.Conflicts)
+                        {
+                            <tr>
+                                <td>@c.ConflictType</td>
+                                <td>@string.Join(", ", c.InvolvedSubjects)</td>
+                                <td>@c.Severity</td>
+                                <td>@(c.HumanReviewRequired ? "是" : "否")</td>
+                                <td>@(c.ReasonCode ?? "—")</td>
+                                <td>@(c.MissingContext is { } m ? string.Join(", ", m) : "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <h2>运行时快照（重放锚点）</h2>
+            <div class="region observer">
+                <p>engine_version = <code>@snap.EngineVersion</code> · analyzer = <code>@snap.AnalyzerVersion</code> · profile = <code>@snap.ProfileVersion</code></p>
+                <p>input_digest = <code>@snap.InputDigest</code></p>
+                <p>runtime_digest = <code>@snap.RuntimeDigest</code></p>
+            </div>
+
+            <h2>证据包（摘要按原样）</h2>
+            <div class="region engine">
+                <p>evidence_digest = <code>@evid.EvidenceDigest</code></p>
+                <p>references = @(evid.References.Length == 0 ? "—" : string.Join(", ", evid.References))</p>
+            </div>
+        }
+    </div>
+}
+
+<div class="sr-only" aria-live="polite">@_live</div>
+
+@code {
+    private bool _loading = true;
+    private bool _busy;
+    private bool _ran;
+    private string? _error;
+    private string _live = "";
+
+    private List<SubjectVersion> _subjectVersions = new();
+    private List<KnowledgeSourceVersion> _knowledgeVersions = new();
+
+    private string _subjectVersionId = string.Empty;
+    private List<string> _selectedKv = new();
+    private string _question = string.Empty;
+    private string _answer = string.Empty;
+    private string _context = string.Empty;
+    private RetentionMode _retention = RetentionMode.SanitizedPersistent;
+
+    private AnalysisRunOutcome? _outcome;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        try
+        {
+            var subjects = await Subjects.ListAsync();
+            foreach (var s in subjects)
+            {
+                _subjectVersions.AddRange(await Subjects.ListVersionsAsync(s.LocalSubjectId));
+            }
+            var sources = await Knowledge.ListAsync();
+            foreach (var k in sources)
+            {
+                _knowledgeVersions.AddRange(await Knowledge.ListVersionsAsync(k.SourceId));
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void ToggleKv(ChangeEventArgs e, string id)
+    {
+        bool on = e.Value is bool b && b;
+        if (on && !_selectedKv.Contains(id))
+        {
+            _selectedKv.Add(id);
+        }
+        else if (!on)
+        {
+            _selectedKv.Remove(id);
+        }
+    }
+
+    private async Task RunAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_subjectVersionId))
+        {
+            _error = "请先选择主体版本。";
+            return;
+        }
+        _busy = true;
+        _ran = false;
+        _outcome = null;
+        try
+        {
+            var canonical = new Dictionary<string, string>
+            {
+                ["user_question"] = _question,
+                ["ai_output"] = _answer,
+                ["context"] = _context,
+            };
+            string json = JsonSerializer.Serialize(canonical);
+            string digest = ContentDigest.Compute(json);
+            var input = new RawAnalysisInput
+            {
+                Mode = "FORM",
+                CanonicalInput = json,
+                ContentDigest = digest,
+                TransformTrace = null,
+            };
+
+            AnalysisTask task = await Workspace.CreateDraftTaskAsync(_subjectVersionId, _selectedKv, input, _retention);
+            _outcome = await Workspace.RunAnalysisAsync(task.TaskId);
+            _ran = true;
+            _live = _outcome.Succeeded ? "分析完成，结论按原样呈现。" : "分析未成功：" + _outcome.ErrorMessage;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

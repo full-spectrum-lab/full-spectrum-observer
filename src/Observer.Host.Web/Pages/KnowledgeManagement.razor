@@ -1,0 +1,184 @@
+@page "/knowledge"
+@rendermode InteractiveServer
+@inject KnowledgeCatalog Knowledge
+
+<PageTitle>知识库管理 — Observer 控制台</PageTitle>
+
+<h1>知识库管理</h1>
+<p class="muted">导入时内容摘要（sha256）由 Observer 计算，绝不信任输入（红线 #8）。激活遵循与主体一致的不可变生命周期（ADR-001）。</p>
+
+@if (_error is not null)
+{
+    <div class="error-state" role="alert">@_error</div>
+}
+
+<div class="card">
+    <h2>导入知识源（含首版草稿）</h2>
+    <div class="region human">
+        <label for="ks-id">知识源标识（SourceId）</label>
+        <input id="ks-id" @bind="_newId" placeholder="KS-2026-0011" />
+
+        <label for="ks-lib">知识库标识（LibraryId）</label>
+        <input id="ks-lib" @bind="_newLib" placeholder="LIB-GLOBAL-001" />
+
+        <label for="ks-name">名称（Name）</label>
+        <input id="ks-name" @bind="_newName" placeholder="跨境支付合规规则集" />
+
+        <label for="ks-app">适用场景（Applicability）</label>
+        <input id="ks-app" @bind="_newApp" placeholder="CROSS_BORDER_PAYMENT" />
+
+        <label for="ks-content">内容 JSON（payload）</label>
+        <textarea id="ks-content" rows="6" @bind="_newContent"></textarea>
+    </div>
+    <button type="button" class="btn" disabled="@_busy" @onclick="ImportAsync">导入知识源</button>
+    <p class="shortcut-hint">键盘：<span class="kbd">Tab</span> 在字段间移动；摘要由系统自动计算，无需填写。</p>
+</div>
+
+@if (_loading)
+{
+    <p class="muted">正在加载…</p>
+}
+else if (_sources.Count == 0)
+{
+    <div class="empty-state">暂无知识源。请使用上方表单导入第一个知识源。</div>
+}
+else
+{
+    @foreach (var source in _sources)
+    {
+        <div class="card">
+            <h2>@source.SourceId — @source.Name</h2>
+            <p class="muted">知识库：@source.LibraryId · 创建：@source.CreatedAt</p>
+            <table>
+                <thead><tr><th>版本</th><th>状态</th><th>摘要</th><th>适用</th><th>操作</th></tr></thead>
+                <tbody>
+                    @foreach (var v in _versions.Where(x => x.SourceId == source.SourceId))
+                    {
+                        <tr>
+                            <td>#@v.Seq <code>@v.VersionId</code></td>
+                            <td>@StatusBadge(v.Status)</td>
+                            <td><code>@v.Digest</code></td>
+                            <td>@v.Applicability</td>
+                            <td>
+                                @if (v.Status == "Draft")
+                                {
+                                    <button type="button" class="btn" disabled="@_busy" @onclick="() => ActivateAsync(source.SourceId, v.VersionId)">激活</button>
+                                }
+                                <button type="button" class="btn secondary" disabled="@_busy" @onclick="() => CopyAsync(source.SourceId, v.VersionId)">复制为草稿</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<div class="sr-only" aria-live="polite">@_live</div>
+
+@code {
+    private bool _loading = true;
+    private bool _busy;
+    private string? _error;
+    private string _live = "";
+
+    private List<KnowledgeSource> _sources = new();
+    private List<KnowledgeSourceVersion> _versions = new();
+
+    private string _newId = string.Empty;
+    private string _newLib = string.Empty;
+    private string _newName = string.Empty;
+    private string _newApp = string.Empty;
+    private string _newContent = "{\n  \"title\": \"\",\n  \"body\": \"\"\n}";
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        try
+        {
+            _sources = await Knowledge.ListAsync();
+            _versions = new List<KnowledgeSourceVersion>();
+            foreach (var s in _sources)
+            {
+                _versions.AddRange(await Knowledge.ListVersionsAsync(s.SourceId));
+            }
+            _error = null;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task ImportAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_newId) || string.IsNullOrWhiteSpace(_newName) || string.IsNullOrWhiteSpace(_newApp))
+        {
+            _error = "知识源标识、名称、适用场景均为必填。";
+            return;
+        }
+        _busy = true;
+        try
+        {
+            await Knowledge.ImportAsync(_newId, _newLib, _newName, _newApp, _newContent);
+            _live = $"已导入知识源 {_newId}，摘要由系统计算并写入。";
+            _newId = _newLib = _newName = _newApp = string.Empty;
+            _newContent = "{\n  \"title\": \"\",\n  \"body\": \"\"\n}";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task ActivateAsync(string sourceId, string versionId)
+    {
+        _busy = true;
+        try
+        {
+            await Knowledge.ActivateAsync(sourceId, versionId);
+            _live = $"已激活知识版本 {versionId}。";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task CopyAsync(string sourceId, string versionId)
+    {
+        _busy = true;
+        try
+        {
+            string newId = await Knowledge.CopyAsDraftAsync(sourceId, versionId);
+            _live = $"已从 {versionId} 复制为草稿 {newId}。";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static RenderFragment StatusBadge(string status) => @<span class="badge @status.ToLowerInvariant()">@status</span>;
+}
