@@ -1,3 +1,15 @@
+# =============================================================================
+# run_m1_verify.ps1 - M1 (Observer v0.3.0-beta) verification runner
+#
+# TEMPORARY NuGetAudit BYPASS (tracked, NOT a permanent exemption):
+#   The `-p:NuGetAudit=false` passed to `dotnet restore/build/test` below is a
+#   TEMPORARY bypass for the HIGH advisory NU1903 on SQLitePCLRaw.lib.e_sqlite3
+#   2.1.6 (GHSA-2m69-gcr7-jv3q), a required transitive pin of Microsoft.Data.Sqlite
+#   8.0.10. It is registered as a v0.3 Final-HBG + RC/Release BLOCKER and MUST be
+#   resolved via the dependency upgrade (item 2). Do NOT hide it by leaving this
+#   bypass in place forever - REMOVE it once SQLitePCLRaw / Microsoft.Data.Sqlite
+#   is upgraded to a non-advisory version.
+# =============================================================================
 $ErrorActionPreference = 'Continue'
 $dotnet = "C:\Users\wangjian0926\.dotnet10\dotnet.exe"
 $env:DOTNET_ROOT = "C:\Users\wangjian0926\.dotnet10"
