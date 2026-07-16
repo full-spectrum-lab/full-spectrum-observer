@@ -36,6 +36,10 @@ public sealed record AnalysisTask
     /// <summary>Lifecycle status (R1-D ordered commit chain + failure states).</summary>
     public required string Status { get; init; }
 
+    /// <summary>Independent human-review status (CR-OBS-003-JOBSTATUS-001). Does NOT alter the
+    /// Engine execution fact and is never a Job status. Defaults to NOT_REQUIRED.</summary>
+    public string ReviewStatus { get; init; } = JobLifecycle.ReviewStatus.NotRequired;
+
     /// <summary>Creation timestamp (ISO-8601 UTC).</summary>
     public required string CreatedAt { get; init; }
 
@@ -57,6 +61,7 @@ public sealed record AnalysisTask
         TransformTrace = input.TransformTrace,
         RetentionMode = retentionMode,
         Status = AnalysisTaskStatus.Draft,
+        ReviewStatus = JobLifecycle.ReviewStatus.NotRequired,
         CreatedAt = createdAtUtc,
     };
 }

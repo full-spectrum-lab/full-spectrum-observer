@@ -11,5 +11,7 @@
     <ProjectReference Include="../../src/Observer.Execution/Observer.Execution.csproj" />
     <ProjectReference Include="../../src/Observer.EngineFacade/Observer.EngineFacade.csproj" />
     <ProjectReference Include="../../src/Observer.Evidence/Observer.Evidence.csproj" />
+    <ProjectReference Include="../../src/Observer.Store/Observer.Store.csproj" />
+    <ProjectReference Include="../../src/Observer.Recovery/Observer.Recovery.csproj" />
   </ItemGroup>
 </Project>

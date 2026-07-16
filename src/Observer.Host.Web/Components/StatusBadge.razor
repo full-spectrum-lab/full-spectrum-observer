@@ -1,0 +1,26 @@
+@using FullSpectrum.Observer.Contracts.Models
+@using FullSpectrum.Observer.Host.Web.Services
+@inject JobStatusPresenter Presenter
+
+@code {
+    /// <summary>Persisted Job status (P0-05). Never the UI-derivative display itself.</summary>
+    [Parameter] public string JobStatus { get; set; } = "";
+
+    /// <summary>Independent review_status (CR-OBS-003-JOBSTATUS-001).</summary>
+    [Parameter] public string ReviewStatus { get; set; } = "NOT_REQUIRED";
+}
+
+@{
+    var display = Presenter.Present(JobStatus, ReviewStatus);
+}
+<span class="obs-badge obs-badge-@display.Tone" title="@(display.Hint ?? "")">
+    @display.Label
+    @if (display.IsFullyCompleted)
+    {
+        <text> · 已完成</text>
+    }
+    @if (display.RequiresRecovery)
+    {
+        <text> · 需恢复</text>
+    }
+</span>

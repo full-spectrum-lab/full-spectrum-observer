@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>FullSpectrum.Observer.Recovery</AssemblyName>
+    <RootNamespace>FullSpectrum.Observer.Recovery</RootNamespace>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
+    <ProjectReference Include="../../src/Observer.Store/Observer.Store.csproj" />
+    <ProjectReference Include="../../src/Observer.Application/Observer.Application.csproj" />
+  </ItemGroup>
+
+</Project>

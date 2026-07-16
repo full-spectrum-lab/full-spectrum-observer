@@ -3,7 +3,10 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>FullSpectrum.Observer.Tests.Integration</AssemblyName>
     <RootNamespace>FullSpectrum.Observer.Tests.Integration</RootNamespace>
-
+    <!-- Keep the existing custom console runner (Program.cs) as the sole entry point. Module 1
+         integration tests (Host bootstrap -> store persistence -> recovery round-trip) use
+         xUnit + FluentAssertions alongside it. -->
+    <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,5 +15,14 @@
     <ProjectReference Include="../../src/Observer.Execution/Observer.Execution.csproj" />
     <ProjectReference Include="../../src/Observer.EngineFacade/Observer.EngineFacade.csproj" />
     <ProjectReference Include="../../src/Observer.Evidence/Observer.Evidence.csproj" />
+    <ProjectReference Include="../../src/Observer.Store/Observer.Store.csproj" />
+    <ProjectReference Include="../../src/Observer.Recovery/Observer.Recovery.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="FluentAssertions" Version="6.12.2" />
   </ItemGroup>
 </Project>

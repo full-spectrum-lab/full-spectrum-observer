@@ -3,12 +3,24 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>FullSpectrum.Observer.Tests.Unit</AssemblyName>
     <RootNamespace>FullSpectrum.Observer.Tests.Unit</RootNamespace>
-
+    <!-- Keep the existing custom console runner (Program.cs) as the sole entry point; the
+         generated Program file is disabled so xUnit [Fact] methods coexist with it. The
+         new Module 1 tests (JobLifecycle / Snapshot / Recovery) use xUnit + FluentAssertions. -->
+    <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
     <ProjectReference Include="../../src/Observer.Application/Observer.Application.csproj" />
     <ProjectReference Include="../../src/Observer.Execution/Observer.Execution.csproj" />
+    <ProjectReference Include="../../src/Observer.Store/Observer.Store.csproj" />
+    <ProjectReference Include="../../src/Observer.Recovery/Observer.Recovery.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="FluentAssertions" Version="6.12.2" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,135 @@
+namespace FullSpectrum.Observer.Contracts.Models;
+
+/// <summary>
+/// Authoritative P0-05 commit &amp; recovery state machine guard for analysis tasks.
+///
+/// Frozen authority: <c>故障提交与恢复状态机.md</c> (P0-05) + 实现授权基线 §P1-2.
+/// This class is the SINGLE source of truth for which Job status transitions are legal;
+/// the persistence layer and orchestrator MUST route every status change through
+/// <see cref="EnsureTransition"/>.
+///
+/// Hard rules encoded (P0-05 §4):
+/// <list type="bullet">
+///   <item><description>COMPLETED is reachable only after AUDIT_COMMITTED.</description></item>
+///   <item><description>RECOVERY_REQUIRED is the only re-entry into the chain (→ SNAPSHOT_COMMITTED) and is reached only from explicit failure states or an external Host-exit mark.</description></item>
+///   <item><description>The Engine output, once persisted, is NEVER recomputed (enforced at the orchestrator; this guard refuses RECOVERY_REQUIRED → ENGINE_COMPLETED directly).</description></item>
+/// </list>
+///
+/// NOTE: <c>Draft</c> / <c>Running</c> (legacy pre-states in <see cref="AnalysisTaskStatus"/>)
+/// are intentionally absent from the transition graph; they are not part of the frozen chain.
+/// </summary>
+public static class JobLifecycle
+{
+    // ---- Review status (independent of Job status; CR-OBS-003-JOBSTATUS-001) ----
+    public static class ReviewStatus
+    {
+        public const string NotRequired = "NOT_REQUIRED";
+        public const string Pending = "PENDING";
+        public const string Reviewed = "REVIEWED";
+
+        public static IReadOnlyCollection<string> All { get; } =
+            new[] { NotRequired, Pending, Reviewed };
+    }
+
+    private static readonly IReadOnlyDictionary<string, HashSet<string>> Transitions =
+        new Dictionary<string, HashSet<string>>(StringComparer.Ordinal)
+        {
+            // Ordered commit chain (P0-05 §2).
+            [AnalysisTaskStatus.PrecheckPassed] = Set(AnalysisTaskStatus.SnapshotCommitted, AnalysisTaskStatus.PreflightFailed, AnalysisTaskStatus.CancelledBeforeEngine),
+            [AnalysisTaskStatus.SnapshotCommitted] = Set(AnalysisTaskStatus.EngineCompleted, AnalysisTaskStatus.EngineFailed, AnalysisTaskStatus.CancelRequestedEngineFinished, AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.EngineCompleted] = Set(AnalysisTaskStatus.OutputValidated, AnalysisTaskStatus.OutputValidationFailed, AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.OutputValidated] = Set(AnalysisTaskStatus.ArtifactCommitted, AnalysisTaskStatus.ArtifactCommitFailed, AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.ArtifactCommitted] = Set(AnalysisTaskStatus.ObservationCommitted, AnalysisTaskStatus.ObservationCommitFailed, AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.ObservationCommitted] = Set(AnalysisTaskStatus.AuditCommitted, AnalysisTaskStatus.AuditCommitFailed, AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.AuditCommitted] = Set(AnalysisTaskStatus.Completed),
+
+            // Explicit failure states → recovery (P0-05 §3).
+            [AnalysisTaskStatus.EngineFailed] = Set(AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.ArtifactCommitFailed] = Set(AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.ObservationCommitFailed] = Set(AnalysisTaskStatus.RecoveryRequired),
+            [AnalysisTaskStatus.AuditCommitFailed] = Set(AnalysisTaskStatus.RecoveryRequired),
+
+            // Recovery re-enters the chain at SNAPSHOT_COMMITTED, reusing the original snapshot.
+            [AnalysisTaskStatus.RecoveryRequired] = Set(AnalysisTaskStatus.SnapshotCommitted),
+        };
+
+    // Terminal states: no further transition is expected (a completed or finally-failed task).
+    private static readonly HashSet<string> Terminal = new(StringComparer.Ordinal)
+    {
+        AnalysisTaskStatus.Completed,
+        AnalysisTaskStatus.PreflightFailed,
+        AnalysisTaskStatus.CancelledBeforeEngine,
+        AnalysisTaskStatus.CancelRequestedEngineFinished,
+        AnalysisTaskStatus.EngineFailed,
+        AnalysisTaskStatus.OutputValidationFailed,
+        AnalysisTaskStatus.ArtifactCommitFailed,
+        AnalysisTaskStatus.ObservationCommitFailed,
+        AnalysisTaskStatus.AuditCommitFailed,
+    };
+
+    // In-flight progress states that the Launcher must mark RECOVERY_REQUIRED on Host exit
+    // (P0-B rule 2: a Host exit means the task CANNOT keep computing).
+    private static readonly HashSet<string> InFlight = new(StringComparer.Ordinal)
+    {
+        AnalysisTaskStatus.Draft,
+        AnalysisTaskStatus.Running,
+        AnalysisTaskStatus.PrecheckPassed,
+        AnalysisTaskStatus.SnapshotCommitted,
+        AnalysisTaskStatus.EngineCompleted,
+        AnalysisTaskStatus.OutputValidated,
+        AnalysisTaskStatus.ArtifactCommitted,
+        AnalysisTaskStatus.ObservationCommitted,
+        AnalysisTaskStatus.AuditCommitted,
+    };
+
+    /// <summary>True when <paramref name="state"/> is one of the frozen P0-05 job statuses.</summary>
+    public static bool IsValidState(string state) =>
+        state is
+            AnalysisTaskStatus.PrecheckPassed or AnalysisTaskStatus.SnapshotCommitted or
+            AnalysisTaskStatus.EngineCompleted or AnalysisTaskStatus.OutputValidated or
+            AnalysisTaskStatus.ArtifactCommitted or AnalysisTaskStatus.ObservationCommitted or
+            AnalysisTaskStatus.AuditCommitted or AnalysisTaskStatus.Completed or
+            AnalysisTaskStatus.PreflightFailed or AnalysisTaskStatus.EngineFailed or
+            AnalysisTaskStatus.OutputValidationFailed or AnalysisTaskStatus.ArtifactCommitFailed or
+            AnalysisTaskStatus.ObservationCommitFailed or AnalysisTaskStatus.AuditCommitFailed or
+            AnalysisTaskStatus.CancelledBeforeEngine or AnalysisTaskStatus.CancelRequestedEngineFinished or
+            AnalysisTaskStatus.RecoveryRequired;
+
+    public static bool IsTerminal(string state) => Terminal.Contains(state);
+
+    public static bool IsRecoveryState(string state) => state == AnalysisTaskStatus.RecoveryRequired;
+
+    public static bool IsFailureState(string state) =>
+        state is AnalysisTaskStatus.PreflightFailed or AnalysisTaskStatus.EngineFailed or
+            AnalysisTaskStatus.OutputValidationFailed or AnalysisTaskStatus.ArtifactCommitFailed or
+            AnalysisTaskStatus.ObservationCommitFailed or AnalysisTaskStatus.AuditCommitFailed or
+            AnalysisTaskStatus.CancelledBeforeEngine or AnalysisTaskStatus.CancelRequestedEngineFinished;
+
+    /// <summary>True for a progress state that is still computing and therefore must be
+    /// driven to RECOVERY_REQUIRED when the Host exits (P0-B rule 2).</summary>
+    public static bool IsInFlight(string state) => InFlight.Contains(state);
+
+    /// <summary>True only for the single fully-committed terminal state that the UI may
+    /// present as "已完成" (ADR-OBS-V030-UI-001 原则⑩).</summary>
+    public static bool IsFullyCompleted(string state) => state == AnalysisTaskStatus.Completed;
+
+    public static bool CanTransition(string current, string next) =>
+        Transitions.TryGetValue(current, out HashSet<string>? nexts) && nexts.Contains(next);
+
+    /// <summary>Throws <see cref="InvalidOperationException"/> when the transition is illegal.</summary>
+    public static void EnsureTransition(string current, string next)
+    {
+        if (current == next)
+            return;
+        if (!CanTransition(current, next))
+        {
+            throw new InvalidOperationException(
+                $"Illegal Job status transition: {current} -> {next}. The P0-05 commit chain forbids this edge.");
+        }
+    }
+
+    /// <summary>Independent review_status validation (CR-OBS-003-JOBSTATUS-001).</summary>
+    public static bool IsValidReviewStatus(string value) => ReviewStatus.All.Contains(value);
+
+    private static HashSet<string> Set(params string[] states) => new(states, StringComparer.Ordinal);
+}

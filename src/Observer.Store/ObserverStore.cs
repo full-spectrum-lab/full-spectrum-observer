@@ -25,7 +25,8 @@ public sealed class ObserverStore : IAsyncDisposable
         _dbPath = dbPath ?? throw new ArgumentNullException(nameof(dbPath));
     }
 
-    /// <summary>Applies <c>Init.sql</c> idempotently (CREATE TABLE IF NOT EXISTS).</summary>
+    /// <summary>Applies <c>Init.sql</c> idempotently (CREATE TABLE IF NOT EXISTS), then
+    /// backfills the <c>review_status</c> column for databases created before it existed.</summary>
     public async Task EnsureSchemaAsync()
     {
         await using var connection = Open();
@@ -34,6 +35,29 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var command = connection.CreateCommand();
         command.CommandText = sql;
         await command.ExecuteNonQueryAsync();
+        await EnsureReviewStatusColumnAsync(connection);
+    }
+
+    /// <summary>
+    /// Idempotently adds <c>review_status</c> to <c>analysis_tasks</c>. SQLite has no
+    /// ADD COLUMN IF NOT EXISTS, so we attempt the ALTER and ignore the duplicate-column error.
+    /// </summary>
+    private static async Task EnsureReviewStatusColumnAsync(SqliteConnection connection)
+    {
+        const string alter =
+            "ALTER TABLE analysis_tasks ADD COLUMN review_status TEXT NOT NULL DEFAULT 'NOT_REQUIRED' " +
+            "CHECK (review_status IN ('NOT_REQUIRED','PENDING','REVIEWED'))";
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = alter;
+            await command.ExecuteNonQueryAsync();
+        }
+        catch (Microsoft.Data.Sqlite.SqliteException exception)
+            when (exception.SqliteErrorCode == 1 && exception.Message.Contains("duplicate column", StringComparison.OrdinalIgnoreCase))
+        {
+            // Column already present on this database; nothing to do.
+        }
     }
 
     private static SqliteConnection Open(string dbPath) =>
@@ -419,8 +443,8 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var command = connection.CreateCommand();
         command.CommandText = @"
             INSERT INTO analysis_tasks
-                (task_id, subject_version_id, knowledge_version_ids, input_mode, canonical_input, content_digest, transform_trace, retention_mode, status, created_at)
-            VALUES (@id, @svid, @kvs, @mode, @ci, @cd, @tt, @rm, @status, @created)";
+                (task_id, subject_version_id, knowledge_version_ids, input_mode, canonical_input, content_digest, transform_trace, retention_mode, status, review_status, created_at)
+            VALUES (@id, @svid, @kvs, @mode, @ci, @cd, @tt, @rm, @status, @rstatus, @created)";
         command.Parameters.AddWithValue("@id", task.TaskId);
         command.Parameters.AddWithValue("@svid", task.SubjectVersionId);
         command.Parameters.AddWithValue("@kvs", SerializeArray(task.KnowledgeVersionIds));
@@ -430,12 +454,14 @@ public sealed class ObserverStore : IAsyncDisposable
         command.Parameters.AddWithValue("@tt", (object?)task.TransformTrace ?? DBNull.Value);
         command.Parameters.AddWithValue("@rm", task.RetentionMode);
         command.Parameters.AddWithValue("@status", task.Status);
+        command.Parameters.AddWithValue("@rstatus", task.ReviewStatus);
         command.Parameters.AddWithValue("@created", task.CreatedAt);
         await command.ExecuteNonQueryAsync();
     }
 
     /// <summary>Advances an analysis task's status. Only the <c>status</c> column is written; the
-    /// locked subject/knowledge version bindings are never altered.</summary>
+    /// locked subject/knowledge version bindings are never altered. The transition is validated
+    /// by the caller against <see cref="JobLifecycle"/>.</summary>
     public async Task UpdateAnalysisTaskStatusAsync(string taskId, string status)
     {
         await using var connection = Open();
@@ -443,6 +469,23 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var command = connection.CreateCommand();
         command.CommandText = "UPDATE analysis_tasks SET status=@status WHERE task_id=@id";
         command.Parameters.AddWithValue("@status", status);
+        command.Parameters.AddWithValue("@id", taskId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>Updates the independent review status (CR-OBS-003-JOBSTATUS-001). This never
+    /// alters the Engine execution fact recorded by <c>status</c>.</summary>
+    public async Task UpdateReviewStatusAsync(string taskId, string reviewStatus)
+    {
+        if (!JobLifecycle.IsValidReviewStatus(reviewStatus))
+        {
+            throw new StoreException("STORE_REVIEW_STATUS_INVALID", $"Invalid review_status: {reviewStatus}.");
+        }
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "UPDATE analysis_tasks SET review_status=@rstatus WHERE task_id=@id";
+        command.Parameters.AddWithValue("@rstatus", reviewStatus);
         command.Parameters.AddWithValue("@id", taskId);
         await command.ExecuteNonQueryAsync();
     }
@@ -471,6 +514,61 @@ public sealed class ObserverStore : IAsyncDisposable
             list.Add(MapAnalysisTask(reader));
         }
         return list;
+    }
+
+    /// <summary>Returns every analysis task currently in the given Job status (P0-05).</summary>
+    public async Task<List<AnalysisTask>> GetTasksByStatusAsync(string status)
+    {
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = AnalysisTaskSelect + " WHERE status = @status ORDER BY created_at, task_id";
+        command.Parameters.AddWithValue("@status", status);
+        await using var reader = await command.ExecuteReaderAsync();
+        var list = new List<AnalysisTask>();
+        while (await reader.ReadAsync())
+        {
+            list.Add(MapAnalysisTask(reader));
+        }
+        return list;
+    }
+
+    /// <summary>Returns every task that needs recovery after a Host exit / interruption (P0-05 / P0-B).</summary>
+    public async Task<List<AnalysisTask>> GetRecoveryRequiredTasksAsync() =>
+        await GetTasksByStatusAsync(AnalysisTaskStatus.RecoveryRequired);
+
+    /// <summary>Loads the runtime snapshot for a task, joining through its result. Null when no
+    /// result/snapshot has been persisted yet (Engine had not completed). Used by the recovery
+    /// planner to decide whether the Engine must re-run or the task can resume post-Engine.</summary>
+    public async Task<RuntimeSnapshot?> GetRuntimeSnapshotByTaskAsync(string taskId)
+    {
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = @"
+            SELECT s.snapshot_id, s.result_id, s.analyzer_version, s.engine_version, s.profile_version,
+                   s.schema_version, s.input_digest, s.config_digest, s.runtime_digest
+            FROM runtime_snapshots s
+            JOIN analysis_results r ON r.result_id = s.result_id
+            WHERE r.task_id = @tid";
+        command.Parameters.AddWithValue("@tid", taskId);
+        await using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return new RuntimeSnapshot
+            {
+                SnapshotId = reader.GetString(0),
+                ResultId = reader.GetString(1),
+                AnalyzerVersion = reader.GetString(2),
+                EngineVersion = reader.GetString(3),
+                ProfileVersion = reader.GetString(4),
+                SchemaVersion = reader.GetString(5),
+                InputDigest = reader.GetString(6),
+                ConfigDigest = reader.GetString(7),
+                RuntimeDigest = reader.GetString(8),
+            };
+        }
+        return null;
     }
 
     public async Task InsertAnalysisResultAsync(AnalysisResult result)
@@ -744,7 +842,7 @@ public sealed class ObserverStore : IAsyncDisposable
         "SELECT version_id, source_id, digest, applicability, status, seq, payload, created_at, effective_time FROM knowledge_source_versions";
 
     private const string AnalysisTaskSelect =
-        "SELECT task_id, subject_version_id, knowledge_version_ids, input_mode, canonical_input, content_digest, transform_trace, retention_mode, status, created_at FROM analysis_tasks";
+        "SELECT task_id, subject_version_id, knowledge_version_ids, input_mode, canonical_input, content_digest, transform_trace, retention_mode, status, review_status, created_at FROM analysis_tasks";
 
     private static ObservedSubject MapSubject(SqliteDataReader reader) => new()
     {
@@ -818,7 +916,8 @@ public sealed class ObserverStore : IAsyncDisposable
         TransformTrace = reader.IsDBNull(6) ? null : reader.GetString(6),
         RetentionMode = reader.GetString(7),
         Status = reader.GetString(8),
-        CreatedAt = reader.GetString(9),
+        ReviewStatus = reader.IsDBNull(9) ? JobLifecycle.ReviewStatus.NotRequired : reader.GetString(9),
+        CreatedAt = reader.GetString(10),
     };
 
     private static AnalysisResult MapAnalysisResult(SqliteDataReader reader) => new()

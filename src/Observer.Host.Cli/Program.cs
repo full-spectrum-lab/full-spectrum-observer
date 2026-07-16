@@ -3,7 +3,9 @@ using FullSpectrum.Observer.Application;
 using FullSpectrum.Observer.Contracts;
 using FullSpectrum.Observer.Contracts.Models;
 using FullSpectrum.Observer.Contracts.Serialization;
+using FullSpectrum.Observer.Evidence;
 using FullSpectrum.Observer.Host.Cli;
+using FullSpectrum.Observer.Store;
 
 return await MainAsync(args);
 
@@ -36,6 +38,7 @@ static async Task<int> MainAsync(string[] args)
             "analyze" => await AnalyzeAsync(host, options, cts.Token),
             "show" => await ShowAsync(host, options, cts.Token),
             "verify-audit" => await VerifyAuditAsync(host, options, cts.Token),
+            "serve" => await ServeAsync(options, cts.Token),
             _ => Unsupported(command),
         };
     }
@@ -176,6 +179,26 @@ static async Task<int> VerifyAuditAsync(
     AuditVerificationResult result = await host.UseCases.VerifyAudit.VerifyAsync(from, cancellationToken);
     Write(result, options.Has("--json"));
     return result.IsValid ? 0 : 50;
+}
+
+/// <summary>
+/// Windows Launcher entry: bootstrap the single-instance lock (ADR-005 L1), mint a one-time
+/// bootstrap token on a random loopback port (L2/L3), launch the Blazor Host, open the browser,
+/// and on shutdown drive in-flight tasks to RECOVERY_REQUIRED (P0-B rule 2).
+/// </summary>
+static async Task<int> ServeAsync(CliOptions options, CancellationToken cancellationToken)
+{
+    string dataDir = Path.GetFullPath(
+        options.Get("--data-dir") ?? Path.Combine(Directory.GetCurrentDirectory(), "data"));
+    string dbPath = Path.Combine(dataDir, "observer_console.db");
+
+    var store = new ObserverStore(dbPath);
+    await store.EnsureSchemaAsync();
+
+    var clock = new SystemClock();
+    var ids = new GuidIdGenerator();
+    using var launcher = new Launcher(store, clock, ids, dataDir);
+    return await launcher.RunAsync(cancellationToken);
 }
 
 static void Write<T>(T value, bool json)

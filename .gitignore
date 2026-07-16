@@ -4,8 +4,11 @@
 artifacts/*
 !artifacts/.gitkeep
 
-# Local runtime/data
+# Local runtime/data (NOTE: 'data/' also matches the source dir src/Observer.Store/Data
+# on case-insensitive filesystems; the negation below re-includes that source tree so the
+# embedded Init.sql schema migration stays version-controlled.)
 data/
+!src/Observer.Store/Data/
 logs/
 temp/
 engine/runtime/*
