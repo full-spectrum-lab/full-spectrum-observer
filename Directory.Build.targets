@@ -1,12 +1,33 @@
 <Project>
   <Target Name="RejectFloatingPackageVersions" BeforeTargets="Restore">
-    <ItemGroup>
-      <_FloatingPackageReference Include="@(PackageReference)"
-        Condition="$([System.String]::Copy('%(PackageReference.Version)').Contains('*'))
-          Or $([System.String]::Copy('%(PackageReference.Version)').Contains('['))
-          Or $([System.String]::Copy('%(PackageReference.Version)').Contains('('))" />
-    </ItemGroup>
-    <Error Condition="'@(_FloatingPackageReference)' != ''"
-      Text="Floating or ranged PackageReference versions are forbidden: @(_FloatingPackageReference)" />
+    <!--
+      Flatten every PackageReference Version into a single string property.
+      The @(PackageReference->'%(Version)') transform uses %() as TRANSFORM
+      syntax here (NOT as batch metadata inside a Condition), so it does NOT
+      trigger MSB4109 when an implicit restore runs (for example, when the
+      test runner triggers a restore without the no-restore switch). The
+      actual check is then done with plain string methods on the property,
+      which is safe in any Condition context.
+      We flag floating/ranged versions by the characters they contain:
+        '*'  -> floating version (e.g. 1.0.*)
+        '['  -> range open (e.g. [1.0,2.0])
+        ']'  -> range close (e.g. [1.0,2.0])
+        ','  -> range separator (present in every valid NuGet range, e.g. (1.0,2.0))
+      NOTE: a literal '(' cannot appear inside an MSBuild condition string
+      (it re-opens expression parsing and raises MSB4109), but any '(' range
+      also contains '[' or ']' or ',', so it is still caught by the checks
+      below. This preserves the original "forbid floating/ranged versions
+      (incl. *, [, ()" semantic without the MSB4109 trigger.
+    -->
+    <PropertyGroup>
+      <_PackageVersionBlob>@(PackageReference->'%(Version)')</_PackageVersionBlob>
+      <_HasFloatingVersion>false</_HasFloatingVersion>
+      <_HasFloatingVersion Condition="$([System.String]::Copy($(_PackageVersionBlob)).Contains('*'))">true</_HasFloatingVersion>
+      <_HasFloatingVersion Condition="$([System.String]::Copy($(_PackageVersionBlob)).Contains('['))">true</_HasFloatingVersion>
+      <_HasFloatingVersion Condition="$([System.String]::Copy($(_PackageVersionBlob)).Contains(']'))">true</_HasFloatingVersion>
+      <_HasFloatingVersion Condition="$([System.String]::Copy($(_PackageVersionBlob)).Contains(','))">true</_HasFloatingVersion>
+    </PropertyGroup>
+    <Error Condition="'$(_HasFloatingVersion)' == 'true'"
+      Text="Floating or ranged PackageReference versions are forbidden: $(_PackageVersionBlob)" />
   </Target>
 </Project>

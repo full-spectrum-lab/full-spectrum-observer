@@ -1,15 +1,25 @@
 # =============================================================================
 # run_m1_verify.ps1 - M1 (Observer v0.3.0-beta) verification runner
 #
-# TEMPORARY NuGetAudit BYPASS (tracked, NOT a permanent exemption):
-#   The `-p:NuGetAudit=false` passed to `dotnet restore/build/test` below is a
-#   TEMPORARY bypass for the HIGH advisory NU1903 on SQLitePCLRaw.lib.e_sqlite3
-#   2.1.6 (GHSA-2m69-gcr7-jv3q), a required transitive pin of Microsoft.Data.Sqlite
-#   8.0.10. It is registered as a v0.3 Final-HBG + RC/Release BLOCKER and MUST be
-#   resolved via the dependency upgrade (item 2). Do NOT hide it by leaving this
-#   bypass in place forever - REMOVE it once SQLitePCLRaw / Microsoft.Data.Sqlite
-#   is upgraded to a non-advisory version.
+# NuGetAudit BYPASS (EXPLICIT OPT-IN, tracked, NOT a permanent exemption):
+#   The HIGH advisory NU1903 on SQLitePCLRaw.lib.e_sqlite3 2.1.6
+#   (GHSA-2m69-gcr7-jv3q) is a required transitive pin of Microsoft.Data.Sqlite
+#   8.0.10. It is registered as a v0.3 Final-HBG + RC/Release BLOCKER and MUST
+#   be resolved via the dependency upgrade (item 2).
+#
+#   This bypass is now EXPLICIT / OPT-IN: it only switches NuGetAudit OFF when
+#   you pass the -AllowKnownNugetAuditBypass switch. By DEFAULT (no switch) the
+#   audit STAYS ON and is no longer silently disabled. Pass the switch ONLY for
+#   the known, already-registered NU1903 / GHSA-2m69-gcr7-jv3q bypass that is
+#   still pending a real fix via dependency upgrade (MUST be resolved via
+#   dependency upgrade). Do NOT leave this bypass on permanently - REMOVE the
+#   switch usage once SQLitePCLRaw / Microsoft.Data.Sqlite is upgraded to a
+#   non-advisory version.
 # =============================================================================
+[CmdletBinding()]
+param(
+    [switch] $AllowKnownNugetAuditBypass
+)
 $ErrorActionPreference = 'Continue'
 $dotnet = "C:\Users\wangjian0926\.dotnet10\dotnet.exe"
 $env:DOTNET_ROOT = "C:\Users\wangjian0926\.dotnet10"
@@ -18,10 +28,16 @@ $repo = "C:\Users\wangjian0926\WorkBuddy\2026-07-12-20-20-07\full-spectrum-obser
 $log = "C:\Users\wangjian0926\AppData\Local\Temp\m1_verify.log"
 $precheck = "C:\Users\wangjian0926\AppData\Local\Temp\verify_repo_identity.ps1"
 
+# Build the optional NuGetAudit bypass argument set. Empty unless the explicit
+# opt-in switch is provided - this keeps the audit enabled by default.
+$bypassArg = if ($AllowKnownNugetAuditBypass) { @('-p:NuGetAudit=false') } else { @() }
+
 function Log($s){ Add-Content -Path $log -Value $s -Encoding UTF8; Write-Host $s }
 
 Set-Content -Path $log -Value "" -Encoding UTF8
 Log "===== STEP V: REAL M1 VERIFICATION ($(Get-Date -Format u)) ====="
+Log "AllowKnownNugetAuditBypass=$AllowKnownNugetAuditBypass"
+Log "NuGetAudit effective bypass args: $($bypassArg -join ' ')"
 
 # --- identity precheck ---
 Log "===== IDENTITY PRECHECK ====="
@@ -37,14 +53,14 @@ Log "dotnet --version => $(& $dotnet --version 2>&1)"
 
 # --- restore (inject nuget.org since NuGet.Config has <clear/>; .packages used for SQLite) ---
 Log "===== dotnet restore ====="
-& $dotnet restore FullSpectrum.Observer.sln -s https://api.nuget.org/v3/index.json -p:NuGetAudit=false 2>&1 | Tee-Object -Append -FilePath $log
+& $dotnet restore FullSpectrum.Observer.sln -s https://api.nuget.org/v3/index.json @bypassArg 2>&1 | Tee-Object -Append -FilePath $log
 $rcrestore = $LASTEXITCODE
 Log "RESTORE_RC=$rcrestore"
 if ($rcrestore -ne 0) { Log "RESTORE FAILED"; exit 1 }
 
 # --- build Release ---
 Log "===== dotnet build -c Release ====="
-& $dotnet build FullSpectrum.Observer.sln -c Release -p:NuGetAudit=false 2>&1 | Tee-Object -Append -FilePath $log
+& $dotnet build FullSpectrum.Observer.sln -c Release @bypassArg 2>&1 | Tee-Object -Append -FilePath $log
 $rcbuild = $LASTEXITCODE
 Log "BUILD_RC=$rcbuild"
 if ($rcbuild -ne 0) { Log "BUILD FAILED"; exit 1 }
@@ -61,13 +77,13 @@ Log "copied sqlite3.dll into $copied bin output dirs"
 
 # --- Unit tests ---
 Log "===== dotnet test Unit (expect 18) ====="
-& $dotnet test tests/Observer.Tests.Unit -c Release -p:NuGetAudit=false --logger "trx;LogFileName=m1-unit-tests.trx" 2>&1 | Tee-Object -Append -FilePath $log
+& $dotnet test tests/Observer.Tests.Unit -c Release @bypassArg --logger "trx;LogFileName=m1-unit-tests.trx" 2>&1 | Tee-Object -Append -FilePath $log
 $rcunit = $LASTEXITCODE
 Log "UNIT_RC=$rcunit"
 
 # --- Integration tests ---
 Log "===== dotnet test Integration (expect 4) ====="
-& $dotnet test tests/Observer.Tests.Integration -c Release -p:NuGetAudit=false --logger "trx;LogFileName=m1-integration-tests.trx" 2>&1 | Tee-Object -Append -FilePath $log
+& $dotnet test tests/Observer.Tests.Integration -c Release @bypassArg --logger "trx;LogFileName=m1-integration-tests.trx" 2>&1 | Tee-Object -Append -FilePath $log
 $rcint = $LASTEXITCODE
 Log "INTEGRATION_RC=$rcint"
 
