@@ -1,0 +1,72 @@
+$ErrorActionPreference = 'Continue'
+$dotnet = "C:\Users\wangjian0926\.dotnet10\dotnet.exe"
+$env:DOTNET_ROOT = "C:\Users\wangjian0926\.dotnet10"
+$env:PATH = "C:\Users\wangjian0926\.dotnet10;$env:PATH"
+$repo = "C:\Users\wangjian0926\WorkBuddy\2026-07-12-20-20-07\full-spectrum-observer"
+$log = "C:\Users\wangjian0926\AppData\Local\Temp\m1_verify.log"
+$precheck = "C:\Users\wangjian0926\AppData\Local\Temp\verify_repo_identity.ps1"
+
+function Log($s){ Add-Content -Path $log -Value $s -Encoding UTF8; Write-Host $s }
+
+Set-Content -Path $log -Value "" -Encoding UTF8
+Log "===== STEP V: REAL M1 VERIFICATION ($(Get-Date -Format u)) ====="
+
+# --- identity precheck ---
+Log "===== IDENTITY PRECHECK ====="
+& "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $precheck
+if ($LASTEXITCODE -ne 0) { Log "PRECHECK FAILED -> ABORT"; exit 1 }
+
+cd $repo
+
+# --- SDK / global.json ---
+Log "===== SDK / global.json ====="
+Log "dotnet --version => $(& $dotnet --version 2>&1)"
+& $dotnet --info 2>&1 | ForEach-Object { Log $_ }
+
+# --- restore (inject nuget.org since NuGet.Config has <clear/>; .packages used for SQLite) ---
+Log "===== dotnet restore ====="
+& $dotnet restore FullSpectrum.Observer.sln -s https://api.nuget.org/v3/index.json -p:NuGetAudit=false 2>&1 | Tee-Object -Append -FilePath $log
+$rcrestore = $LASTEXITCODE
+Log "RESTORE_RC=$rcrestore"
+if ($rcrestore -ne 0) { Log "RESTORE FAILED"; exit 1 }
+
+# --- build Release ---
+Log "===== dotnet build -c Release ====="
+& $dotnet build FullSpectrum.Observer.sln -c Release -p:NuGetAudit=false 2>&1 | Tee-Object -Append -FilePath $log
+$rcbuild = $LASTEXITCODE
+Log "BUILD_RC=$rcbuild"
+if ($rcbuild -ne 0) { Log "BUILD FAILED"; exit 1 }
+
+# --- provision native sqlite3.dll into every bin/Release/net10.0 output ---
+Log "===== provision native sqlite3.dll into bin outputs ====="
+$src = Join-Path $repo ".runtime\sqlite\sqlite3.dll"
+$copied = 0
+Get-ChildItem $repo -Recurse -Directory -Filter net10.0 | Where-Object { $_.FullName -match 'bin\\Release' } | ForEach-Object {
+    Copy-Item $src (Join-Path $_.FullName "sqlite3.dll") -Force
+    $copied++
+}
+Log "copied sqlite3.dll into $copied bin output dirs"
+
+# --- Unit tests ---
+Log "===== dotnet test Unit (expect 18) ====="
+& $dotnet test tests/Observer.Tests.Unit -c Release -p:NuGetAudit=false --logger "trx;LogFileName=m1-unit-tests.trx" 2>&1 | Tee-Object -Append -FilePath $log
+$rcunit = $LASTEXITCODE
+Log "UNIT_RC=$rcunit"
+
+# --- Integration tests ---
+Log "===== dotnet test Integration (expect 4) ====="
+& $dotnet test tests/Observer.Tests.Integration -c Release -p:NuGetAudit=false --logger "trx;LogFileName=m1-integration-tests.trx" 2>&1 | Tee-Object -Append -FilePath $log
+$rcint = $LASTEXITCODE
+Log "INTEGRATION_RC=$rcint"
+
+# --- parse discovered counts ---
+function ParseCount($projLog) {
+    # look for the VSTest summary line "Passed!  - Failed: X, Passed: Y, Skipped: Z, Total: T"
+    $m = Select-String -Path $log -Pattern "Passed!\s*-\s*Failed:\s*(\d+),\s*Passed:\s*(\d+),\s*Skipped:\s*(\d+),\s*Total:\s*(\d+)" | Select-Object -Last 1
+    if ($m) { return $m.Matches[0].Groups }
+    return $null
+}
+Log "===== SUMMARY ====="
+Log "RESTORE_RC=$rcrestore BUILD_RC=$rcbuild UNIT_RC=$rcunit INTEGRATION_RC=$rcint"
+Log "Expect Unit=18 Integration=4"
+Log "=== DONE ($(Get-Date -Format u)) ==="
