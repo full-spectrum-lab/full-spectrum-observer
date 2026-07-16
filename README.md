@@ -1,47 +1,57 @@
 # Full Spectrum Observer
 
-Observer System `0.2.0-alpha` — Engine v1.0/v1.5 Compatibility Adapter: a Python `src/compat/` layer layered on the v0.1 Foundation Kernel.
+[English](README.md) · [简体中文](README.zh-CN.md)
 
-## Current implementation status
+> Local-first Observer application for reproducible evidence, audit traces and bounded human review.
+
+[![Foundation gates](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml/badge.svg)](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml)
+[![Release](https://img.shields.io/badge/release-v0.2.0--alpha.2-orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/badge/license-MulanPSL--2.0%20OR%20Apache--2.0-blue)](LICENSE)
+
+## Release truth
+
+| Line | Status | Scope |
+| --- | --- | --- |
+| [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **Public pre-release** | Engine v1.0/v1.5 compatibility adapter over the Foundation Kernel. |
+| `v0.3.0-beta` | **In development — not released** | Local single-user Operator Console. |
+| `v0.4`–`v1.0` | **Designed — not implemented** | Scenario Packs, enterprise node, multi-principal service and real-organization validation. |
+
+The current GitHub Release is a source release. A roadmap or Wiki document is not an installable client and is not presented as a shipped capability.
+
+## What is implemented
+
+The released Foundation/compatibility line provides:
+
+- a pinned .NET 10 `win-x64` build baseline;
+- immutable runtime snapshots and a native SQLite evidence core;
+- a process-isolated Engine Facade with a private Python 3.11 runtime;
+- preservation of version, Profile, UNKNOWN, reason-code, Replay and Audit semantics across the Engine v1.0/v1.5 compatibility layer;
+- deterministic CASE005 fixtures, evidence manifests and offline verification gates;
+- dual licensing under `MulanPSL-2.0 OR Apache-2.0`.
+
+The latest `main` Foundation-gate workflow is the public CI source of truth. Historical candidate-branch reports remain available in the repository for audit, but do not override the release table above.
+
+## Architecture boundary
 
 ```text
-VG1 Scope Baseline:        FS-OBS-V010-SCOPE-BL-1.0 — FROZEN
-VG2 Design Baseline:       FS-OBS-V010-DES-BL-1.0 — FROZEN
-Implementation Baseline:   FS-OBS-V010-IMP-BL-1.0 — FROZEN
-IG0 Baseline Verified:     PASS
-IG1 Locked .NET Build:     PASS (formal repository)
-IG2 Contracts/Schemas:     PASS
-IG3 Evidence Core:         PASS (native SQLite win-x64)
-IG4 Engine Bridge:         PASS (private Python 3.11)
-WP-04 Execution Source:    IMPLEMENTED
-WP-05 CLI Source:          IMPLEMENTED
-IG5 Minimum Loop:          PASS
-IG6 Security/Fault Gate:   PASS
-IG7 Offline Package Gate:  PASS (R2, 1961/1961 payload checks)
-IG8 Independent Repro:     PASS (clean extracted package)
+Observer application (.NET 10)
+  → Application / Evidence Core
+  → Observer.EngineFacade
+  → pinned private Python worker
+  → fixed Engine contract
 ```
 
-IG0 through IG6 pass. The first IG7 package passed functional verification, but
-independent IG8 review found a blocking LICENSE/SBOM contradiction. The owner has
-now selected `MulanPSL-2.0 OR Apache-2.0`; packaging records that expression,
-inventories every payload file and includes all bundled Python distributions.
-The corrected R2 package passed complete payload verification and clean-directory
-IG8 replay. The `v0.2.0-alpha` tag denotes this Engine v1.0/v1.5 Compatibility Adapter release
-(Python `src/compat/` layer); it does not re-execute or re-claim the v0.1 Foundation
-Kernel .NET gates (IG0–IG8), which remain authoritative from the v0.1 release.
+Only `Observer.EngineFacade` may start the Engine worker. Observer does not reimplement FSHI, Risk, ESS, Gate, UNKNOWN, Explanation or Runestone calculations. It records and presents results; it does not certify, authorize or execute final enterprise actions.
 
-## Fixed toolchain
+## Reproduce the source gates
 
-- .NET SDK: `10.0.301`
-- Target framework: `net10.0`
-- Release target RID: `win-x64`
-- Engine source: `v1.0.0` / `09062bae2c7608bda79ee4bfde5779109e8e6197`
-- Schema baseline: `FS-OBS-V010-SCHEMA-BL-1.0`
+Prerequisites are intentionally pinned and are not downloaded by the scripts:
 
-The exact .NET 10 SDK is pinned by `global.json`. The build scripts do not download
-SDKs, packages, Python, or Engine files.
-
-## First commands on Windows
+- .NET SDK `10.0.301`;
+- target `net10.0`, RID `win-x64`;
+- private Python 3.11 and pinned native SQLite where required;
+- Engine and schema identities recorded in repository lock files.
 
 ```powershell
 pwsh ./scripts/verify-baseline.ps1
@@ -49,35 +59,35 @@ pwsh ./scripts/build.ps1 -Configuration Release -Locked
 pwsh ./scripts/test.ps1 -Gate IG1
 ```
 
-Run the remaining gates with explicitly pinned runtime paths:
+For gates that require private runtime paths:
 
 ```powershell
-$env:FSP_PRIVATE_PYTHON = "C:\\path\\to\\private-python-3.11\\python.exe"
-$env:FSP_SQLITE_NATIVE_DIR = "C:\\path\\to\\pinned-sqlite-win-x64"
+$env:FSP_PRIVATE_PYTHON = "C:\path\to\private-python-3.11\python.exe"
+$env:FSP_SQLITE_NATIVE_DIR = "C:\path\to\pinned-sqlite-win-x64"
 pwsh ./scripts/test.ps1 -Gate IG3
 pwsh ./scripts/test.ps1 -Gate IG4
 ```
 
-## Boundary
+## Evidence and documentation
 
-Only `Observer.EngineFacade` may start the Python worker. No project in this
-bootstrap implements FSHI, Risk, ESS, Gate, UNKNOWN, Explanation, or Runestone
-calculation logic.
+- [Releases](https://github.com/full-spectrum-lab/full-spectrum-observer/releases)
+- [Foundation gate workflow](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml)
+- [Evidence directory](evidence/)
+- [Baseline documents](docs/baselines/)
+- [Architecture decisions and documentation](docs/)
+- [Source package manifest](SOURCE_PACKAGE_MANIFEST.json)
+- [Security policy](SECURITY.md)
+- [Contributing](CONTRIBUTING.md)
 
-## IG2 candidate branch
+## Ecosystem
 
-The branch `feat/IMP-0101-ig2-contracts-candidate` contains the contract implementation candidate. It must not
-be merged into `main` until the exact .NET build and IG2 C# runners pass. See
-`IG2_候选执行报告.md`.
+| Repository | Role |
+| --- | --- |
+| [full-spectrum-protocol](https://github.com/full-spectrum-lab/full-spectrum-protocol) | Protocol schemas, specifications and conformance rules |
+| [full-spectrum-engine](https://github.com/full-spectrum-lab/full-spectrum-engine) | Deterministic local-first governance runtime |
+| [full-spectrum-enterprise-governance](https://github.com/full-spectrum-lab/full-spectrum-enterprise-governance) | Enterprise cases, adapters and review workflows |
+| [full-spectrum-commons](https://github.com/full-spectrum-lab/full-spectrum-commons) | Evidence status, diagrams, research and public navigation |
 
-## IG3 Evidence Core source candidate
+## License
 
-The `feat/IMP-0201-evidence-core-candidate` branch implements the SQLite schema, native C API adapter, Artifact Store, operations, idempotency, immutable Runtime Snapshot, Observation finalization and GLOBAL Audit Hash Chain. The Python reference oracle passes, but C# build and win-x64 native sqlite runtime tests are pending.
-
-## IG4 Engine Bridge source candidate
-
-The `feat/IMP-0301-engine-bridge-candidate` branch vendors the fixed Engine dependency, implements the one-line Python Worker protocol and the C# process Facade. The actual Worker smoke executes the pinned CASE005 golden successfully. The C# build, private Python 3.11 bundle and Windows process-tree tests remain pending.
-
-## IG3/IG4 source integration candidate
-
-The current `integration/IG3-IG4-source-candidate` branch contains both independently developed candidates. It is a source-compatibility branch only; it does not start WP-04 or claim IG3/IG4 Gate approval.
+Choose either `MulanPSL-2.0` or `Apache-2.0`. Third-party components retain their own licenses; release packages must include their exact SBOM and notices.
