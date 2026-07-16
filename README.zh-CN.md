@@ -1,5 +1,9 @@
 # Full Spectrum Observer
 
+[![全频谱三层入口与三大核心组件](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/architecture/three-entry-three-core-components-zh-v10.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/three-entry-three-core-components.md)
+
+**Observer 在体系中的位置：** Protocol 定义主体和治理契约，Engine 提供确定性分析，Observer 将获得授权的本地事实连接到 Evidence、Replay 与人工决策点。当前公开版本只做观察，不执行企业或生产系统的最终动作。
+
 [English](README.md) · [简体中文](README.zh-CN.md)
 
 > 面向可复现 Evidence、审计追踪和有限人工复核的本地优先 Observer 应用。
@@ -60,4 +64,3 @@ IG3/IG4 等门禁需显式提供固定的私有 Python 3.11 和原生 SQLite 路
 ## 许可证
 
 使用者可以在木兰宽松许可证第 2 版与 Apache License 2.0 中任选其一。第三方组件继续适用各自许可证；正式发布包必须附准确 SBOM 和第三方声明。
-

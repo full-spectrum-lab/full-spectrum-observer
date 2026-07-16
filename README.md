@@ -4,6 +4,10 @@
 
 > Local-first Observer application for reproducible evidence, audit traces and bounded human review.
 
+[![Full Spectrum three entries and three core components](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/architecture/three-entry-three-core-components-zh-v10.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/three-entry-three-core-components.md)
+
+**Where Observer fits:** Protocol defines subjects and governance contracts; Engine provides deterministic analysis; Observer connects authorized local facts to evidence, replay and a human decision point. The public Observer line remains observation-only and does not execute final enterprise or production actions.
+
 [![Foundation gates](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml/badge.svg)](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml)
 [![Release](https://img.shields.io/badge/release-v0.2.0--alpha.2-orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
@@ -78,6 +82,8 @@ pwsh ./scripts/test.ps1 -Gate IG4
 - [Source package manifest](SOURCE_PACKAGE_MANIFEST.json)
 - [Security policy](SECURITY.md)
 - [Contributing](CONTRIBUTING.md)
+- [Three entry paths and three core components](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/three-entry-three-core-components.md)
+- [Synthetic industrial evidence-gap case](https://github.com/full-spectrum-lab/full-spectrum-enterprise-governance/tree/main/cases/industrial-tightening-evidence-gap)
 
 ## Ecosystem
 
