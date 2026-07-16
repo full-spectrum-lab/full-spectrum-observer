@@ -18,11 +18,13 @@ public sealed class KnowledgeCatalog
 {
     private readonly ObserverStore _store;
     private readonly AuditContext _audit;
+    private readonly AuditViewer _viewer;
 
-    public KnowledgeCatalog(ObserverStore store, AuditContext audit)
+    public KnowledgeCatalog(ObserverStore store, AuditContext audit, AuditViewer viewer)
     {
         _store = store;
         _audit = audit;
+        _viewer = viewer;
     }
 
     public Task<List<KnowledgeSource>> ListAsync() => _store.GetKnowledgeSourcesAsync();
@@ -57,7 +59,7 @@ public sealed class KnowledgeCatalog
             CreatedAt = SystemClock.UtcNow,
         };
         await _store.InsertKnowledgeSourceVersionAsync(version);
-        await _audit.AppendAsync("IMPORT_KNOWLEDGE", null, $"source={sourceId} digest={digest}");
+        await _viewer.AppendAsync("IMPORT_KNOWLEDGE", null, $"source={sourceId} digest={digest}");
     }
 
     public async Task ActivateAsync(string sourceId, string versionId)
@@ -86,7 +88,7 @@ public sealed class KnowledgeCatalog
             CreatedAt = SystemClock.UtcNow,
         };
         await _store.InsertKnowledgeSourceVersionAsync(draft);
-        await _audit.AppendAsync("COPY_KNOWLEDGE_DRAFT", null, $"from={versionId}");
+        await _viewer.AppendAsync("COPY_KNOWLEDGE_DRAFT", null, $"from={versionId}");
         return draft.VersionId;
     }
 

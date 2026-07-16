@@ -16,11 +16,13 @@ public sealed class SubjectCatalog
 {
     private readonly ObserverStore _store;
     private readonly AuditContext _audit;
+    private readonly AuditViewer _viewer;
 
-    public SubjectCatalog(ObserverStore store, AuditContext audit)
+    public SubjectCatalog(ObserverStore store, AuditContext audit, AuditViewer viewer)
     {
         _store = store;
         _audit = audit;
+        _viewer = viewer;
     }
 
     public Task<List<ObservedSubject>> ListAsync() => _store.GetSubjectsAsync();
@@ -53,7 +55,7 @@ public sealed class SubjectCatalog
             CreatedAt = SystemClock.UtcNow,
         };
         await _store.InsertSubjectVersionAsync(version);
-        await _audit.AppendAsync("CREATE_SUBJECT", null, $"subject={localSubjectId}");
+        await _viewer.AppendAsync("CREATE_SUBJECT", null, $"subject={localSubjectId}");
     }
 
     public async Task ActivateAsync(string subjectId, string versionId)
@@ -87,7 +89,7 @@ public sealed class SubjectCatalog
             CreatedAt = SystemClock.UtcNow,
         };
         await _store.InsertSubjectVersionAsync(draft);
-        await _audit.AppendAsync("COPY_DRAFT", null, $"from={versionId}");
+        await _viewer.AppendAsync("COPY_DRAFT", null, $"from={versionId}");
         return draft.VersionId;
     }
 

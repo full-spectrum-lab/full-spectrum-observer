@@ -18,7 +18,7 @@ namespace FullSpectrum.Observer.Host.Web.Services;
 public sealed class AnalysisWorkspace
 {
     private readonly ObserverStore _store;
-    private readonly EngineFacade _engine;
+    private readonly FullSpectrum.Observer.EngineFacade.EngineFacade _engine;
     private readonly IntakeAdapter _intake;
     private readonly OutputAdapter _output;
     private readonly AuditViewer _audit;
@@ -27,7 +27,7 @@ public sealed class AnalysisWorkspace
 
     public AnalysisWorkspace(
         ObserverStore store,
-        EngineFacade engine,
+        FullSpectrum.Observer.EngineFacade.EngineFacade engine,
         IntakeAdapter intake,
         OutputAdapter output,
         AuditViewer audit,

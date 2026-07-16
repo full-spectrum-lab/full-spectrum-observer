@@ -181,11 +181,6 @@ static async Task<int> VerifyAuditAsync(
     return result.IsValid ? 0 : 50;
 }
 
-/// <summary>
-/// Windows Launcher entry: bootstrap the single-instance lock (ADR-005 L1), mint a one-time
-/// bootstrap token on a random loopback port (L2/L3), launch the Blazor Host, open the browser,
-/// and on shutdown drive in-flight tasks to RECOVERY_REQUIRED (P0-B rule 2).
-/// </summary>
 static async Task<int> ServeAsync(CliOptions options, CancellationToken cancellationToken)
 {
     string dataDir = Path.GetFullPath(

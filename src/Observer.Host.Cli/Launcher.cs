@@ -138,7 +138,7 @@ public sealed class Launcher : IDisposable
     private Process? _hostProcess;
 
     public int Port { get; private set; }
-    public BootstrapToken BootstrapToken { get; private set; }
+    public BootstrapToken? BootstrapToken { get; private set; }
 
     public Launcher(ObserverStore store, IClock clock, IIdGenerator ids, string dataDirectory)
     {
@@ -175,7 +175,7 @@ public sealed class Launcher : IDisposable
             {
                 Task hostExit = _hostProcess is null
                     ? Task.CompletedTask
-                    : _hostProcess.WaitForExitAsync();
+                    : _hostProcess.WaitForExitAsync(shutdownToken);
                 await Task.WhenAny(stopped.Task, hostExit);
             }
         }
@@ -203,7 +203,7 @@ public sealed class Launcher : IDisposable
         var startInfo = new ProcessStartInfo
         {
             FileName = hostExe,
-            Arguments = $"--urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken.Value}",
+            Arguments = $"--urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value}",
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = false,
