@@ -15,10 +15,7 @@ public sealed class OutputAdapter
     /// <summary>Splits a validated Engine response into Observer result/conflict/snapshot/evidence.</summary>
     public AnalysisOutput Parse(EngineResponse response, AnalysisTask task, string createdAtUtc)
     {
-        if (response is null)
-        {
-            throw new ArgumentNullException(nameof(response));
-        }
+        ArgumentNullException.ThrowIfNull(response);
 
         string resultId = $"RES-{task.TaskId}";
         string conclusionJson = response.Conclusion is { } conclusion

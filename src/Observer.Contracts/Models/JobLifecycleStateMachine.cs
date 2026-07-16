@@ -72,7 +72,11 @@ public static class JobLifecycle
     private static readonly HashSet<string> InFlight = new(StringComparer.Ordinal)
     {
         AnalysisTaskStatus.Draft,
-        AnalysisTaskStatus.Running,
+        // Legacy UI-derivative "in progress" marker. Kept here ONLY so a historical 'Running'
+        // row (allowed by the DB CHECK constraint for backward compatibility) is still treated
+        // as in-flight and driven to RECOVERY_REQUIRED on Host exit. Never persisted going forward
+        // (see AnalysisTaskStatus.Running [Obsolete]); referenced by literal to avoid the obsolete symbol.
+        "Running",
         AnalysisTaskStatus.PrecheckPassed,
         AnalysisTaskStatus.SnapshotCommitted,
         AnalysisTaskStatus.EngineCompleted,
@@ -113,8 +117,14 @@ public static class JobLifecycle
     /// present as "已完成" (ADR-OBS-V030-UI-001 原则⑩).</summary>
     public static bool IsFullyCompleted(string state) => state == AnalysisTaskStatus.Completed;
 
-    public static bool CanTransition(string current, string next) =>
-        Transitions.TryGetValue(current, out HashSet<string>? nexts) && nexts.Contains(next);
+    public static bool CanTransition(string current, string next)
+    {
+        // A self-transition is always legal (idempotent); mirrors EnsureTransition's short-circuit
+        // so the predicate and the guard agree on same-state transitions.
+        if (current == next)
+            return true;
+        return Transitions.TryGetValue(current, out HashSet<string>? nexts) && nexts.Contains(next);
+    }
 
     /// <summary>Throws <see cref="InvalidOperationException"/> when the transition is illegal.</summary>
     public static void EnsureTransition(string current, string next)

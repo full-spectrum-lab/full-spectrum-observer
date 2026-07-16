@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS evidence_bundles (
   bundle_id        TEXT PRIMARY KEY,
   result_id        TEXT NOT NULL REFERENCES analysis_results(result_id) ON DELETE RESTRICT,
   evidence_digest  TEXT NOT NULL,
-  references       TEXT NOT NULL
+  "references"     TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS audit_records (

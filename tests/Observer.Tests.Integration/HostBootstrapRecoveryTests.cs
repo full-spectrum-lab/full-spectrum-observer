@@ -31,7 +31,7 @@ public sealed class HostBootstrapRecoveryTests
 
     private static async Task SeedSubjectAsync(ObserverStore store)
     {
-        string now = SystemClock.UtcNow.ToString("O");
+        string now = new SystemClock().UtcNow.ToString("O");
         await store.InsertSubjectAsync(new ObservedSubject
         {
             LocalSubjectId = "S-1",
@@ -63,7 +63,7 @@ public sealed class HostBootstrapRecoveryTests
             ContentDigest = new string('d', 64),
             TransformTrace = null,
         };
-        return AnalysisTask.Create(taskId, "SV-1", ImmutableArray<string>.Empty, input, "FULL_LOCAL", SystemClock.UtcNow.ToString("O"))
+        return AnalysisTask.Create(taskId, "SV-1", ImmutableArray<string>.Empty, input, "FULL_LOCAL", new SystemClock().UtcNow.ToString("O"))
             with { Status = status };
     }
 
@@ -115,7 +115,7 @@ public sealed class HostBootstrapRecoveryTests
             ConclusionPayload = "{}",
             UnknownState = "KNOWN",
             HardGate = false,
-            CreatedAt = SystemClock.UtcNow.ToString("O"),
+            CreatedAt = new SystemClock().UtcNow.ToString("O"),
         });
         await store.InsertRuntimeSnapshotAsync(new RuntimeSnapshot
         {

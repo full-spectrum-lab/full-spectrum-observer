@@ -192,7 +192,7 @@ public sealed class ObserverStore : IAsyncDisposable
     {
         await using var connection = Open();
         await connection.OpenAsync();
-        await using var transaction = await connection.BeginTransactionAsync();
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
         try
         {
             SubjectVersion? target = await GetSubjectVersionAsync(connection, transaction, versionId);
@@ -238,7 +238,7 @@ public sealed class ObserverStore : IAsyncDisposable
     {
         await using var connection = Open();
         await connection.OpenAsync();
-        await using var transaction = await connection.BeginTransactionAsync();
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
         try
         {
             SubjectVersion? target = await GetSubjectVersionAsync(connection, transaction, versionId);
@@ -392,7 +392,7 @@ public sealed class ObserverStore : IAsyncDisposable
     {
         await using var connection = Open();
         await connection.OpenAsync();
-        await using var transaction = await connection.BeginTransactionAsync();
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
         try
         {
             KnowledgeSourceVersion? target = await GetKnowledgeSourceVersionAsync(connection, transaction, versionId);
@@ -625,7 +625,7 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var connection = Open();
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO evidence_bundles (bundle_id, result_id, evidence_digest, references) VALUES (@id, @rid, @ed, @refs)";
+        command.CommandText = "INSERT INTO evidence_bundles (bundle_id, result_id, evidence_digest, \"references\") VALUES (@id, @rid, @ed, @refs)";
         command.Parameters.AddWithValue("@id", bundle.BundleId);
         command.Parameters.AddWithValue("@rid", bundle.ResultId);
         command.Parameters.AddWithValue("@ed", bundle.EvidenceDigest);
@@ -663,7 +663,7 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var connection = Open();
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
-        command.CommandText = "SELECT bundle_id, result_id, evidence_digest, references FROM evidence_bundles WHERE result_id = @rid";
+        command.CommandText = "SELECT bundle_id, result_id, evidence_digest, \"references\" FROM evidence_bundles WHERE result_id = @rid";
         command.Parameters.AddWithValue("@rid", resultId);
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())

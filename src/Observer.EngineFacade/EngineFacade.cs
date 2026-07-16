@@ -102,8 +102,8 @@ public sealed class EngineFacade
                 "Engine execution timed out (dependency missing / not replayable).");
         }
 
-        string stdout = await process.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
-        _ = await process.StandardError.ReadToEndAsync().ConfigureAwait(false);
+        string stdout = await process.StandardOutput.ReadToEndAsync(linked.Token).ConfigureAwait(false);
+        _ = await process.StandardError.ReadToEndAsync(linked.Token).ConfigureAwait(false);
 
         // 4. Response-side validation (fail-closed).
         EngineResponse response;

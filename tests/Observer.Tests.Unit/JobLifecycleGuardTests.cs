@@ -40,8 +40,8 @@ public sealed class JobLifecycleGuardTests
     public void Same_state_is_idempotent()
     {
         JobLifecycle.CanTransition(AnalysisTaskStatus.EngineCompleted, AnalysisTaskStatus.EngineCompleted).Should().BeTrue();
-        JobLifecycle.Invoking(j => j.EnsureTransition(AnalysisTaskStatus.Completed, AnalysisTaskStatus.Completed))
-            .Should().NotThrow();
+        Action act = () => JobLifecycle.EnsureTransition(AnalysisTaskStatus.Completed, AnalysisTaskStatus.Completed);
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -104,7 +104,8 @@ public sealed class JobLifecycleGuardTests
         JobLifecycle.IsValidReviewStatus(JobLifecycle.ReviewStatus.NotRequired).Should().BeTrue();
         JobLifecycle.IsValidReviewStatus(JobLifecycle.ReviewStatus.Pending).Should().BeTrue();
         JobLifecycle.IsValidReviewStatus(JobLifecycle.ReviewStatus.Reviewed).Should().BeTrue();
-        JobLifecycle.IsValidReviewStatus("REVIEWED").Should().BeFalse();
+        // "APPROVED" is a plausible-but-undefined review status; it must be rejected.
+        JobLifecycle.IsValidReviewStatus("APPROVED").Should().BeFalse();
         JobLifecycle.ReviewStatus.All.Should().HaveCount(3);
     }
 

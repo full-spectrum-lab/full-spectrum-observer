@@ -63,7 +63,9 @@ public static class RecoveryBootstrap
     private static IEnumerable<string> InFlightStates()
     {
         yield return AnalysisTaskStatus.Draft;
-        yield return AnalysisTaskStatus.Running;
+        // Legacy UI-derivative "in progress" marker; scanned by literal so historical 'Running'
+        // rows (DB CHECK allows them for backward compatibility) are still recovered. Not persisted.
+        yield return "Running";
         yield return AnalysisTaskStatus.PrecheckPassed;
         yield return AnalysisTaskStatus.SnapshotCommitted;
         yield return AnalysisTaskStatus.EngineCompleted;
