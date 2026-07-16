@@ -1,9 +1,9 @@
 {
   "package_id": "full-spectrum-observer-source-v0.2.0-alpha.2",
-  "generated_at_utc": "2026-07-14T15:46:46Z",
+  "generated_at_utc": "2026-07-16T06:42:56Z",
   "repository": "full-spectrum/full-spectrum-observer",
   "branch": "v0.2.0-alpha.2",
-  "source_head": "b70826a766eed7f3887d8c8a8e3199d5622ea397",
+  "source_head": "b09f01e28f825ac51d8396aaac444b288bce5912",
   "system_version": "0.2.0-alpha.2",
   "scope": "Engine v1.0/v1.5 Compatibility Adapter (Python layer); v0.1 Foundation Kernel .NET gates inherited, not re-executed here",
   "dotnet_build": "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)",
@@ -20,8 +20,8 @@
     },
     {
       "path": ".github/workflows/foundation-gates.yml",
-      "size_bytes": 1999,
-      "sha256": "adc2108c3352e0bb41f4e047085ea8bec8ccc98586d4bbf5845639ba0baee02a"
+      "size_bytes": 2351,
+      "sha256": "1f40d76ffe50c4d06fd79f044c937fe229366d4519eb34ee1f4ee0080fd41b6c"
     },
     {
       "path": ".gitignore",
