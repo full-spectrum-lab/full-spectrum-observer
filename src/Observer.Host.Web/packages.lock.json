@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     "net10.0": {
+      "Microsoft.AspNetCore.App.Internal.Assets": {
+        "type": "Direct",
+        "requested": "[10.0.9, )",
+        "resolved": "10.0.9",
+        "contentHash": "E9Wp/LPKAYkGOVBv4lt5U5TnUA/7pov7QZAwF3eI64kK8AAXqkPDwuadEOwpL1WXEfgecYm0fccluvABp32D8g=="
+      },
       "Microsoft.Data.Sqlite": {
         "type": "Transitive",
         "resolved": "8.0.10",
@@ -54,6 +60,14 @@
       },
       "FullSpectrum.Observer.Contracts": {
         "type": "Project"
+      },
+      "FullSpectrum.Observer.EngineFacade": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Application": "[1.0.0, )",
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "FullSpectrum.Observer.Store": "[1.0.0, )"
+        }
       },
       "FullSpectrum.Observer.Store": {
         "type": "Project",

@@ -2,6 +2,50 @@
   "version": 1,
   "dependencies": {
     "net10.0": {
+      "Microsoft.Data.Sqlite": {
+        "type": "Transitive",
+        "resolved": "8.0.10",
+        "contentHash": "LvqIniy/EvNf5ixgChUz0p3VMCrjemgMJGrKl9p5UE384Q/ASK/Fe9J6wLHVuZ3AiiuH9qv8Zo9qXH310tWzUw==",
+        "dependencies": {
+          "Microsoft.Data.Sqlite.Core": "8.0.10",
+          "SQLitePCLRaw.bundle_e_sqlite3": "2.1.6"
+        }
+      },
+      "Microsoft.Data.Sqlite.Core": {
+        "type": "Transitive",
+        "resolved": "8.0.10",
+        "contentHash": "ZKd0NfhYDxHY920ADQ8bPJuixcL+EW4HJD/N81g+PZ4gB+XoFZXFKOc7tWes+HkTfvU8vLN//Oq7gzG9lMxFSw==",
+        "dependencies": {
+          "SQLitePCLRaw.core": "2.1.6"
+        }
+      },
+      "SQLitePCLRaw.bundle_e_sqlite3": {
+        "type": "Transitive",
+        "resolved": "2.1.6",
+        "contentHash": "aRaQRN70jpQ6rGJNg75yrgmwRrf0usHvzSrrvgL6mEeti8UwOwWDSzmIDAXjPOZKUaNPWIehO7w1dh1yzghrrw==",
+        "dependencies": {
+          "SQLitePCLRaw.lib.e_sqlite3": "2.1.6",
+          "SQLitePCLRaw.provider.e_sqlite3": "2.1.6"
+        }
+      },
+      "SQLitePCLRaw.core": {
+        "type": "Transitive",
+        "resolved": "2.1.6",
+        "contentHash": "Frw5zVMl3qN+FWT8Moo1lm1tggh4KQ2UXcV0lrcW1JNbU0KFmJrzL6e9Je+aiseVtj5qGQRNP4ShBNZDMZRzvg=="
+      },
+      "SQLitePCLRaw.lib.e_sqlite3": {
+        "type": "Transitive",
+        "resolved": "2.1.6",
+        "contentHash": "aVQ/ysavZSC2OO0Axfj43Fl0c3Y4LFYcqCkEeAIUs+dcxCkxBsSj9vZxtz1ZEZWADESvotTcUzqCV7AP33fWYw=="
+      },
+      "SQLitePCLRaw.provider.e_sqlite3": {
+        "type": "Transitive",
+        "resolved": "2.1.6",
+        "contentHash": "UnzsdPLr7/I4s7sfiYY3V2ZZU3qm8sWkOEscGwlMt3K/6G8FwToQICR71z/th1nAv1aKHABZwdh7u+0tsQGHAQ==",
+        "dependencies": {
+          "SQLitePCLRaw.core": "2.1.6"
+        }
+      },
       "FullSpectrum.Observer.Application": {
         "type": "Project",
         "dependencies": {
@@ -15,7 +59,8 @@
         "type": "Project",
         "dependencies": {
           "FullSpectrum.Observer.Application": "[1.0.0, )",
-          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "FullSpectrum.Observer.Store": "[1.0.0, )"
         }
       },
       "FullSpectrum.Observer.Evidence": {
@@ -30,6 +75,13 @@
         "dependencies": {
           "FullSpectrum.Observer.Application": "[1.0.0, )",
           "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+        }
+      },
+      "FullSpectrum.Observer.Store": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "Microsoft.Data.Sqlite": "[8.0.10, )"
         }
       }
     }

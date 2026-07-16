@@ -3,7 +3,8 @@
   "dependencies": {
     "net10.0": {
       "Microsoft.Data.Sqlite": {
-        "type": "Transitive",
+        "type": "Direct",
+        "requested": "[8.0.10, )",
         "resolved": "8.0.10",
         "contentHash": "LvqIniy/EvNf5ixgChUz0p3VMCrjemgMJGrKl9p5UE384Q/ASK/Fe9J6wLHVuZ3AiiuH9qv8Zo9qXH310tWzUw==",
         "dependencies": {
@@ -46,21 +47,8 @@
           "SQLitePCLRaw.core": "2.1.6"
         }
       },
-      "FullSpectrum.Observer.Application": {
-        "type": "Project",
-        "dependencies": {
-          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
-        }
-      },
       "FullSpectrum.Observer.Contracts": {
         "type": "Project"
-      },
-      "FullSpectrum.Observer.Store": {
-        "type": "Project",
-        "dependencies": {
-          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
-          "Microsoft.Data.Sqlite": "[8.0.10, )"
-        }
       }
     }
   }
