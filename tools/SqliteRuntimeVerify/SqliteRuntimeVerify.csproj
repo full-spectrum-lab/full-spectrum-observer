@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>14.0</LangVersion>
+
+    <!--
+      Standalone security-verification harness for M2-SEC-01.
+      This project is intentionally EXCLUDED from the solution (.sln) so that it
+      never changes the 14-project product build semantics (M2 P1 must stay at
+      Unit 31/31, Integration 8/8, 0 errors). The strict product rules coming
+      from the repo-root Directory.Build.props / .targets are deliberately
+      relaxed here because this is a throwaway verification tool, not product code.
+    -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <AnalysisLevel>none</AnalysisLevel>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <IsPackable>false</IsPackable>
+
+    <!--
+      Which fix candidate to verify. Override on the command line:
+        dotnet run/build -p:Candidate=A    (RECOMMENDED, default)
+        dotnet run/build -p:Candidate=A1
+        dotnet run/build -p:Candidate=B
+
+      A  = Microsoft.Data.Sqlite.Core 8.0.10 + SQLitePCLRaw.core 2.1.6
+            + SQLitePCLRaw.provider.e_sqlite3 2.1.6 + SourceGear.sqlite3
+            => patched engine, AND the vulnerable SQLitePCLRaw.lib.e_sqlite3
+               is removed from the graph => NuGetAudit passes by construction.
+      A1 = Microsoft.Data.Sqlite 8.0.10 (full bundle) + SourceGear.sqlite3
+            => the vulnerable lib stays in the graph => NuGetAudit still fails.
+      B  = Microsoft.Data.Sqlite 8.0.10 + SQLitePCLRaw.lib.e_sqlite3 2.1.12
+            => NuGet unifies the transitive lib.e_sqlite3 2.1.6 -> 2.1.12
+               (2.1.12 > 2.1.11, outside the advisory range) => audit-clean.
+    -->
+    <Candidate>A</Candidate>
+    <SourceGearVersion>3.53.3</SourceGearVersion>
+    <LibVersion>2.1.12</LibVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Candidate)' == 'A'">
+    <DefineConstants>$(DefineConstants);CAND_A;USE_CUSTOM_PROVIDER</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Candidate)' == 'A1'">
+    <DefineConstants>$(DefineConstants);CAND_A1</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Candidate)' == 'B'">
+    <DefineConstants>$(DefineConstants);CAND_B</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Candidate A: Core + custom provider so the patched SourceGear native lib is used.
+       SQLitePCLRaw.provider.e_sqlite3 (2.1.6) depends ONLY on SQLitePCLRaw.core
+       (it is the managed P/Invoke wrapper for e_sqlite3.dll); it does NOT pull the
+       vulnerable SQLitePCLRaw.lib.e_sqlite3 package. SourceGear.sqlite3 deploys the
+       patched e_sqlite3.dll (engine >= 3.50.2). Hence the vulnerable package is
+       entirely absent from the graph => NuGetAudit passes by construction. -->
+  <ItemGroup Condition="'$(Candidate)' == 'A'">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.10" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.6" />
+    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="2.1.6" />
+    <PackageReference Include="SourceGear.sqlite3" Version="$(SourceGearVersion)" />
+  </ItemGroup>
+
+  <!-- Candidate A1: full Microsoft.Data.Sqlite bundle + SourceGear override attempt. -->
+  <ItemGroup Condition="'$(Candidate)' == 'A1'">
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <PackageReference Include="SourceGear.sqlite3" Version="$(SourceGearVersion)" />
+  </ItemGroup>
+
+  <!-- Candidate B: try to pin the transitive vulnerable lib to a patched build. -->
+  <ItemGroup Condition="'$(Candidate)' == 'B'">
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="$(LibVersion)" />
+  </ItemGroup>
+
+</Project>
