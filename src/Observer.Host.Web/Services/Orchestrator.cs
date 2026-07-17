@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FullSpectrum.Observer.Contracts.Models;
+using FullSpectrum.Observer.EngineFacade;
 
 namespace FullSpectrum.Observer.Host.Web.Services;
 
@@ -31,4 +33,13 @@ public sealed class Orchestrator
 
     /// <summary>Runs a previously created analysis task (delegates to the workspace).</summary>
     public Task<AnalysisRunOutcome> RunAnalysisAsync(string taskId) => Workspace.RunAnalysisAsync(taskId);
+
+    /// <summary>Idempotent create-and-run keyed by JobId + request fingerprint (delegates to the workspace).</summary>
+    public Task<AnalysisRunOutcome> CreateAndRunAsync(
+        string? requestedJobId,
+        string subjectVersionId,
+        IReadOnlyList<string> knowledgeVersionIds,
+        RawAnalysisInput input,
+        RetentionMode retention) =>
+        Workspace.CreateAndRunAsync(requestedJobId, subjectVersionId, knowledgeVersionIds, input, retention);
 }

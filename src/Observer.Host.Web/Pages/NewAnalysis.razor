@@ -3,6 +3,7 @@
 @inject SubjectCatalog Subjects
 @inject KnowledgeCatalog Knowledge
 @inject AnalysisWorkspace Workspace
+@inject NavigationManager Navigation
 
 <PageTitle>新建分析 — Observer 控制台</PageTitle>
 
@@ -74,11 +75,12 @@ else
     </div>
 }
 
-@if (_ran)
+@if (_ran && _outcome is not null)
 {
     <div class="card">
         <h2>运行结果</h2>
-        <p>任务：<code>@_outcome?.TaskId</code> · 状态：<code>@_outcome?.Task?.Status</code></p>
+        <p>任务：<code>@_outcome.TaskId</code> · 状态：<code>@_outcome.Task?.Status</code></p>
+        <p class="muted">状态为后端 SQLite 按 JobId 持久化的真相；浏览器刷新或 Circuit 断开后从此处重新拉取即一致。</p>
 
         @if (_outcome is { Succeeded: false })
         {
@@ -144,11 +146,19 @@ else
 <div class="sr-only" aria-live="polite">@_live</div>
 
 @code {
+    [SupplyParameterFromQuery(Name = "jobId")]
+    private string? JobIdQuery { get; set; }
+
     private bool _loading = true;
     private bool _busy;
     private bool _ran;
     private string? _error;
     private string _live = "";
+
+    // Stable JobId for this submission. Reused across re-submits in the same page session so a
+    // repeated submit of the identical request is idempotent (no new task is created). Persisted in
+    // the URL (?jobId=…) so a browser refresh re-reads the authoritative backend state.
+    private string? _jobId;
 
     private List<SubjectVersion> _subjectVersions = new();
     private List<KnowledgeSourceVersion> _knowledgeVersions = new();
@@ -176,6 +186,23 @@ else
             foreach (var k in sources)
             {
                 _knowledgeVersions.AddRange(await Knowledge.ListVersionsAsync(k.SourceId));
+            }
+
+            // Refresh / deep-link rehydration: the JobId lives in the URL, so the authoritative task
+            // AND its committed artifacts are re-read from SQLite (the backend is the single source
+            // of truth). The rendered view after a refresh is identical to the post-run view (AC-10).
+            if (!string.IsNullOrWhiteSpace(JobIdQuery))
+            {
+                _jobId = JobIdQuery;
+                _outcome = await Workspace.LoadOutcomeAsync(JobIdQuery);
+                if (_outcome.Task is null)
+                {
+                    _error = $"任务 {JobIdQuery} 不存在。";
+                }
+                else
+                {
+                    _ran = true;
+                }
             }
         }
         catch (Exception ex)
@@ -229,10 +256,14 @@ else
                 TransformTrace = null,
             };
 
-            AnalysisTask task = await Workspace.CreateDraftTaskAsync(_subjectVersionId, _selectedKv, input, _retention);
-            _outcome = await Workspace.RunAnalysisAsync(task.TaskId);
+            // Idempotent create-and-run keyed by JobId + request fingerprint. The same JobId
+            // resubmitted returns the existing task instead of creating a duplicate.
+            _jobId ??= Ids.Next("TASK");
+            _outcome = await Workspace.CreateAndRunAsync(_jobId, _subjectVersionId, _selectedKv, input, _retention);
             _ran = true;
             _live = _outcome.Succeeded ? "分析完成，结论按原样呈现。" : "分析未成功：" + _outcome.ErrorMessage;
+            // Pin the JobId in the URL so a refresh rebuilds the view from the backend, not memory.
+            Navigation.NavigateTo($"/new-analysis?jobId={_jobId}", replace: true);
         }
         catch (Exception ex)
         {

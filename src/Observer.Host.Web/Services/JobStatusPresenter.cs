@@ -30,7 +30,10 @@ public sealed class JobStatusPresenter
         (string label, string tone, bool complete, bool recovery, bool failure, string? hint) = jobStatus switch
         {
             AnalysisTaskStatus.Draft => ("草稿", "muted", false, false, false, null),
-            AnalysisTaskStatus.Running => ("执行中", "info", false, false, false, null),
+            // Historical UI-derivative "in progress" marker. Referenced by literal (never the
+            // obsolete AnalysisTaskStatus.Running symbol) so the enum member stays unused going
+            // forward; new tasks never persist this value.
+            "Running" => ("执行中(历史)", "info", false, false, false, "历史 UI 派生状态；新任务不再持久化 Running。"),
             AnalysisTaskStatus.PrecheckPassed => ("预检查通过", "info", false, false, false, null),
             AnalysisTaskStatus.SnapshotCommitted => ("快照已提交", "info", false, false, false, null),
             AnalysisTaskStatus.EngineCompleted => ("Engine 完成（未完整）", "warn", false, false, false, "Engine 已完成，尚未完成落库，非任务完成。"),
@@ -56,6 +59,10 @@ public sealed class JobStatusPresenter
 
     /// <summary>The single gate for the "已完成" badge (原则⑩): true ONLY for COMPLETED.</summary>
     public bool IsFullyCompleted(string jobStatus) => JobLifecycle.IsFullyCompleted(jobStatus);
+
+    /// <summary>True when the task is still progressing (derived from canonical states, never from
+    /// the obsolete <c>Running</c> marker). Mirrors <see cref="JobLifecycle.IsInProgress"/>.</summary>
+    public bool IsInProgress(string jobStatus) => JobLifecycle.IsInProgress(jobStatus);
 
     /// <summary>True when the task needs recovery (RECOVERY_REQUIRED).</summary>
     public bool RequiresRecovery(string jobStatus) => JobLifecycle.IsRecoveryState(jobStatus);
