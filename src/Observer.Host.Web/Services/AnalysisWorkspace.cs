@@ -7,6 +7,8 @@ using FullSpectrum.Observer.Contracts.Models;
 using FullSpectrum.Observer.EngineFacade;
 using FullSpectrum.Observer.Store;
 
+#nullable enable
+
 namespace FullSpectrum.Observer.Host.Web.Services;
 
 /// <summary>

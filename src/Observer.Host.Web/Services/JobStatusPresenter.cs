@@ -1,5 +1,7 @@
 using FullSpectrum.Observer.Contracts.Models;
 
+#nullable enable
+
 namespace FullSpectrum.Observer.Host.Web.Services;
 
 /// <summary>

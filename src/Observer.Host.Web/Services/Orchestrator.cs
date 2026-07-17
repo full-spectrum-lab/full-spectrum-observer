@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using FullSpectrum.Observer.Contracts.Models;
 using FullSpectrum.Observer.EngineFacade;
 
+#nullable enable
+
 namespace FullSpectrum.Observer.Host.Web.Services;
 
 /// <summary>
