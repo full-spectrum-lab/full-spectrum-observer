@@ -86,6 +86,39 @@ public static class JobLifecycle
         AnalysisTaskStatus.AuditCommitted,
     };
 
+    // Canonical forward order for the Web analysis orchestration's persisted commit chain
+    // (CREATE/Draft -> ... -> COMPLETED). This is a SEPARATE, ordered list from the P0-05 edge
+    // graph in Transitions: the Web orchestration commits the Engine output-derived runtime
+    // snapshot AFTER the Engine runs (SNAPSHOT_COMMITTED follows ENGINE_COMPLETED), whereas the
+    // abstract graph nests SNAPSHOT_COMMITTED before ENGINE_COMPLETED. Keeping the two distinct
+    // avoids forking the frozen spec graph while still letting the orchestration assert a strict
+    // "状态机只前进" (no-backward) discipline via CanAdvance.
+    private static readonly string[] ProgressOrder =
+    {
+        AnalysisTaskStatus.Draft,
+        AnalysisTaskStatus.PrecheckPassed,
+        AnalysisTaskStatus.EngineCompleted,
+        AnalysisTaskStatus.OutputValidated,
+        AnalysisTaskStatus.SnapshotCommitted,
+        AnalysisTaskStatus.ArtifactCommitted,
+        AnalysisTaskStatus.ObservationCommitted,
+        AnalysisTaskStatus.AuditCommitted,
+        AnalysisTaskStatus.Completed,
+    };
+
+    // In-progress (still computing / not yet fully committed) states that the UI may present as
+    // "进行中" (ADR-OBS-V030-UI-001 原则⑥/⑦). Equals [PRECHECK_PASSED … AUDIT_COMMITTED].
+    private static readonly HashSet<string> InProgressStates = new(StringComparer.Ordinal)
+    {
+        AnalysisTaskStatus.PrecheckPassed,
+        AnalysisTaskStatus.SnapshotCommitted,
+        AnalysisTaskStatus.EngineCompleted,
+        AnalysisTaskStatus.OutputValidated,
+        AnalysisTaskStatus.ArtifactCommitted,
+        AnalysisTaskStatus.ObservationCommitted,
+        AnalysisTaskStatus.AuditCommitted,
+    };
+
     /// <summary>True when <paramref name="state"/> is one of the frozen P0-05 job statuses.</summary>
     public static bool IsValidState(string state) =>
         state is
@@ -117,6 +150,13 @@ public static class JobLifecycle
     /// present as "已完成" (ADR-OBS-V030-UI-001 原则⑩).</summary>
     public static bool IsFullyCompleted(string state) => state == AnalysisTaskStatus.Completed;
 
+    /// <summary>True when the task is still progressing (not yet fully committed). Mirrors the UI
+    /// "进行中" derivation: <c>status ∈ [PRECHECK_PASSED … AUDIT_COMMITTED]</c> and not COMPLETED
+    /// (ADR-OBS-V030-UI-001 原则⑥/⑦). The Web orchestration never persists the obsolete
+    /// <see cref="AnalysisTaskStatus.Running"/> marker, so "进行中" is DERIVED from canonical
+    /// states rather than read from a stored one.</summary>
+    public static bool IsInProgress(string state) => InProgressStates.Contains(state);
+
     public static bool CanTransition(string current, string next)
     {
         // A self-transition is always legal (idempotent); mirrors EnsureTransition's short-circuit
@@ -125,6 +165,64 @@ public static class JobLifecycle
             return true;
         return Transitions.TryGetValue(current, out HashSet<string>? nexts) && nexts.Contains(next);
     }
+
+    /// <summary>
+    /// Forward-only guard for the Web analysis orchestration. Returns true when <paramref name="next"/>
+    /// does not regress <paramref name="current"/>:
+    /// <list type="bullet">
+    ///   <item><description>an equal state (idempotent self-transition);</description></item>
+    ///   <item><description>a strictly later state along <see cref="ProgressOrder"/>;</description></item>
+    ///   <item><description>a failure / recovery branch from any in-progress state;</description></item>
+    ///   <item><description>the RECOVERY_REQUIRED → SNAPSHOT_COMMITTED re-entry into the chain.</description></item>
+    /// </list>
+    /// This enforces the "状态机只前进" discipline (P0-05) for the orchestration's actual persisted
+    /// order. It complements — and must not be confused with — <see cref="EnsureTransition"/>, which
+    /// encodes the stricter P0-05 edge graph used by the abstract spec unit tests.
+    /// </summary>
+    public static bool CanAdvance(string current, string next)
+    {
+        if (current == next)
+        {
+            return true;
+        }
+        int currentIndex = IndexOfProgress(current);
+        int nextIndex = IndexOfProgress(next);
+        if (currentIndex >= 0 && nextIndex >= 0)
+        {
+            return nextIndex > currentIndex;
+        }
+        // A failure / recovery branch is always a forward move from any in-progress state.
+        if (IsProgressState(current) && (IsFailureState(next) || IsRecoveryState(next)))
+        {
+            return true;
+        }
+        // Any explicit failure state may re-enter recovery (P0-05 §3): the single recovery
+        // re-entry is RECOVERY_REQUIRED, after which the chain resumes at SNAPSHOT_COMMITTED.
+        if (IsFailureState(current) && IsRecoveryState(next))
+        {
+            return true;
+        }
+        // Recovery re-enters the committed chain at SNAPSHOT_COMMITTED, reusing the original snapshot.
+        if (IsRecoveryState(current) && next == AnalysisTaskStatus.SnapshotCommitted)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private static int IndexOfProgress(string state)
+    {
+        for (int i = 0; i < ProgressOrder.Length; i++)
+        {
+            if (string.Equals(ProgressOrder[i], state, StringComparison.Ordinal))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static bool IsProgressState(string state) => IndexOfProgress(state) >= 0;
 
     /// <summary>Throws <see cref="InvalidOperationException"/> when the transition is illegal.</summary>
     public static void EnsureTransition(string current, string next)
