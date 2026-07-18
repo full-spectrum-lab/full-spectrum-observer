@@ -164,7 +164,7 @@ $manifest = [ordered]@{
     artifact_digest = $resolvedDigest
     build_channel   = $resolvedChannel
     engine_tag      = "v1.5.0"
-    generated_at    = (Get-Date -AsUTC -Format "yyyy-MM-ddTHH:mm:ssZ")
+    generated_at    = ([System.DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))
 }
 $manifestJson = $manifest | ConvertTo-Json -Compress
 # The Console (Web Host) reads release-manifest.json from its own base directory (web/);
