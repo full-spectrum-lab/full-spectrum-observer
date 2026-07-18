@@ -15,6 +15,7 @@
     <ProjectReference Include="../../src/Observer.Execution/Observer.Execution.csproj" />
     <ProjectReference Include="../../src/Observer.Store/Observer.Store.csproj" />
     <ProjectReference Include="../../src/Observer.Recovery/Observer.Recovery.csproj" />
+    <ProjectReference Include="../../src/Observer.Host.Web/Observer.Host.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

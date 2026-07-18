@@ -24,6 +24,7 @@ else
                     <tr><td>engine_tag</td><td><code>@_ver.EngineTag</code></td></tr>
                     <tr><td>engine_commit</td><td><code>@_ver.EngineCommit</code></td></tr>
                     <tr><td>engine_artifact_digest</td><td><code>@_ver.EngineArtifactDigest</code></td></tr>
+                    <tr><td>build_channel</td><td><code>@_ver.BuildChannel</code></td></tr>
                     <tr><td>adapter_version</td><td><code>@_ver.AdapterVersion</code></td></tr>
                     <tr><td>analyzer_version / profile_version</td><td><code>@EngineV15Contract.AnalyzerVersion / @EngineV15Contract.ProfileVersion</code></td></tr>
                     <tr><td>schema_version</td><td><code>@_ver.SchemaVersion</code></td></tr>
@@ -32,10 +33,10 @@ else
                 </tbody>
             </table>
         </div>
-        @if (_ver.EngineArtifactDigest.Contains("PLACEHOLDER"))
+        @if (_ver.BuildChannel == "DEVELOPMENT")
         {
-            <div class="error-state" role="alert">
-                引擎制品摘要（engine_artifact_digest）为占位符，GO-6 签署前须由已发布制品的真实 sha256 填充，不得伪造（红线 #4）。
+            <div class="warn-state" role="status">
+                开发/未发布构建：artifact_digest = UNPUBLISHED，build_channel = DEVELOPMENT。正式 Release 由 release-manifest.json 提供真实 SHA-256，且发布 Gate 禁止占位符出货（红线 #4）。
             </div>
         }
     </div>
@@ -48,10 +49,11 @@ else
                     <tr><td>应用版本</td><td><code>@_ver.AppVersion</code></td></tr>
                     <tr><td>.NET 运行时</td><td><code>@_ver.DotNetVersion</code></td></tr>
                     <tr><td>数据目录</td><td><code>@Diagnostics.DataDirectory</code></td></tr>
-                    <tr><td>网络绑定</td><td><code>@_ver.LoopbackBinding</code></td></tr>
+                    <tr><td>Console 访问地址</td><td><code>@_ver.RequestedEndpoint</code></td></tr>
+                    <tr><td>实际服务绑定</td><td><code>@_ver.ActualBoundEndpoint</code></td></tr>
                 </tbody>
             </table>
-            <p class="muted">仅环回（127.0.0.1 / ::1），绝不暴露 0.0.0.0（网络边界红线）。</p>
+            <p class="muted">绑定来自当前运行实例的实际 Kestrel 地址（IServerAddressesFeature），仅环回；绝不暴露 0.0.0.0（网络边界红线）。</p>
         </div>
     </div>
 
@@ -78,7 +80,7 @@ else
     private string? _error;
     private string _live = "";
 
-    private VersionInfo _ver = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+    private VersionInfo _ver = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
     private StoreDiagnostics _diag = new();
 
     protected override async Task OnInitializedAsync()

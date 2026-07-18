@@ -66,14 +66,16 @@ else
             <p>engine_tag = <code>@_ver.EngineTag</code></p>
             <p>engine_commit = <code>@_ver.EngineCommit</code></p>
             <p>artifact_digest = <code>@_ver.EngineArtifactDigest</code></p>
+            <p>build_channel = <code>@_ver.BuildChannel</code></p>
             <p>adapter_version = <code>@_ver.AdapterVersion</code></p>
             <p>schema_version = <code>@_ver.SchemaVersion</code></p>
             <p>schema_digest = <code>@_ver.SchemaDigest</code></p>
             <p>compat_matrix = <code>@_ver.CompatibilityMatrixId</code></p>
         </div>
         <div class="region observer">
-            <p>网络绑定：<code>@_ver.LoopbackBinding</code></p>
-            <p class="muted">仅环回（127.0.0.1 / ::1），绝不暴露 0.0.0.0。</p>
+            <p>Console 访问地址：<code>@_ver.RequestedEndpoint</code></p>
+            <p>实际服务绑定：<code>@_ver.ActualBoundEndpoint</code></p>
+            <p class="muted">绑定来自当前运行实例的实际 Kestrel 地址，仅环回（127.0.0.1 / ::1），绝不暴露 0.0.0.0。</p>
         </div>
     </div>
 }
@@ -81,12 +83,13 @@ else
 <div class="sr-only" aria-live="polite">@_live</div>
 
 @code {
+    #nullable enable
     private bool _loading = true;
     private string? _error;
     private string _live = "";
     private StoreDiagnostics _diag = new();
     private AuditChainVerification _chain = new(true, 0, null, string.Empty);
-    private VersionInfo _ver = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+    private VersionInfo _ver = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
 
     protected override async Task OnInitializedAsync()
     {

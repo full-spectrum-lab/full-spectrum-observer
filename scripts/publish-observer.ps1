@@ -31,7 +31,11 @@ param(
     [string]$OutputDirectory = "publish/observer",
     [string]$Configuration = "Release",
     [string]$Runtime = "win-x64",
-    [string]$NuGetSource = "https://api.nuget.org/v3/index.json"
+    [string]$NuGetSource = "https://api.nuget.org/v3/index.json",
+    [switch]$Release,
+    [string]$EngineArtifactDigest,
+    [string]$EngineManifestPath,
+    [string]$EngineArtifactPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -101,9 +105,89 @@ if (-not (Test-Path $nativeWeb -PathType Leaf)) {
     throw "MISSING approved native SQLite runtime in Web output: $nativeWeb (publish did not deploy e_sqlite3.dll)"
 }
 
+Write-Host "=== Generate release-manifest.json (single source of truth for artifact digest) ==="
+$resolvedDigest = $null
+$resolvedChannel = $null
+
+if ($Release.IsPresent) {
+    # Release mode: a real, valid digest is mandatory.
+    if (-not [string]::IsNullOrWhiteSpace($EngineManifestPath) -and (Test-Path $EngineManifestPath)) {
+        $em = Get-Content $EngineManifestPath -Raw | ConvertFrom-Json
+        if ($em.PSObject.Properties.Name -contains 'artifact_digest') { $resolvedDigest = [string]$em.artifact_digest }
+        if ($em.PSObject.Properties.Name -contains 'build_channel') { $resolvedChannel = [string]$em.build_channel }
+    }
+    if ([string]::IsNullOrWhiteSpace($resolvedDigest) -and -not [string]::IsNullOrWhiteSpace($EngineArtifactDigest)) {
+        $resolvedDigest = $EngineArtifactDigest
+    }
+    if ([string]::IsNullOrWhiteSpace($resolvedDigest)) {
+        throw "RELEASE GATE FAILED: a real Engine artifact digest is required (pass -EngineArtifactDigest or -EngineManifestPath). Refusing to publish a release with UNPUBLISHED/placeholder digest."
+    }
+    # Must be a valid 64-hex SHA-256 and must NOT be a placeholder.
+    if ($resolvedDigest -notmatch '^[0-9a-fA-F]{64}$') {
+        throw "RELEASE GATE FAILED: artifact_digest '$resolvedDigest' is not a 64-hex SHA-256."
+    }
+    if ($resolvedDigest -like '*PLACEHOLDER*') {
+        throw "RELEASE GATE FAILED: artifact_digest contains a PLACEHOLDER sentinel."
+    }
+    # Cross-check against provided manifest.
+    if (-not [string]::IsNullOrWhiteSpace($EngineManifestPath) -and (Test-Path $EngineManifestPath)) {
+        $em = Get-Content $EngineManifestPath -Raw | ConvertFrom-Json
+        if ($em.PSObject.Properties.Name -contains 'artifact_digest') {
+            $md = [string]$em.artifact_digest
+            if ($md -ne $resolvedDigest) {
+                throw "RELEASE GATE FAILED: provided Engine manifest digest '$md' does not match resolved digest '$resolvedDigest'."
+            }
+        }
+    }
+    # Recompute from the actual artifact if supplied (must be recomputable/verifiable).
+    if (-not [string]::IsNullOrWhiteSpace($EngineArtifactPath) -and (Test-Path $EngineArtifactPath)) {
+        $actual = (Get-FileHash -Algorithm SHA256 -LiteralPath $EngineArtifactPath).Hash.ToLowerInvariant()
+        if ($actual -ne $resolvedDigest.ToLowerInvariant()) {
+            throw "RELEASE GATE FAILED: recomputed SHA-256 '$actual' of $EngineArtifactPath does not match declared digest '$resolvedDigest'."
+        }
+        Write-Host "  recomputed SHA-256 matches declared digest: $actual"
+    }
+    if ([string]::IsNullOrWhiteSpace($resolvedChannel)) { $resolvedChannel = "RELEASE" }
+} else {
+    # Dev / unpublished build: allowed, but clearly marked.
+    if (-not [string]::IsNullOrWhiteSpace($EngineArtifactDigest)) {
+        $resolvedDigest = $EngineArtifactDigest
+        $resolvedChannel = "RELEASE"
+    } else {
+        $resolvedDigest = "UNPUBLISHED"
+        $resolvedChannel = "DEVELOPMENT"
+    }
+    Write-Warning "DEV PUBLISH: artifact_digest = $resolvedDigest, build_channel = $resolvedChannel (placeholder/UNPUBLISHED allowed for dev; release gate enforces real SHA-256)."
+}
+
+$manifest = [ordered]@{
+    artifact_digest = $resolvedDigest
+    build_channel   = $resolvedChannel
+    engine_tag      = "v1.5.0"
+    generated_at    = (Get-Date -AsUTC -Format "yyyy-MM-ddTHH:mm:ssZ")
+}
+$manifestJson = $manifest | ConvertTo-Json -Compress
+# The Console (Web Host) reads release-manifest.json from its own base directory (web/);
+# the CLI base directory also receives a copy for completeness.
+$manifestWeb = Join-Path $WebOut "release-manifest.json"
+$manifestCli = Join-Path $CliOut "release-manifest.json"
+Set-Content -Path $manifestWeb -Value $manifestJson -Encoding utf8
+Set-Content -Path $manifestCli -Value $manifestJson -Encoding utf8
+Write-Host "  release-manifest.json -> $manifestWeb"
+Write-Host "  release-manifest.json -> $manifestCli"
+
+# Release Gate: no shipped artifact may contain the placeholder sentinel string.
+$placeholderHits = @(Get-ChildItem -Path $OutputRoot -Recurse -Include *.json,*.xml,*.config,*.txt,*.cs,*.razor,*.html,*.md |
+    Select-String -SimpleMatch "PLACEHOLDER_PENDING_PUBLISHED_ARTIFACT_SHA256" -ErrorAction SilentlyContinue)
+if ($placeholderHits.Count -gt 0) {
+    $msg = "RELEASE GATE FAILED: placeholder sentinel found in published output:`n" + ($placeholderHits.Path -join "`n")
+    if ($Release.IsPresent) { throw $msg } else { Write-Warning $msg }
+}
+
 Write-Host "=== Publish package complete ==="
 Write-Host "  CLI    : $cliExe"
 Write-Host "  Web    : $webExe"
 Write-Host "  Native : $nativeCli"
 Write-Host "  Native : $nativeWeb"
+Write-Host "  Digest : $resolvedDigest ($resolvedChannel)"
 Write-Host "=== [publish-observer] OK ==="

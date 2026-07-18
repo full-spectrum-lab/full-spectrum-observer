@@ -21,11 +21,12 @@ public static class EngineV15Contract
     public const string EngineCommit = "88493007d4e00344c70a70ed0e5a5d652dec86f5";
 
     /// <summary>
-    /// Engine v1.5.0 release artifact sha256. NOT available in this workspace (the published
-    /// binary is not present), so this is an explicit PLACEHOLDER. It MUST be filled from the
-    /// published artifact before GO-6 sign-off. Do NOT fabricate a real sha256 here.
+    /// Compile-time dev sentinel ONLY. The runtime-authoritative engine artifact digest is read
+    /// from release-manifest.json (single source of truth); this constant is never displayed.
+    /// For dev/unpublished builds it resolves to "UNPUBLISHED". The real 64-hex SHA-256 is supplied
+    /// by the publish pipeline (Release mode, -Release gate) and must never be fabricated here.
     /// </summary>
-    public const string EngineArtifactDigest = "PLACEHOLDER_PENDING_PUBLISHED_ARTIFACT_SHA256";
+    public const string EngineArtifactDigest = "UNPUBLISHED";
 
     /// <summary>Observer-side Adapter fixture version compatible with the v1.5 matrix.</summary>
     public const string AdapterVersion = "1.0.0";

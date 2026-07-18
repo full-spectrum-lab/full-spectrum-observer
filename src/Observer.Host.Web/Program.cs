@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FullSpectrum.Observer.EngineFacade;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using FullSpectrum.Observer.Host.Web;
 using FullSpectrum.Observer.Host.Web.Services;
 using FullSpectrum.Observer.Store;
@@ -18,6 +21,7 @@ builder.WebHost.UseKestrel(options => options.ListenLocalhost(port));
 // ADR-005 L3: one-time bootstrap token minted by the Launcher and passed via --bootstrap-token.
 // The Host validates it once (BootstrapTokenGate seam); it is never logged or persisted (L9/L16).
 string? bootstrapToken = GetOption(args, "--bootstrap-token");
+string requestedUrls = GetOption(args, "--urls");
 builder.Services.AddSingleton(new BootstrapTokenContext(bootstrapToken, TimeSpan.FromSeconds(30)));
 
 builder.Services.AddRazorComponents()
@@ -52,8 +56,29 @@ builder.Services.AddSingleton(_ => EngineV15Composition.Create(new EngineV15Opti
 
 var app = builder.Build();
 
-// Surface the resolved (stable, absolute) data directory on the System Information page.
-app.Services.GetRequiredService<SystemDiagnostics>().DataDirectory = dataDirectory;
+// Surface the resolved (stable, absolute) data directory and the actual runtime endpoints
+// on the System Information page.
+var systemDiagnostics = app.Services.GetRequiredService<SystemDiagnostics>();
+systemDiagnostics.DataDirectory = dataDirectory;
+systemDiagnostics.RequestedEndpoint = requestedUrls;
+// The authoritative binding is what Kestrel actually bound (IServerAddressesFeature),
+// not a static constant. Capture it once the server has started listening.
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    try
+    {
+        var server = app.Services.GetRequiredService<IServer>();
+        var feature = server.Features.Get<IServerAddressesFeature>();
+        if (feature?.Addresses is not null)
+        {
+            systemDiagnostics.ActualBoundEndpoints = feature.Addresses.ToList();
+        }
+    }
+    catch
+    {
+        // keep the requested-endpoint fallback already set
+    }
+});
 
 // Bootstrap-token handshake seam (L3/L4). Full HttpOnly session exchange is a subsequent module.
 app.UseBootstrapTokenGate();
