@@ -35,14 +35,6 @@
       "FullSpectrum.Observer.Contracts": {
         "type": "Project"
       }
-    },
-    "net10.0/win-x64": {
-      "SourceGear.sqlite3": {
-        "type": "Direct",
-        "requested": "[3.53.3, )",
-        "resolved": "3.53.3",
-        "contentHash": "PaDT7JwQ00HmXZT1xSGSC0c24A5lVpJYHMrXBuJATdpB2t0nf4Kq9HyPaZhxVW0elPq4XI1s5BLh7qLuObmzFA=="
-      }
     }
   }
 }

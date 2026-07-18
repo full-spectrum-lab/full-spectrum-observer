@@ -10,7 +10,7 @@ public static class ObserverHostFactory
 {
     public static HostComponents Create(string dataDirectory, string allowedInputRoot)
     {
-        string root = RepositoryLayout.FindRoot();
+        string root = RepositoryLayout.FindRoot(allowedInputRoot);
         string schemaDirectory = RepositoryLayout.SchemaDirectory(root);
         string packDirectory = Path.Combine(root, "packs", "foundation-case005");
         string worker = Path.Combine(root, "engine", "worker", "worker.py");
