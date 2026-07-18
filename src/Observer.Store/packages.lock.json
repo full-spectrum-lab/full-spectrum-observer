@@ -6,7 +6,7 @@
         "type": "Direct",
         "requested": "[8.0.10, )",
         "resolved": "8.0.10",
-        "contentHash": "ZKd0NfhYDxHY920ADQ8bPJuixcL+EW4HJD/N81g+PZ4gB+XoFZXFKOc7tWes+HkTfvU8vLN//Oq7gzG9lMxFSw==",
+        "contentHash": "i95bgLqp6rJzmhQEtGhVVHnk1nYAhr/pLDul676PnwI/d7uDSSGs2ZPU9aP0VOuppkZaNinQOUCrD7cstDbQiQ==",
         "dependencies": {
           "SQLitePCLRaw.core": "2.1.6"
         }
@@ -21,13 +21,13 @@
         "type": "Direct",
         "requested": "[2.1.6, )",
         "resolved": "2.1.6",
-        "contentHash": "Frw5zVMl3qN+FWT8Moo1lm1tggh4KQ2UXcV0lrcW1JNbU0KFmJrzL6e9Je+aiseVtj5qGQRNP4ShBNZDMZRzvg=="
+        "contentHash": "wO6v9GeMx9CUngAet8hbO7xdm+M42p1XeJq47ogyRoYSvNSp0NGLI+MgC0bhrMk9C17MTVFlLiN6ylyExLCc5w=="
       },
       "SQLitePCLRaw.provider.e_sqlite3": {
         "type": "Direct",
         "requested": "[2.1.6, )",
         "resolved": "2.1.6",
-        "contentHash": "UnzsdPLr7/I4s7sfiYY3V2ZZU3qm8sWkOEscGwlMt3K/6G8FwToQICR71z/th1nAv1aKHABZwdh7u+0tsQGHAQ==",
+        "contentHash": "PQ2Oq3yepLY4P7ll145P3xtx2bX8xF4PzaKPRpw9jZlKvfe4LE/saAV82inND9usn1XRpmxXk7Lal3MTI+6CNg==",
         "dependencies": {
           "SQLitePCLRaw.core": "2.1.6"
         }
