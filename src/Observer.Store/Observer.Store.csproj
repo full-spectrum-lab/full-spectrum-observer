@@ -21,8 +21,19 @@
     <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
   </ItemGroup>
 
+  <!--
+    M2-RUN-01 + M2-SEC-01 "Candidate A": adopt the patched SourceGear.sqlite3 native runtime
+    instead of the (vulnerable) SQLitePCLRaw.lib.e_sqlite3 bundle pulled transitively by the
+    full Microsoft.Data.Sqlite package. Microsoft.Data.Sqlite.Core ships no default provider,
+    so SQLitePCLRaw.provider.e_sqlite3 is wired in via SqliteRuntimeBootstrap.Initialize()
+    (see SqliteRuntimeBootstrap.cs) BEFORE any connection is opened. This keeps NuGetAudit
+    clean (no NU1903) and ships a >= 3.50.2 engine.
+  -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.10" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.6" />
+    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="2.1.6" />
+    <PackageReference Include="SourceGear.sqlite3" Version="3.53.3" />
   </ItemGroup>
 
   <ItemGroup>

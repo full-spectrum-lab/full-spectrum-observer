@@ -5,6 +5,7 @@ using FullSpectrum.Observer.EngineFacade;
 using FullSpectrum.Observer.Host.Web;
 using FullSpectrum.Observer.Host.Web.Services;
 using FullSpectrum.Observer.Store;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,9 +24,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Single-user loopback console: a singleton store + services avoid per-circuit state skew.
-string dataDirectory = builder.Configuration["Observer:DataDirectory"]
-    ?? Path.Combine(builder.Environment.ContentRootPath, "data");
-Directory.CreateDirectory(dataDirectory);
+// Install the patched SourceGear native SQLite provider before any connection opens.
+SqliteRuntimeBootstrap.Initialize();
+string dataDirectory = ObserverDataDirectory.Resolve(builder.Configuration["Observer:DataDirectory"]);
+Console.WriteLine($"[Observer] Resolved data directory: {dataDirectory}");
 string dbPath = Path.Combine(dataDirectory, "observer_console.db");
 
 var store = new ObserverStore(dbPath);
@@ -49,6 +51,9 @@ builder.Services.AddSingleton(_ => EngineV15Composition.Create(new EngineV15Opti
 }));
 
 var app = builder.Build();
+
+// Surface the resolved (stable, absolute) data directory on the System Information page.
+app.Services.GetRequiredService<SystemDiagnostics>().DataDirectory = dataDirectory;
 
 // Bootstrap-token handshake seam (L3/L4). Full HttpOnly session exchange is a subsequent module.
 app.UseBootstrapTokenGate();

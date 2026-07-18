@@ -195,8 +195,11 @@ public sealed class Launcher : IDisposable
         string? hostExe = ResolveHostWebExecutable();
         if (hostExe is null)
         {
+            string expected = Path.Combine(AppContext.BaseDirectory, "web", "Observer.Host.Web.exe");
             throw new FileNotFoundException(
-                "未找到 Observer.Host.Web 可执行文件。请通过环境变量 " + HostWebExeEnv + " 指定其绝对路径。",
+                $"未找到 Observer Web Host（Observer.Host.Web.exe）。发布包应在 CLI 安装目录下包含 " +
+                $"web/Observer.Host.Web.exe（预期位置：{expected}）。请重新发布完整包，不要手动复制文件。" +
+                $"如需覆盖，可设置环境变量 {HostWebExeEnv} 指向其绝对路径。",
                 "Observer.Host.Web");
         }
 
@@ -215,11 +218,21 @@ public sealed class Launcher : IDisposable
 
     private static string? ResolveHostWebExecutable()
     {
+        // Preferred: the Web Host is bundled under the CLI install directory as `web/`.
+        string webSubdir = Path.Combine(AppContext.BaseDirectory, "web", "Observer.Host.Web.exe");
+        if (File.Exists(webSubdir))
+        {
+            return webSubdir;
+        }
+
+        // Explicit override via environment variable (absolute path).
         string? fromEnv = Environment.GetEnvironmentVariable(HostWebExeEnv);
         if (!string.IsNullOrWhiteSpace(fromEnv) && File.Exists(fromEnv))
         {
             return fromEnv;
         }
+
+        // Legacy co-location next to the CLI exe (kept for backward compatibility).
         string nextToLauncher = Path.Combine(AppContext.BaseDirectory, "Observer.Host.Web.exe");
         return File.Exists(nextToLauncher) ? nextToLauncher : null;
     }

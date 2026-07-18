@@ -18,6 +18,14 @@ namespace FullSpectrum.Observer.Store;
 /// </summary>
 public sealed class ObserverStore : IAsyncDisposable
 {
+    // Install the patched SourceGear native SQLite provider before any connection is opened.
+    // Runs once, at first use of this type, guaranteeing the e_sqlite3 provider is active
+    // regardless of which Host entry point reached here first.
+    static ObserverStore()
+    {
+        SqliteRuntimeBootstrap.Initialize();
+    }
+
     private readonly string _dbPath;
 
     public ObserverStore(string dbPath)

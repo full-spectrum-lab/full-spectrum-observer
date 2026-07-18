@@ -2,45 +2,30 @@
   "version": 1,
   "dependencies": {
     "net10.0": {
-      "Microsoft.Data.Sqlite": {
+      "Microsoft.Data.Sqlite.Core": {
         "type": "Direct",
         "requested": "[8.0.10, )",
-        "resolved": "8.0.10",
-        "contentHash": "LvqIniy/EvNf5ixgChUz0p3VMCrjemgMJGrKl9p5UE384Q/ASK/Fe9J6wLHVuZ3AiiuH9qv8Zo9qXH310tWzUw==",
-        "dependencies": {
-          "Microsoft.Data.Sqlite.Core": "8.0.10",
-          "SQLitePCLRaw.bundle_e_sqlite3": "2.1.6"
-        }
-      },
-      "Microsoft.Data.Sqlite.Core": {
-        "type": "Transitive",
         "resolved": "8.0.10",
         "contentHash": "ZKd0NfhYDxHY920ADQ8bPJuixcL+EW4HJD/N81g+PZ4gB+XoFZXFKOc7tWes+HkTfvU8vLN//Oq7gzG9lMxFSw==",
         "dependencies": {
           "SQLitePCLRaw.core": "2.1.6"
         }
       },
-      "SQLitePCLRaw.bundle_e_sqlite3": {
-        "type": "Transitive",
-        "resolved": "2.1.6",
-        "contentHash": "aRaQRN70jpQ6rGJNg75yrgmwRrf0usHvzSrrvgL6mEeti8UwOwWDSzmIDAXjPOZKUaNPWIehO7w1dh1yzghrrw==",
-        "dependencies": {
-          "SQLitePCLRaw.lib.e_sqlite3": "2.1.6",
-          "SQLitePCLRaw.provider.e_sqlite3": "2.1.6"
-        }
+      "SourceGear.sqlite3": {
+        "type": "Direct",
+        "requested": "[3.53.3, )",
+        "resolved": "3.53.3",
+        "contentHash": "PaDT7JwQ00HmXZT1xSGSC0c24A5lVpJYHMrXBuJATdpB2t0nf4Kq9HyPaZhxVW0elPq4XI1s5BLh7qLuObmzFA=="
       },
       "SQLitePCLRaw.core": {
-        "type": "Transitive",
+        "type": "Direct",
+        "requested": "[2.1.6, )",
         "resolved": "2.1.6",
         "contentHash": "Frw5zVMl3qN+FWT8Moo1lm1tggh4KQ2UXcV0lrcW1JNbU0KFmJrzL6e9Je+aiseVtj5qGQRNP4ShBNZDMZRzvg=="
       },
-      "SQLitePCLRaw.lib.e_sqlite3": {
-        "type": "Transitive",
-        "resolved": "2.1.6",
-        "contentHash": "aVQ/ysavZSC2OO0Axfj43Fl0c3Y4LFYcqCkEeAIUs+dcxCkxBsSj9vZxtz1ZEZWADESvotTcUzqCV7AP33fWYw=="
-      },
       "SQLitePCLRaw.provider.e_sqlite3": {
-        "type": "Transitive",
+        "type": "Direct",
+        "requested": "[2.1.6, )",
         "resolved": "2.1.6",
         "contentHash": "UnzsdPLr7/I4s7sfiYY3V2ZZU3qm8sWkOEscGwlMt3K/6G8FwToQICR71z/th1nAv1aKHABZwdh7u+0tsQGHAQ==",
         "dependencies": {
@@ -49,6 +34,14 @@
       },
       "FullSpectrum.Observer.Contracts": {
         "type": "Project"
+      }
+    },
+    "net10.0/win-x64": {
+      "SourceGear.sqlite3": {
+        "type": "Direct",
+        "requested": "[3.53.3, )",
+        "resolved": "3.53.3",
+        "contentHash": "PaDT7JwQ00HmXZT1xSGSC0c24A5lVpJYHMrXBuJATdpB2t0nf4Kq9HyPaZhxVW0elPq4XI1s5BLh7qLuObmzFA=="
       }
     }
   }

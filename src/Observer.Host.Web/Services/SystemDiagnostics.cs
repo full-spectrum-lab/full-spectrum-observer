@@ -16,6 +16,9 @@ public sealed class SystemDiagnostics
         _store = store;
     }
 
+    /// <summary>Resolved, stable, absolute data directory in use by this process.</summary>
+    public string? DataDirectory { get; set; }
+
     public Task<StoreDiagnostics> GetStoreDiagnosticsAsync() => _store.GetDiagnosticsAsync();
 
     /// <summary>Pinned version info. Engine identity comes from the frozen EngineV15Contract.</summary>

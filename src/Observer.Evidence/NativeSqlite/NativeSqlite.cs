@@ -13,61 +13,61 @@ internal static class NativeSqlite
     internal const int OpenFullMutex = 0x00010000;
     internal static readonly IntPtr Transient = new(-1);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_open_v2([MarshalAs(UnmanagedType.LPUTF8Str)] string filename, out IntPtr db, int flags, IntPtr vfs);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_close_v2(IntPtr db);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_busy_timeout(IntPtr db, int milliseconds);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_extended_result_codes(IntPtr db, int onoff);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr sqlite3_errmsg(IntPtr db);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_extended_errcode(IntPtr db);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_exec(IntPtr db, [MarshalAs(UnmanagedType.LPUTF8Str)] string sql, IntPtr callback, IntPtr callbackArg, out IntPtr errorMessage);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern void sqlite3_free(IntPtr pointer);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_prepare_v2(IntPtr db, [MarshalAs(UnmanagedType.LPUTF8Str)] string sql, int byteCount, out IntPtr statement, IntPtr tail);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_finalize(IntPtr statement);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_step(IntPtr statement);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_bind_text(IntPtr statement, int index, [MarshalAs(UnmanagedType.LPUTF8Str)] string value, int byteCount, IntPtr destructor);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_bind_int64(IntPtr statement, int index, long value);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_bind_null(IntPtr statement, int index);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_column_type(IntPtr statement, int column);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr sqlite3_column_text(IntPtr statement, int column);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_column_bytes(IntPtr statement, int column);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern long sqlite3_column_int64(IntPtr statement, int column);
 
-    [DllImport("sqlite3", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("e_sqlite3", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_changes(IntPtr db);
 
     internal static string Utf8(IntPtr pointer, int bytes = -1) => pointer == IntPtr.Zero

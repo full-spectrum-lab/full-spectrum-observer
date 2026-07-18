@@ -18,13 +18,12 @@ static async Task<int> MainAsync(string[] args)
 
     try
     {
+        // Install the patched SourceGear native SQLite provider before any connection opens.
+        SqliteRuntimeBootstrap.Initialize();
+
         string command = args[0].ToLowerInvariant();
         CliOptions options = CliOptions.Parse(args.Skip(1));
-        string dataDir = Path.GetFullPath(
-            options.Get("--data-dir") ?? Path.Combine(Directory.GetCurrentDirectory(), "data"));
-        string inputRoot = Path.GetFullPath(
-            options.Get("--input-root") ?? Directory.GetCurrentDirectory());
-        await using HostComponents host = ObserverHostFactory.Create(dataDir, inputRoot);
+
         using var cts = new CancellationTokenSource();
         Console.CancelKeyPress += (_, eventArgs) =>
         {
@@ -32,13 +31,28 @@ static async Task<int> MainAsync(string[] args)
             cts.Cancel();
         };
 
+        // `serve` is a launcher-only command: it runs the embedded web host and the
+        // console SQLite store, but never needs the source repository root, schema
+        // directory, or embedded engine. It MUST launch from any working directory
+        // (including a published product directory started from an unrelated cwd),
+        // so it is dispatched before ObserverHostFactory.Create, which requires the
+        // repository root to be discoverable from the working directory.
+        if (command == "serve")
+        {
+            return await ServeAsync(options, cts.Token);
+        }
+
+        string dataDir = ObserverDataDirectory.Resolve(options.Get("--data-dir"));
+        string inputRoot = Path.GetFullPath(
+            options.Get("--input-root") ?? Directory.GetCurrentDirectory());
+        await using HostComponents host = ObserverHostFactory.Create(dataDir, inputRoot);
+
         return command switch
         {
             "health" => await HealthAsync(host, options, cts.Token),
             "analyze" => await AnalyzeAsync(host, options, cts.Token),
             "show" => await ShowAsync(host, options, cts.Token),
             "verify-audit" => await VerifyAuditAsync(host, options, cts.Token),
-            "serve" => await ServeAsync(options, cts.Token),
             _ => Unsupported(command),
         };
     }
@@ -183,8 +197,9 @@ static async Task<int> VerifyAuditAsync(
 
 static async Task<int> ServeAsync(CliOptions options, CancellationToken cancellationToken)
 {
-    string dataDir = Path.GetFullPath(
-        options.Get("--data-dir") ?? Path.Combine(Directory.GetCurrentDirectory(), "data"));
+    SqliteRuntimeBootstrap.Initialize();
+    string dataDir = ObserverDataDirectory.Resolve(options.Get("--data-dir"));
+    Console.WriteLine($"[Observer] Resolved data directory: {dataDir}");
     string dbPath = Path.Combine(dataDir, "observer_console.db");
 
     var store = new ObserverStore(dbPath);

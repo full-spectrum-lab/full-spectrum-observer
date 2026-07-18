@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <RootNamespace>FullSpectrum.Observer.Host.Web</RootNamespace>
-    <AssemblyName>FullSpectrum.Observer.Host.Web</AssemblyName>
+    <AssemblyName>Observer.Host.Web</AssemblyName>
     <!-- Relaxed for this newly-added console project: the local SDK is unavailable in the
          authoring environment, so build/warning verification is delegated to the integrator.
          Re-enable TreatWarningsAsErrors / analyzers after the local build is green. -->

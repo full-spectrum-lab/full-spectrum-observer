@@ -21,7 +21,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <!-- M2-RUN-01 + M2-SEC-01 "Candidate A": use the patched SourceGear.sqlite3 runtime via
+         Microsoft.Data.Sqlite.Core + SQLitePCLRaw.provider.e_sqlite3 (no vulnerable bundle). -->
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.10" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.6" />
+    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="2.1.6" />
+    <PackageReference Include="SourceGear.sqlite3" Version="3.53.3" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
