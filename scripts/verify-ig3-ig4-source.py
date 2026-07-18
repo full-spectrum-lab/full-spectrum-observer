@@ -30,7 +30,7 @@ for item in wlock['files']:
  p=ROOT/'engine'/item['path']; h=hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
  if h!=item['sha256'] or (p.stat().st_size if p.exists() else None)!=item['size_bytes']: wfail.append(item['path'])
 add('worker_lock',not wfail,','.join(wfail))
-add('engine_identity',wlock['engine_version']=='v1.0.0' and wlock['engine_commit']=='09062bae2c7608bda79ee4bfde5779109e8e6197')
+add('engine_identity',wlock['engine_version']=='v1.5.0' and wlock['engine_commit']=='88493007d4e00344c70a70ed0e5a5d652dec86f5')
 # Migration controls.
 sql=(ROOT/'src/Observer.Evidence/Migrations/001_foundation.sql').read_text()
 for token in ('CREATE TABLE IF NOT EXISTS audit_events','tr_audit_events_no_update','tr_audit_events_no_delete','tr_runtime_snapshots_no_update','BEGIN'):

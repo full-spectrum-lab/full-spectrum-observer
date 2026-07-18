@@ -1,11 +1,13 @@
 {
   "engine_id": "full-spectrum-engine",
-  "version": "v1.0.0",
-  "source_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
-  "tag": "v1.0.0",
-  "artifact_status": "PENDING_VG3",
-  "artifact_sha256": null,
+  "version": "v1.5.0",
+  "source_commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5",
+  "tag": "v1.5.0",
+  "artifact_status": "RECONCILED",
+  "source_artifact_sha256": "9646d5742fe644522b6bf17dd5eab3cdf4c42ce87f4bcfa4b61284ee7a1e321c",
+  "runtime_payload_manifest_sha256": "2de479953e21025cac9a24d60911569149564828b9540ee67dbdf76e90a41218",
   "allowed_entrypoint": "run_simulation",
   "fastapi_forbidden": true,
-  "engine_sqlite_forbidden": true
+  "engine_sqlite_forbidden": true,
+  "_source_of_truth": "engine/engine-baseline.json"
 }

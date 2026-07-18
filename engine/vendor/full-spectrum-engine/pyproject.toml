@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "full-spectrum-engine"
-version = "1.0.0"
+version = "1.5.0"
 description = "Full Spectrum Protocol — stable local-first simulation engine contract (v1.0.0)"
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.24.0"]
@@ -45,3 +45,6 @@ Repository = "https://github.com/full-spectrum-lab/full-spectrum-engine"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
+
+[project.scripts]
+fsengine-govchain = "src.governance_chain.cli:main"

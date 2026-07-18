@@ -1,30 +1,31 @@
 {
   "contract": "fs-observer-engine-bridge-source-manifest/1",
-  "status": "SOURCE_CANDIDATE",
-  "engine_version": "v1.0.0",
-  "engine_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
+  "status": "RECONCILED",
+  "engine_version": "v1.5.0",
+  "engine_commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5",
   "vendored_source_root": "engine/vendor/full-spectrum-engine",
+  "_source_of_truth": "engine/engine-baseline.json",
   "worker_lock": "engine/worker.lock.json",
   "files": [
     {
       "path": "engine/vendor/full-spectrum-engine/LICENSE",
-      "size_bytes": 3900,
-      "sha256": "77e07eed036129ff9326e11999e608d3a7dc83c0639ee928a3ec4cebe4c19b4e"
+      "size_bytes": 3974,
+      "sha256": "0948d22004bf0a76df53a50c26da47acde47fb30e290c9972d9a413a26b8e5da"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/pyproject.toml",
-      "size_bytes": 1718,
-      "sha256": "9bc9542a59f7aa606a36729e6512bcaa9540562c2e76ec6cade00658c9f970f4"
+      "size_bytes": 1839,
+      "sha256": "1184702c4d4de71dc0dde7684f5701c6027e75c985fadc96d2e12a17fdef957d"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/requirements.txt",
-      "size_bytes": 208,
-      "sha256": "b6358709415266be0569d043b556da0083b642f550a18f68ebc142a68330c967"
+      "size_bytes": 277,
+      "sha256": "1a07744e8cd435716b642a33fe0423abe971f54c83a2a5d6582b46c953e9628a"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/simulate.py",
-      "size_bytes": 11514,
-      "sha256": "da795b469fded500f75c837e34e0af8de046fe1fc01cc455e161fbc1e888111d"
+      "size_bytes": 11831,
+      "sha256": "32c2277d249383c6d6762926dab2ece66b3e4898124ec80d9b1e382f03eb8455"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/__init__.py",
@@ -38,8 +39,8 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/bridge/runestone.py",
-      "size_bytes": 4276,
-      "sha256": "dade75d5427911cdb6aabfd814feb28b3fb804152f95aafc067706afdfa6c27e"
+      "size_bytes": 4410,
+      "sha256": "5c32019a77c0315be41b4b4d28426f18b00f77da910604159c28c408903e8b9e"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/core/__init__.py",
@@ -48,13 +49,13 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/core/fshi.py",
-      "size_bytes": 1394,
-      "sha256": "766f0768a73ff4f5a25543a3aba9aafe955e6239df3f2b927a09c3a9d835ab55"
+      "size_bytes": 1445,
+      "sha256": "e40cc0efafb63ba8de2df61e8fe177d17b36281964e5837fa1dd77f40baab071"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/core/state.py",
-      "size_bytes": 2062,
-      "sha256": "29abf594836b2d34860b5699d1246c05f9369d9f130ae5049a931760f3ae9f74"
+      "size_bytes": 2122,
+      "sha256": "05132c449e0c6eb4e500415579c2fb46783b7f9095905033fae25bbb40add52f"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/engine/__init__.py",
@@ -63,13 +64,13 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/engine/agents.py",
-      "size_bytes": 4824,
-      "sha256": "f708d401c2838593a62196bc388cebe815a7f5a76df8fdc0edd6b60a81c89af8"
+      "size_bytes": 5000,
+      "sha256": "1015cd2feb4e52ca5bde876d8dce66913116f19acb0bb9d55cedba029e0e0e00"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/engine/ess.py",
-      "size_bytes": 4228,
-      "sha256": "fe3c6638d3f8a0c50686313f23649adda0122113fd535b827df9f01dc13e9b89"
+      "size_bytes": 4360,
+      "sha256": "fa2a82c0719a9a1495d341c2ee883116dcf91acf83044270538e82dfacd93da3"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/governance/__init__.py",
@@ -78,13 +79,13 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/governance/bomb.py",
-      "size_bytes": 3521,
-      "sha256": "902cba88b4796229e904b8ceed453673c2c6a2589db04f982c252f0ed02744a2"
+      "size_bytes": 3629,
+      "sha256": "06bb1f5177711213d345a8f6f8426290f231f1f7f680dfedb5d89f4dc20bd690"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/governance/validator.py",
-      "size_bytes": 5414,
-      "sha256": "f82ff852b34ed976ba78f11687803438d855b2a79c2174afb078ce1458e58bb5"
+      "size_bytes": 5582,
+      "sha256": "060e5abd31572383718a2e3cfbfa4d5b19ac5dd5ccebb4363b10d792cc4a5f24"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/guardian/__init__.py",
@@ -93,13 +94,13 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/guardian/lyapunov.py",
-      "size_bytes": 3817,
-      "sha256": "990fa5b3dd20abd87fc0167159789d828880ad22162cef8af2afaad2ae4ea268"
+      "size_bytes": 3939,
+      "sha256": "5c7c9e28b5f8051505b45704f67aa16a42b9b13f8a4e121ad999544d54dc81b5"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/guardian/network.py",
-      "size_bytes": 7096,
-      "sha256": "1aaea52196281b97fba284a57f2ee80681361ff0a3bc6799a8721a6050a8fffd"
+      "size_bytes": 7331,
+      "sha256": "c7661d272f4669073990398e883bea67aaa740305dd9c8c4b1d21ec218fc6e0e"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/observation/__init__.py",
@@ -108,13 +109,13 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/observation/l0.py",
-      "size_bytes": 5172,
-      "sha256": "e12b5207b2ad350f5a0506267779f01d2a270942eaae2186d4b1c4e802e5dc5a"
+      "size_bytes": 5329,
+      "sha256": "071105317816203cd0928c5a440081cb10f9f8e3a1eb94095afd990d56fe24f1"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/report_generator.py",
-      "size_bytes": 10428,
-      "sha256": "43fa0b65b540da7338a78bd991befa226678572781b35a3d45215061b17aef8b"
+      "size_bytes": 10708,
+      "sha256": "0ed99f3d014b737d133a09544e06a0945e6b38c02193464b852e84f56e899a71"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/safety/__init__.py",
@@ -123,8 +124,8 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/src/safety/emergency.py",
-      "size_bytes": 8785,
-      "sha256": "c9bcd31dc06cbe59b083dcff7ff4be12cb7b67f3ecd6bc034776e1eb24ae176d"
+      "size_bytes": 9034,
+      "sha256": "745dd632f189fe8528a0d16f123a41ad8d8688cc0c89aa6a0fda7e0a524e7b94"
     }
   ]
 }

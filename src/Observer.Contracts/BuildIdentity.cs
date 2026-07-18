@@ -11,8 +11,8 @@ public static class BuildIdentity
     public const string DesignBaseline = "FS-OBS-V010-DES-BL-1.0";
     public const string ImplementationBaseline = "FS-OBS-V010-IMP-BL-1.0";
     public const string SchemaBaseline = "FS-OBS-V010-SCHEMA-BL-1.0";
-    public const string EngineVersion = "v1.0.0";
-    public const string EngineCommit = "09062bae2c7608bda79ee4bfde5779109e8e6197";
+    public const string EngineVersion = "v1.5.0";
+    public const string EngineCommit = "88493007d4e00344c70a70ed0e5a5d652dec86f5";
     public const string ImplementationGate = "IG8_PASS_RELEASED_ALPHA";
 
 }

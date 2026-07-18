@@ -34,10 +34,10 @@
       ],
       "properties": {
         "version": {
-          "const": "v1.0.0"
+          "const": "v1.5.0"
         },
         "commit": {
-          "const": "09062bae2c7608bda79ee4bfde5779109e8e6197"
+          "const": "88493007d4e00344c70a70ed0e5a5d652dec86f5"
         }
       },
       "additionalProperties": false
