@@ -23,7 +23,7 @@ public static class EngineFacadeSourceTests
             Protocol = "fs-observer-engine-facade/1",
             RequestId = "12345678-1234-4234-8234-123456789abc",
             Operation = "evaluate",
-            Engine = JsonSerializer.SerializeToElement(new { version="v1.0.0", commit="09062bae2c7608bda79ee4bfde5779109e8e6197" }),
+            Engine = JsonSerializer.SerializeToElement(new { version="v1.5.0", commit="88493007d4e00344c70a70ed0e5a5d652dec86f5" }),
             Seed = 42,
             FixedTimeUtc = "2026-07-04T00:00:00Z",
             Scenario = scenario,

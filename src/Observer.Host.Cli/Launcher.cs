@@ -251,6 +251,8 @@ public sealed class Launcher : IDisposable
         }
     }
 
+    private const int GracefulStopTimeoutMs = 5000;
+
     private void TerminateHost()
     {
         if (_hostProcess is null)
@@ -259,10 +261,42 @@ public sealed class Launcher : IDisposable
         }
         try
         {
-            if (!_hostProcess.HasExited)
+            // The Host is a long-lived Web process. We MUST NOT hard-kill it as the first action:
+            // an abrupt termination can abandon in-flight SQLite transactions and leave the store
+            // in an inconsistent state (P0-B rule 2 expects in-flight tasks to reach
+            // RECOVERY_REQUIRED, which only happens if the host shuts down cleanly). We therefore
+            // request a graceful shutdown first and only escalate to Kill() if the window elapses.
+            if (_hostProcess.HasExited)
             {
+                Console.WriteLine("[Launcher] Host 已自行退出。");
+                Console.WriteLine("GRACEFUL_EXIT=YES");
+                Console.WriteLine("FORCED_KILL_FALLBACK=NO");
+                return;
+            }
+
+            Console.WriteLine("[Launcher] 正在请求 Host 优雅退出…");
+            bool requested = _hostProcess.CloseMainWindow();
+            if (!requested)
+            {
+                // Windowless console host: there is no message loop to pump a WM_CLOSE, so
+                // CloseMainWindow cannot deliver the signal. We still grant the host a chance to
+                // self-terminate, then fall back to a hard kill below as a last resort.
+                Console.WriteLine("[Launcher] Host 无主窗口，无法投递窗口关闭消息；进入优雅退出等待窗口。");
+            }
+
+            if (!_hostProcess.WaitForExit(GracefulStopTimeoutMs))
+            {
+                Console.WriteLine("[Launcher] Host 未在优雅退出窗口内结束，执行强制终止（最后手段）。");
+                Console.WriteLine("GRACEFUL_EXIT=NO");
+                Console.WriteLine("FORCED_KILL_FALLBACK=YES");
                 _hostProcess.Kill();
-                _hostProcess.WaitForExit(2000);
+                _hostProcess.WaitForExit(GracefulStopTimeoutMs);
+            }
+            else
+            {
+                Console.WriteLine("[Launcher] Host 已优雅退出。");
+                Console.WriteLine("GRACEFUL_EXIT=YES");
+                Console.WriteLine("FORCED_KILL_FALLBACK=NO");
             }
         }
         catch

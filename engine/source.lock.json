@@ -5,7 +5,7 @@
   "tag": "v1.5.0",
   "artifact_status": "RECONCILED",
   "source_artifact_sha256": "9646d5742fe644522b6bf17dd5eab3cdf4c42ce87f4bcfa4b61284ee7a1e321c",
-  "runtime_payload_manifest_sha256": "2de479953e21025cac9a24d60911569149564828b9540ee67dbdf76e90a41218",
+  "runtime_payload_manifest_sha256": "8ea222ec4e6432d5a29b0e90aa43ce23930e8508bc1ddc821e675bdcff1a04cf",
   "allowed_entrypoint": "run_simulation",
   "fastapi_forbidden": true,
   "engine_sqlite_forbidden": true,

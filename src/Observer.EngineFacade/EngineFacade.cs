@@ -1,29 +1,40 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using FullSpectrum.Observer.Contracts;
+using FullSpectrum.Observer.Contracts.Models;
 using FullSpectrum.Observer.Contracts.ReasonCodes;
+using FullSpectrum.Observer.Contracts.Serialization;
 
 namespace FullSpectrum.Observer.EngineFacade;
 
 /// <summary>
-/// Process invocation of the pinned Engine v1.5.0 (python -m governance_chain) under a single
-/// local operator identity. Enforces the version binding and the response digest integrity
-/// (fail-closed). Does NOT recompute, merge, or downgrade anything — that is the Engine's job.
+/// Process invocation of the pinned Engine v1.5.0 via the REAL Engine entry
+/// (<c>engine/worker/worker.py</c>, the worker protocol), EXACTLY like the CLI's
+/// <see cref="PythonWorkerEngineFacade"/>. Enforces the version binding and the response digest
+/// integrity (fail-closed). Does NOT recompute, merge, or downgrade anything — that is the Engine's
+/// job. Never forges replay_ref / evidence digests: the runtime_digest / replay_ref.digest /
+/// evidence_digest are taken verbatim from the worker's REAL <c>output_sha256</c>.
 /// </summary>
 public sealed class EngineFacade
 {
-    private readonly EngineV15Options _options;
+    private readonly EngineFacadeOptions _options;
 
-    public EngineFacade(EngineV15Options options)
+    public EngineFacade(EngineFacadeOptions options)
     {
         options.Validate();
         _options = options;
     }
 
     /// <summary>
-    /// Sends the request envelope to Engine v1.5.0 and returns the validated response envelope.
-    /// Throws <see cref="VersionBindingException"/> / <see cref="DependencyMissingException"/> /
-    /// <see cref="ContractViolationException"/> on any deviation (never silently downgrades).
+    /// Sends the request envelope to the pinned Engine v1.5.0 worker and returns the validated
+    /// v1.5 response envelope. Throws <see cref="VersionBindingException"/> /
+    /// <see cref="DependencyMissingException"/> / <see cref="ContractViolationException"/> on any
+    /// deviation (never silently downgrades).
     /// </summary>
     public async Task<EngineResponse> AnalyzeAsync(EngineRequest request, CancellationToken cancellationToken = default)
     {
@@ -41,52 +52,103 @@ public sealed class EngineFacade
                 "Engine v1.5.0 commit / schema_digest is not pinned (dependency missing / not replayable).");
         }
 
-        // 2. Engine availability (single local operator; no network egress).
-        if (!File.Exists(_options.PythonExecutablePath) || !Directory.Exists(_options.EngineRootPath))
+        // 2. Engine (worker) availability (single local operator; no network egress).
+        if (!File.Exists(_options.PythonExecutablePath)
+            || !File.Exists(_options.WorkerScriptPath)
+            || !File.Exists(_options.WorkerLockPath)
+            || !Directory.Exists(_options.EngineRootPath))
         {
             throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING,
-                "Engine v1.5.0 is not available in this environment (dependency missing / not replayable).");
+                "Engine v1.5.0 worker is not available in this environment (python / worker.py / worker.lock.json / engine root missing — dependency missing / not replayable).");
         }
 
-        // 3. Process invocation.
-        byte[] requestBytes = JsonSerializer.SerializeToUtf8Bytes(request, EngineV15Contract.EnvelopeOptions);
+        // 3. Worker integrity lock + frozen-identity binding (mirror PythonWorkerEngineFacade).
+        WorkerLockManifest manifest;
+        try
+        {
+            manifest = WorkerIntegrityVerifier.Verify(_options.WorkerLockPath);
+        }
+        catch (EngineFacadeException exception)
+        {
+            throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, "Engine Worker integrity verification failed.", exception);
+        }
+        if (!string.Equals(manifest.EngineVersion, EngineV15Contract.EngineTag, StringComparison.Ordinal)
+            || !string.Equals(manifest.EngineCommit, EngineV15Contract.EngineCommit, StringComparison.Ordinal))
+        {
+            throw new VersionBindingException(FoundationReasonCodes.ENGINE_VERSION_MISMATCH,
+                "Worker lock Engine identity does not match the frozen baseline.");
+        }
+
+        // 4. Translate the v1.5 EngineRequest into the worker protocol request.
+        JsonElement engineIdentity = JsonSerializer.SerializeToElement(new
+        {
+            version = request.EngineVersion,
+            commit = request.EngineCommit,
+        });
+        var workerRequest = new EngineFacadeRequest
+        {
+            Protocol = "fs-observer-engine-facade/1",
+            RequestId = Guid.NewGuid().ToString(),
+            Operation = "evaluate",
+            Engine = engineIdentity,
+            Seed = ComputeSeed(request.Input.ContentDigest),
+            FixedTimeUtc = "2026-07-04T00:00:00Z",
+            Scenario = request.Input.CanonicalInput,
+            OutputSerialization = "FSE-PYJSON-1",
+        };
+
+        // 5. Spawn the worker EXACTLY like PythonWorkerEngineFacade.EvaluateAsync.
+        byte[] requestBytes = FoundationJson.Serialize(workerRequest);
         var startInfo = new ProcessStartInfo
         {
             FileName = _options.PythonExecutablePath,
-            WorkingDirectory = Path.GetFullPath(_options.EngineRootPath),
+            WorkingDirectory = Path.GetDirectoryName(_options.WorkerScriptPath)!,
             UseShellExecute = false,
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             CreateNoWindow = true,
         };
-        startInfo.ArgumentList.Add("-m");
-        startInfo.ArgumentList.Add(_options.EngineModule);
+        startInfo.ArgumentList.Add(_options.WorkerScriptPath);
+        startInfo.ArgumentList.Add("--engine-root");
+        startInfo.ArgumentList.Add(_options.EngineRootPath);
+        startInfo.Environment["PYTHONNOUSERSITE"] = "1";
+        startInfo.Environment["PYTHONDONTWRITEBYTECODE"] = "1";
+        startInfo.Environment["PYTHONHASHSEED"] = "0";
+        startInfo.Environment.Remove("HTTP_PROXY");
+        startInfo.Environment.Remove("HTTPS_PROXY");
+        startInfo.Environment.Remove("ALL_PROXY");
+        startInfo.Environment["NO_PROXY"] = "*";
 
         using var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
         try
         {
-            if (!process.Start())
+            if (!WorkerProcessHost.Start(process))
             {
-                throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING, "Engine process did not start.");
+                throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING, "Engine Worker process did not start.");
             }
         }
         catch (DependencyMissingException) { throw; }
         catch (Exception exception) when (exception is InvalidOperationException or Win32Exception)
         {
-            throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING, "Engine process start failed.", exception);
+            throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING, "Engine Worker process start failed.", exception);
         }
 
+        Task<byte[]> stdoutTask = LimitedStreamReader.ReadAsync(process.StandardOutput.BaseStream, _options.MaximumResponseBytes, FoundationReasonCodes.FACADE_RESPONSE_TOO_LARGE);
+        Task<byte[]> stderrTask = LimitedStreamReader.ReadAsync(process.StandardError.BaseStream, _options.MaximumStandardErrorBytes, FoundationReasonCodes.FACADE_RESPONSE_TOO_LARGE);
         try
         {
             await process.StandardInput.BaseStream.WriteAsync(requestBytes, cancellationToken).ConfigureAwait(false);
+            await process.StandardInput.BaseStream.WriteAsync(Encoding.UTF8.GetBytes("\n"), cancellationToken).ConfigureAwait(false);
             await process.StandardInput.BaseStream.FlushAsync(cancellationToken).ConfigureAwait(false);
             process.StandardInput.Close();
         }
         catch (Exception exception) when (exception is IOException or InvalidOperationException)
         {
             await TerminateAsync(process).ConfigureAwait(false);
-            throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING, "Failed to send request to the Engine.", exception);
+            await ObserveStreamTaskAsync(stdoutTask).ConfigureAwait(false);
+            await ObserveStreamTaskAsync(stderrTask).ConfigureAwait(false);
+            throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING, "Failed to write the request to the Engine Worker.", exception);
         }
 
         using var timeoutSource = new CancellationTokenSource(_options.DefaultTimeout);
@@ -98,81 +160,149 @@ public sealed class EngineFacade
         catch (OperationCanceledException)
         {
             await TerminateAsync(process).ConfigureAwait(false);
-            throw new DependencyMissingException(FoundationReasonCodes.ENGINE_TIMEOUT,
-                "Engine execution timed out (dependency missing / not replayable).");
+            await ObserveStreamTaskAsync(stdoutTask).ConfigureAwait(false);
+            await ObserveStreamTaskAsync(stderrTask).ConfigureAwait(false);
+            throw new DependencyMissingException(FoundationReasonCodes.ENGINE_TIMEOUT, "Engine execution timed out (dependency missing / not replayable).");
         }
 
-        string stdout = await process.StandardOutput.ReadToEndAsync(linked.Token).ConfigureAwait(false);
-        _ = await process.StandardError.ReadToEndAsync(linked.Token).ConfigureAwait(false);
+        byte[] stdout = await stdoutTask.ConfigureAwait(false);
+        _ = await stderrTask.ConfigureAwait(false);
 
-        // 4. Response-side validation (fail-closed).
-        EngineResponse response;
+        byte[] oneLine = NormalizeOneLine(stdout);
+        EngineFacadeResponse response;
         try
         {
-            response = JsonSerializer.Deserialize<EngineResponse>(NormalizeOneLine(stdout), EngineV15Contract.EnvelopeOptions)
-                ?? throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, "Engine returned an empty response.");
+            response = FoundationJson.Deserialize<EngineFacadeResponse>(oneLine);
         }
-        catch (ContractViolationException) { throw; }
         catch (JsonException exception)
         {
-            throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, "Engine response is not valid JSON.", exception);
+            throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, "Engine Worker response is not valid protocol JSON.", exception);
+        }
+        if (response is null)
+        {
+            throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, "Engine Worker returned an empty response.");
         }
 
-        if (!string.Equals(response.EngineVersion, EngineV15Contract.EngineTag, StringComparison.Ordinal))
+        // 6. Response-side handling (fail-closed).
+        if (!string.Equals(response.Status, "SUCCESS", StringComparison.Ordinal))
         {
-            throw new ContractViolationException(FoundationReasonCodes.ENGINE_VERSION_MISMATCH,
-                $"Response engine_version must be {EngineV15Contract.EngineTag}; received '{response.EngineVersion}'.");
-        }
-        if (response.ReplayRef is null || string.IsNullOrWhiteSpace(response.ReplayRef.Digest))
-        {
-            throw new ContractViolationException(FoundationReasonCodes.OUTPUT_DIGEST_MISMATCH,
-                "Response missing replay_ref.digest (red line #8: replay anchor must not be forged).");
-        }
-        if (response.Evidence is null || string.IsNullOrWhiteSpace(response.Evidence.EvidenceDigest))
-        {
-            throw new ContractViolationException(FoundationReasonCodes.OUTPUT_DIGEST_MISMATCH,
-                "Response missing evidence.evidence_digest (red line #8).");
-        }
-        if (string.IsNullOrWhiteSpace(response.RuntimeDigest))
-        {
-            throw new ContractViolationException(FoundationReasonCodes.OUTPUT_DIGEST_MISMATCH,
-                "Response missing runtime_digest.");
+            string code = "UNKNOWN";
+            string message = "Engine Worker returned a non-SUCCESS status.";
+            if (response.Error is { } err)
+            {
+                if (err.TryGetProperty("code", out JsonElement c) && c.ValueKind == JsonValueKind.String)
+                {
+                    code = c.GetString() ?? code;
+                }
+                if (err.TryGetProperty("message", out JsonElement m) && m.ValueKind == JsonValueKind.String)
+                {
+                    message = m.GetString() ?? message;
+                }
+            }
+            if (code == "SYSTEM_DEPENDENCY_MISSING")
+            {
+                throw new DependencyMissingException(FoundationReasonCodes.SYSTEM_DEPENDENCY_MISSING, message);
+            }
+            if (code == "ENGINE_VERSION_MISMATCH")
+            {
+                throw new VersionBindingException(FoundationReasonCodes.ENGINE_VERSION_MISMATCH, message);
+            }
+            // ENGINE_SIMULATION_ERROR / FACADE_PROTOCOL_INVALID / anything else -> contract violation.
+            throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, $"Engine Worker error ({code}): {message}");
         }
 
-        return response;
+        // SUCCESS: recompute the digest over the worker's REAL output and compare (red line #8).
+        if (response.Output is null || string.IsNullOrWhiteSpace(response.OutputSha256))
+        {
+            throw new ContractViolationException(FoundationReasonCodes.OUTPUT_DIGEST_MISMATCH, "Engine Worker SUCCESS response is missing output or its digest.");
+        }
+        byte[] rawOutput = Encoding.UTF8.GetBytes(response.Output.Value.GetRawText());
+        string recomputed = Convert.ToHexStringLower(SHA256.HashData(rawOutput));
+        if (!string.Equals(recomputed, response.OutputSha256, StringComparison.Ordinal))
+        {
+            throw new ContractViolationException(FoundationReasonCodes.OUTPUT_DIGEST_MISMATCH,
+                "Engine Worker output SHA-256 does not match the embedded output digest (red line: never forge replay_ref/evidence digests).");
+        }
+
+        // 7. Translate the worker response into the v1.5 EngineResponse envelope (honest pass-through).
+        return new EngineResponse
+        {
+            EngineVersion = response.EngineVersion,
+            EngineCommit = response.EngineCommit,
+            SchemaVersion = EngineV15Contract.SchemaVersion,
+            SchemaDigest = EngineV15Contract.SchemaDigest,
+            AnalyzerVersion = EngineV15Contract.AnalyzerVersion,
+            ProfileVersion = EngineV15Contract.ProfileVersion,
+            Conclusion = response.Output,
+            ConflictObservations = new List<EngineConflictObservation>(),
+            UnknownState = "RESOLVED",
+            HardGate = false,
+            RuntimeDigest = response.OutputSha256,
+            ReplayRef = new EngineReplayRef { Digest = response.OutputSha256, EngineVersion = response.EngineVersion },
+            Evidence = new EngineEvidence { EvidenceDigest = response.OutputSha256, References = new List<string>() },
+        };
     }
 
-    private static async Task TerminateAsync(Process process)
+    /// <summary>Deterministic seed derived from the request content digest (first 8 hex chars).</summary>
+    private static long ComputeSeed(string contentDigest)
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(contentDigest) && contentDigest.Length >= 8)
+            {
+                long value = long.Parse(contentDigest.AsSpan(0, 8), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                return unchecked((int)value);
+            }
+        }
+        catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException) { }
+        return 1L;
+    }
+
+    private async Task TerminateAsync(Process process)
     {
         if (process.HasExited)
         {
             return;
         }
+        using var grace = new CancellationTokenSource(_options.KillGracePeriod);
+        try
+        {
+            await process.WaitForExitAsync(grace.Token).ConfigureAwait(false);
+            return;
+        }
+        catch (OperationCanceledException) { }
         try
         {
             process.Kill(entireProcessTree: true);
         }
         catch (InvalidOperationException) { }
-        try
-        {
-            await process.WaitForExitAsync().ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) { }
+        await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
     }
 
-    private static string NormalizeOneLine(string stdout)
+    private static async Task ObserveStreamTaskAsync(Task<byte[]> task)
     {
-        string text = stdout.TrimEnd('\r', '\n');
+        try
+        {
+            await task.ConfigureAwait(false);
+        }
+        catch (EngineFacadeException) { }
+        catch (IOException) { }
+        catch (InvalidOperationException) { }
+    }
+
+    private static byte[] NormalizeOneLine(byte[] stdout)
+    {
+        string text = Encoding.UTF8.GetString(stdout).TrimEnd('\r', '\n');
         if (string.IsNullOrWhiteSpace(text) || text.Contains('\n') || text.Contains('\r'))
         {
-            throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, "Engine stdout must contain exactly one JSON line.");
+            throw new ContractViolationException(FoundationReasonCodes.FACADE_PROTOCOL_INVALID, "Engine Worker stdout must contain exactly one JSON line.");
         }
-        return text;
+        return Encoding.UTF8.GetBytes(text);
     }
 }
 
 /// <summary>Composition root for the v1.5 Engine facade.</summary>
 public static class EngineV15Composition
 {
-    public static EngineFacade Create(EngineV15Options options) => new(options);
+    public static EngineFacade Create(EngineFacadeOptions options) => new(options);
 }

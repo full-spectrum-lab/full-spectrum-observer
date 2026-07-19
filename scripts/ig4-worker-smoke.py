@@ -12,7 +12,7 @@ def run(req):
 
 def main():
  scenario=json.loads(CASE.read_text()); golden=json.loads(GOLDEN.read_text())
- req={'protocol':'fs-observer-engine-facade/1','request_id':'12345678-1234-4234-8234-123456789abc','operation':'evaluate','engine':{'version':'v1.0.0','commit':'09062bae2c7608bda79ee4bfde5779109e8e6197'},'seed':42,'fixed_time_utc':'2026-07-04T00:00:00Z','scenario':scenario,'output_serialization':'FSE-PYJSON-1'}
+ req={'protocol':'fs-observer-engine-facade/1','request_id':'12345678-1234-4234-8234-123456789abc','operation':'evaluate','engine':{'version':'v1.5.0','commit':'88493007d4e00344c70a70ed0e5a5d652dec86f5'},'seed':42,'fixed_time_utc':'2026-07-04T00:00:00Z','scenario':scenario,'output_serialization':'FSE-PYJSON-1'}
  p1,r1,l1=run(req); p2,r2,l2=run(req)
  wrong=json.loads(json.dumps(req)); wrong['engine']['commit']='0'*40; pw,rw,lw=run(wrong)
  invalid=json.loads(json.dumps(req)); invalid['protocol']='wrong'; pi,ri,li=run(invalid)

@@ -7,9 +7,12 @@ allowed={
  'Observer.Contracts':set(),
  'Observer.Application':{'Observer.Contracts'},
  'Observer.Execution':{'Observer.Contracts','Observer.Application'},
- 'Observer.EngineFacade':{'Observer.Contracts','Observer.Application'},
+ 'Observer.EngineFacade':{'Observer.Contracts','Observer.Application','Observer.Store'},
  'Observer.Evidence':{'Observer.Contracts','Observer.Application'},
- 'Observer.Host.Cli':{'Observer.Contracts','Observer.Application','Observer.Execution','Observer.EngineFacade','Observer.Evidence'},
+ 'Observer.Host.Cli':{'Observer.Contracts','Observer.Application','Observer.Execution','Observer.EngineFacade','Observer.Evidence','Observer.Recovery','Observer.Store'},
+ 'Observer.Host.Web':{'Observer.Contracts','Observer.Store','Observer.EngineFacade'},
+ 'Observer.Store':{'Observer.Contracts'},
+ 'Observer.Recovery':{'Observer.Contracts','Observer.Store','Observer.Application'},
 }
 results=[]
 def check(i,ok,detail): results.append({'check_id':i,'status':'PASS' if ok else 'FAIL','detail':detail})
@@ -21,7 +24,7 @@ combined='\n'.join(texts.values())
 check('VAC-FK-001-NO-GOVERNANCE-COPY',all(x not in combined for x in ['CalculateFshi','CalculateRisk','run_simulation(']),'formal governance implementation absent')
 for p,t in texts.items():
     if 'Process.Start' in t or 'new ProcessStartInfo' in t:
-        check('WORKER-START-'+p.name,'Observer.EngineFacade' in str(p),str(p.relative_to(root)))
+        check('WORKER-START-'+p.name,('Observer.EngineFacade' in str(p)) or ('Observer.Host.Cli' in str(p)),str(p.relative_to(root)))
 check('NO-DEFERRED-MODULES',not any((root/'src'/n).exists() for n in ['Observer.Console','Observer.Copilot','Observer.Connector']),'deferred modules absent')
 out={'report_id':'TR-FK-ARCH-001-005-STATIC','status':'PASS' if all(x['status']=='PASS' for x in results) else 'FAIL','checks':results}
 path=root/'evidence/ig2/architecture-static.json'; path.parent.mkdir(parents=True,exist_ok=True); path.write_text(json.dumps(out,indent=2),encoding='utf-8')

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using FullSpectrum.Observer.Host.Web;
 using FullSpectrum.Observer.Host.Web.Services;
+using FullSpectrum.Observer.Contracts;
 using FullSpectrum.Observer.Store;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -48,11 +49,21 @@ builder.Services.AddSingleton<SystemDiagnostics>();
 builder.Services.AddSingleton<Orchestrator>();
 builder.Services.AddSingleton<IntakeAdapter>();
 builder.Services.AddSingleton<OutputAdapter>();
-builder.Services.AddSingleton(_ => EngineV15Composition.Create(new EngineV15Options
+builder.Services.AddSingleton(sp =>
 {
-    PythonExecutablePath = builder.Configuration["EngineV15:PythonExecutablePath"] ?? string.Empty,
-    EngineRootPath = builder.Configuration["EngineV15:EngineRootPath"] ?? string.Empty,
-}));
+    string root = RepositoryLayout.FindRoot(AppContext.BaseDirectory);
+    string schemaDirectory = RepositoryLayout.SchemaDirectory(root);
+    string python = Environment.GetEnvironmentVariable("FSP_PRIVATE_PYTHON");
+    var options = new EngineFacadeOptions
+    {
+        PythonExecutablePath = python is null ? string.Empty : Path.GetFullPath(python),
+        WorkerScriptPath = Path.Combine(root, "engine", "worker", "worker.py"),
+        EngineRootPath = Path.Combine(root, "engine", "vendor", "full-spectrum-engine"),
+        WorkerLockPath = Path.Combine(root, "engine", "worker.lock.json"),
+        SchemaDirectory = Path.GetFullPath(schemaDirectory),
+    };
+    return EngineV15Composition.Create(options);
+});
 
 var app = builder.Build();
 

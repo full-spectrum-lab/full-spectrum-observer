@@ -35,6 +35,15 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($Gate -eq "IG1") { exit 0 }
 
 Require-PrivatePython
+
+# Fresh-clone auto-recovery: install the formal Python test/verification deps
+# (scripts/requirements.txt) into the pinned private Python before running gates.
+. (Join-Path $PSScriptRoot "bootstrap-python-deps.ps1")
+Install-FspPythonDeps -Python $PrivatePython
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Python test/verification dependency bootstrap returned $LASTEXITCODE; gates requiring jsonschema may fail."
+}
+
 Invoke-Ig2Prerequisites
 if ($Gate -eq "IG2") { exit 0 }
 

@@ -3,8 +3,8 @@
   "request_id": "12345678-1234-4234-8234-123456789abc",
   "operation": "evaluate",
   "engine": {
-    "version": "v1.0.0",
-    "commit": "09062bae2c7608bda79ee4bfde5779109e8e6197"
+    "version": "v1.5.0",
+    "commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5"
   },
   "seed": 1,
   "fixed_time_utc": "2026-07-12T00:00:00.000Z",

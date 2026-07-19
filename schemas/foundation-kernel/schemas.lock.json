@@ -15,13 +15,13 @@
       "file": "engine-facade-request.schema.json",
       "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/engine-facade-request/1.0.0-alpha.1",
       "title": "EngineFacadeRequest",
-      "sha256": "6248b26e8e0e4d0a1722c4622fbbd208818edde8a44182f89d5aac32fa7c7e45"
+      "sha256": "2807218e56ea3adf19f2e8a0ec63a15b19ff6738de24201ccc068de785450d5c"
     },
     {
       "file": "engine-facade-response.schema.json",
       "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/engine-facade-response/1.0.0-alpha.1",
       "title": "EngineFacadeResponse",
-      "sha256": "bdd28cd993a88887b443b8c2639ab49d21e33bb865a9eec1ae995fae32cdbf65"
+      "sha256": "3b77e0880703d1e3c281286debd38354802178aa2eff3f78fd8ecb8812a3702e"
     },
     {
       "file": "foundation-analysis-request.schema.json",
@@ -99,13 +99,13 @@
       "file": "examples/engine-facade-request.example.json",
       "schema_id": null,
       "title": "engine-facade-request.example",
-      "sha256": "75c6cb66220be01f1109cb11357086bf116439b9a010983abc6297e62656bd0e"
+      "sha256": "d2d6d242d9205bb96fe66b0505bf58079fac873298904030f46c30237bc43569"
     },
     {
       "file": "examples/engine-facade-response.example.json",
       "schema_id": null,
       "title": "engine-facade-response.example",
-      "sha256": "730e387dea246b6328fe5d857c512b3d08e0f4ddb4cbda042a88ea751b5d955b"
+      "sha256": "7d58e5f452e4641c1449cd4a86e8414c7bcabbe2db7d8f1f0892bfa28e5d8c1d"
     },
     {
       "file": "examples/foundation-analysis-request.example.json",

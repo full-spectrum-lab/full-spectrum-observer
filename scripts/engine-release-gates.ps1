@@ -40,9 +40,51 @@ function Get-ZipEntrySha256([string]$zipPath, [string]$entryName) {
     } finally { $za.Dispose() }
 }
 
+<#
+.SYNOPSIS
+    Returns the raw (byte-for-byte) content of a ZIP entry, or $null if absent.
+    Used by Gate 3 for source-artifact content traceability.
+#>
+function Get-ZipEntryBytes([string]$zipPath, [string]$entryName) {
+    $za = [System.IO.Compression.ZipFile]::OpenRead($zipPath)
+    try {
+        $e = $za.Entries | Where-Object { $_.FullName -eq $entryName } | Select-Object -First 1
+        if (-not $e) { return $null }
+        $ms = New-Object System.IO.MemoryStream
+        $e.Open().CopyTo($ms)
+        # Comma operator forces a scalar return: an empty byte[] (e.g. empty __init__.py)
+        # would otherwise be unrolled to $null by PowerShell's output stream.
+        return , $ms.ToArray()
+    } finally { $za.Dispose() }
+}
+
+<#
+.SYNOPSIS
+    Byte-level EOL canonicalization: CRLF -> LF, lone CR -> LF.
+    Only the newline-kind is changed; encoding, BOM, trailing newline, and any
+    other bytes are preserved. No string decoding is performed so BOM/encodings
+    are never touched.
+#>
+function Get-CanonicalBytes([byte[]]$data) {
+    $ms = New-Object System.IO.MemoryStream
+    $i = 0
+    while ($i -lt $data.Length) {
+        if ($data[$i] -eq 0x0D) {            # CR
+            if ($i + 1 -lt $data.Length -and $data[$i+1] -eq 0x0A) {  # CRLF
+                $ms.WriteByte(0x0A); $i += 2; continue
+            }
+            $ms.WriteByte(0x0A); $i += 1; continue   # 单独 CR
+        }
+        $ms.WriteByte($data[$i]); $i += 1
+    }
+    # Comma operator forces a scalar return: an empty byte[] would otherwise be
+    # unrolled to $null by PowerShell's output stream (breaking empty-file entries).
+    return , $ms.ToArray()
+}
+
 function Get-RuntimePayloadManifestDigest([string]$manifestPath) {
     $m = Get-Content $manifestPath -Raw | ConvertFrom-Json
-    $lines = ($m.files | Sort-Object path | ForEach-Object { "$($_.path)|$($_.sha256)" }) -join "`n"
+    $lines = ($m.files | Sort-Object path | ForEach-Object { "$($_.path)|$($_.sha256)|$($_.source_trace_mode)|$($_.source_trace_sha256)" }) -join "`n"
     $bytes = [System.Text.Encoding]::UTF8.GetBytes($lines)
     return (Get-FileHash -Algorithm SHA256 -InputStream ([System.IO.MemoryStream]::new($bytes))).Hash.ToLowerInvariant()
 }
@@ -61,7 +103,7 @@ function Test-EngineReleaseGates {
     $prefix     = [string]$Baseline.source_artifact_entry_prefix
 
     # (1) Source artifact ZIP exists.
-    $zipPath = Join-Path $RepoRoot "engine" $zipName
+    $zipPath = Join-Path (Join-Path $RepoRoot "engine") $zipName
     if (-not (Test-Path $zipPath -PathType Leaf)) {
         throw "RELEASE GATE FAILED: source artifact ZIP missing: $zipPath (Mode A requires the package to carry it)."
     }
@@ -94,12 +136,32 @@ function Test-EngineReleaseGates {
             throw "RELEASE GATE FAILED: runtime payload file '$($entry.path)' SHA-256 '$actual' != manifest '$($entry.sha256)' (manifest != actual files)."
         }
         if ($entry.traces_to_source_artifact -eq $true) {
-            $zsha = Get-ZipEntrySha256 $zipPath $entry.source_artifact_entry
-            if ($null -eq $zsha) {
+            # Gate 3: source-artifact content traceability (normalized).
+            # The manifest MUST explicitly declare source_trace_mode + source_trace_sha256
+            # (never guessed from the file extension). Supported modes:
+            #   text_lf_canonical : compare canonical(runtime) vs canonical(ZIP entry)
+            #   byte_exact        : compare raw bytes vs raw ZIP entry bytes
+            if ([string]::IsNullOrEmpty($entry.source_trace_mode) -or [string]::IsNullOrEmpty($entry.source_trace_sha256)) {
+                throw "RELEASE GATE FAILED: runtime payload file '$($entry.path)' missing source_trace_mode/source_trace_sha256 (manifest must declare trace mode explicitly)."
+            }
+            if ($entry.source_trace_mode -ne 'text_lf_canonical' -and $entry.source_trace_mode -ne 'byte_exact') {
+                throw "RELEASE GATE FAILED: runtime payload file '$($entry.path)' has unsupported source_trace_mode '$($entry.source_trace_mode)' (expected text_lf_canonical or byte_exact)."
+            }
+            $zipBytes = Get-ZipEntryBytes $zipPath $entry.source_artifact_entry
+            if ($null -eq $zipBytes) {
                 throw "RELEASE GATE FAILED: ZIP entry '$($entry.source_artifact_entry)' not found in source artifact (untraceable payload)."
             }
-            if ($zsha -ne [string]$entry.sha256) {
-                throw "RELEASE GATE FAILED: runtime payload file '$($entry.path)' SHA-256 '$actual' != source ZIP entry '$($entry.source_artifact_entry)' SHA-256 '$zsha' (not a faithful subset)."
+            $rtBytes = [System.IO.File]::ReadAllBytes($fp)
+            $expectTrace = [string]$entry.source_trace_sha256.ToLowerInvariant()
+            if ($entry.source_trace_mode -eq 'text_lf_canonical') {
+                $rtTrace  = (Get-FileHash -Algorithm SHA256 -InputStream ([System.IO.MemoryStream]::new((Get-CanonicalBytes $rtBytes)))).Hash.ToLowerInvariant()
+                $zipTrace = (Get-FileHash -Algorithm SHA256 -InputStream ([System.IO.MemoryStream]::new((Get-CanonicalBytes $zipBytes)))).Hash.ToLowerInvariant()
+            } else {
+                $rtTrace  = (Get-FileHash -Algorithm SHA256 -InputStream ([System.IO.MemoryStream]::new($rtBytes))).Hash.ToLowerInvariant()
+                $zipTrace = (Get-FileHash -Algorithm SHA256 -InputStream ([System.IO.MemoryStream]::new($zipBytes))).Hash.ToLowerInvariant()
+            }
+            if ($rtTrace -ne $expectTrace -or $zipTrace -ne $expectTrace) {
+                throw "RELEASE GATE FAILED: runtime payload file '$($entry.path)' source_trace_sha256 != canonical(runtime)/canonical(ZIP) (not a faithful subset)."
             }
         }
     }

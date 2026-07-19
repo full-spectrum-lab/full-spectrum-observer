@@ -25,10 +25,16 @@ if ($ActualSdk -ne $RequiredSdk) {
 & (Join-Path $PSScriptRoot "verify-baseline.ps1")
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+# Official build entry must work on a cold fresh clone (empty NuGet cache).
+# NuGet.Config uses <clear/> (controlled/locked restore), so without an explicit
+# source a cold `dotnet restore` fails with NU1100. Inject the canonical nuget.org
+# v3 feed here so operators never need a manual `-s`.
+$DefaultNuGetSource = "https://api.nuget.org/v3/index.json"
 $RestoreArgs = @(
     "restore",
     (Join-Path $RepoRoot "FullSpectrum.Observer.sln"),
-    "--configfile", (Join-Path $RepoRoot "NuGet.Config")
+    "--configfile", (Join-Path $RepoRoot "NuGet.Config"),
+    "-s", $DefaultNuGetSource
 )
 if ($Locked) {
     $RestoreArgs += "--locked-mode"

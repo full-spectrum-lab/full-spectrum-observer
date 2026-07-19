@@ -9,7 +9,7 @@
   "engine_source_artifact_sha256": "9646d5742fe644522b6bf17dd5eab3cdf4c42ce87f4bcfa4b61284ee7a1e321c",
   "source_artifact_entry_prefix": "engine-v1.5.0-88493007/",
   "runtime_payload_manifest_filename": "engine/runtime-payload-manifest.json",
-  "engine_runtime_payload_manifest_sha256": "2de479953e21025cac9a24d60911569149564828b9540ee67dbdf76e90a41218",
+  "engine_runtime_payload_manifest_sha256": "8ea222ec4e6432d5a29b0e90aa43ce23930e8508bc1ddc821e675bdcff1a04cf",
   "packaging_method": "git archive --format=zip --prefix=engine-v1.5.0-88493007/ 88493007d4e00344c70a70ed0e5a5d652dec86f5",
   "status": "BASELINE_RECONCILED",
   "generated_at": "2026-07-18T19:20:00+08:00",

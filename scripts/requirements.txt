@@ -1,0 +1,13 @@
+# Observer v0.3 — formal Python test/verification dependency entry.
+#
+# This is the SINGLE declared dependency source for the repository's
+# Python-based gate / verification scripts (e.g. scripts/ig2-reference-validator.py
+# and scripts/verify-package.py, both of which `from jsonschema import ...`).
+#
+# Fresh clone auto-recovery: the gate command (scripts/test.ps1) dot-sources
+# scripts/bootstrap-python-deps.ps1, which runs:
+#     <private-python> -m pip install -r scripts/requirements.txt
+# so a clean environment self-installs jsonschema before the gates run.
+#
+# Pinned to the version verified in the M2-FIX-01 narrow-fix environment.
+jsonschema==4.26.0
