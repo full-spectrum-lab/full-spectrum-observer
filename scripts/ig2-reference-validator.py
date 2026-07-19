@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import base64, hashlib, json, re, sys
+import base64, hashlib, json, os, re, sys
 from decimal import Decimal
 from jsonschema import Draft202012Validator
 
 root=Path(__file__).resolve().parents[1]
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible). Reference validation goes to ig2/.
+EVIDENCE_ROOT = Path(os.environ.get("FSP_EVIDENCE_ROOT") or (root/"evidence"))
 schema_dir=root/'schemas/foundation-kernel'
 examples=schema_dir/'examples'
 rows=[]
@@ -50,9 +53,9 @@ for v in vectors:
     ok=ca==cb
     vector_out.append({'id':v['id'],'canonical_utf8':ca.decode(),'sha256':hashlib.sha256(ca).hexdigest(),'status':'PASS' if ok else 'FAIL'})
     rows.append({'test':v['id'],'status':'PASS' if ok else 'FAIL'})
-(root/'evidence/ig2').mkdir(parents=True,exist_ok=True)
-(root/'evidence/ig2/canonical-vectors.json').write_text(json.dumps(vector_out,ensure_ascii=False,indent=2),encoding='utf-8')
+(EVIDENCE_ROOT/'ig2').mkdir(parents=True,exist_ok=True)
+(EVIDENCE_ROOT/'ig2/canonical-vectors.json').write_text(json.dumps(vector_out,ensure_ascii=False,indent=2),encoding='utf-8')
 status='PASS' if all(r['status']=='PASS' for r in rows) else 'FAIL'
 out={'report_id':'IG2-REFERENCE-VALIDATION','status':status,'schema_meta_and_instance':'12/12 PASS' if status=='PASS' else 'FAIL','reason_codes':len(codes),'rows':rows}
-(root/'evidence/ig2/reference-validation.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+(EVIDENCE_ROOT/'ig2/reference-validation.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps(out,ensure_ascii=False,indent=2)); sys.exit(0 if status=='PASS' else 1)

@@ -14,11 +14,21 @@ import socket
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-EVIDENCE = ROOT / "evidence" / "ig6" / "IG6_Result.json"
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible).
+EVIDENCE_ROOT = pathlib.Path(os.environ.get("FSP_EVIDENCE_ROOT") or (ROOT / "evidence"))
+EVIDENCE = EVIDENCE_ROOT / "ig6" / "IG6_Result.json"
 
 
 def load(path: str) -> dict:
-    return json.loads((ROOT / path).read_text(encoding="utf-8-sig"))
+    # Paths under "evidence/..." resolve inside EVIDENCE_ROOT (which may be an external
+    # directory). Every other path resolves against the repository root as before.
+    candidate = pathlib.Path(path)
+    if candidate.parts and candidate.parts[0] == "evidence":
+        target = EVIDENCE_ROOT / pathlib.Path(*candidate.parts[1:])
+    else:
+        target = ROOT / candidate
+    return json.loads(target.read_text(encoding="utf-8-sig"))
 
 
 def source_text(paths: list[pathlib.Path]) -> str:
@@ -73,7 +83,9 @@ def main() -> int:
     check("IG6-PATH-001", not unsafe, f"unsafe locked paths={unsafe}")
 
     canary = "FS_OBSERVER_IG6_SECRET_CANARY_7D4C0E"
-    evidence_text = source_text(list((ROOT / "evidence").rglob("*.json")))
+    evidence_text = ""
+    if EVIDENCE_ROOT.exists():
+        evidence_text = source_text(list(EVIDENCE_ROOT.rglob("*.json")))
     check("IG6-PRV-001", canary not in evidence_text, "secret canary absent from evidence")
 
     secret_pattern = re.compile(r"(?i)(password|api[_-]?key|access[_-]?token)\s*[=:]\s*[\"'][^\"']+[\"']")

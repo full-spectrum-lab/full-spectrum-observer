@@ -7,7 +7,16 @@ param(
 
 $ErrorActionPreference = "Stop"
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-$EvidenceDir = Join-Path $RepoRoot "evidence/ig1"
+
+# Official entry point: route all run evidence to an external directory by default so a
+# fresh clone's working tree stays clean. Honour an explicit FSP_EVIDENCE_ROOT if the
+# operator set one; otherwise generate a unique out-of-repo location under TEMP. The
+# variable is inherited by every child process (PowerShell / Python / dotnet).
+if ([string]::IsNullOrWhiteSpace($env:FSP_EVIDENCE_ROOT)) {
+    $env:FSP_EVIDENCE_ROOT = Join-Path $env:TEMP ("full-spectrum-observer/evidence/" + [System.Guid]::NewGuid().ToString("N").Substring(0,12))
+}
+
+$EvidenceDir = Join-Path $env:FSP_EVIDENCE_ROOT "ig1"
 $LogPath = Join-Path $EvidenceDir "build-log.txt"
 New-Item -ItemType Directory -Path $EvidenceDir -Force | Out-Null
 

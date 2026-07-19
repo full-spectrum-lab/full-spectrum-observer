@@ -2,7 +2,10 @@
 from __future__ import annotations
 import hashlib,json,os,pathlib,subprocess,sys
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-WORKER=ROOT/'engine/worker/worker.py'; ENGINE=ROOT/'engine/vendor/full-spectrum-engine'; CASE=ROOT/'packs/foundation-case005/case005.input.json'; GOLDEN=ROOT/'packs/foundation-case005/engine-golden.json'; EVIDENCE=ROOT/'evidence/ig4/worker-smoke.json'
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible).
+EVIDENCE_ROOT=pathlib.Path(os.environ.get("FSP_EVIDENCE_ROOT") or (ROOT/"evidence"))
+WORKER=ROOT/'engine/worker/worker.py'; ENGINE=ROOT/'engine/vendor/full-spectrum-engine'; CASE=ROOT/'packs/foundation-case005/case005.input.json'; GOLDEN=ROOT/'packs/foundation-case005/engine-golden.json'; EVIDENCE=EVIDENCE_ROOT/'ig4/worker-smoke.json'
 
 def encode(v): return json.dumps(v,ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False).encode()
 def run(req):

@@ -16,7 +16,10 @@ CASE = ROOT / "packs" / "foundation-case005" / "case005.input.json"
 GOLDEN = ROOT / "packs" / "foundation-case005" / "engine-golden.json"
 WORKER = ROOT / "engine" / "worker" / "worker.py"
 ENGINE = ROOT / "engine" / "vendor" / "full-spectrum-engine"
-EVIDENCE = ROOT / "evidence" / "ig5" / "reference-pipeline.json"
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible).
+EVIDENCE_ROOT = pathlib.Path(os.environ.get("FSP_EVIDENCE_ROOT") or (ROOT / "evidence"))
+EVIDENCE = EVIDENCE_ROOT / "ig5" / "reference-pipeline.json"
 
 
 def encode(value: object) -> bytes:
