@@ -3,7 +3,6 @@ using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text;
 using FullSpectrum.Observer.Application;
 using FullSpectrum.Observer.Recovery;
@@ -367,14 +366,15 @@ public sealed class Launcher : IDisposable
 
     /// <summary>
     /// Requests a graceful shutdown over the LOCAL Windows Named Pipe the Web Host is listening on
-    /// (ADR-005 L2/L3, M2-FIX-03). Sends <c>STOP &lt;session-token&gt;</c> and reads the single-line
-    /// response (<c>ACK</c> = accepted, host stopping; <c>REJECT</c> = bad token/user). Returns true
-    /// if the pipe boundary was reached (so we then wait for a clean exit), false on any transport
-    /// failure. This is the sole cross-process control signal and uses NO network client.
+    /// (ADR-005 L2/L3, M2-FIX-03, M2-FIX-04). Sends <c>STOP &lt;session-token&gt;</c> and reads the
+    /// single-line response (<c>ACK</c> = accepted, host stopping; <c>REJECT</c> = bad token). Returns
+    /// true if the pipe boundary was reached (so we then wait for a clean exit), false on any
+    /// transport failure. This is the sole cross-process control signal and uses NO network client.
     /// <para>
-    /// The client requests <see cref="TokenImpersonationLevel.Impersonation"/> so the server can
-    /// verify the caller is the same Windows principal that started it — defense in depth on top of
-    /// the unguessable pipe name + session token.
+    /// The client connects with <see cref="PipeOptions.CurrentUserOnly"/>, matching the server. On
+    /// Windows the OS restricts the pipe to the SAME user AND the SAME elevation level that created
+    /// it, so NO token impersonation is requested — the same-user boundary is enforced by the kernel
+    /// and does NOT depend on the <c>SeImpersonatePrivilege</c> the sandbox may lack (M2-FIX-04).
     /// </para>
     /// </summary>
     private bool RequestStopViaNamedPipe()
@@ -385,12 +385,14 @@ public sealed class Launcher : IDisposable
         }
         try
         {
+            // M2-FIX-04: connect with PipeOptions.CurrentUserOnly (no token impersonation). The OS
+            // limits the pipe to the same Windows user + elevation level, which is all we need — no
+            // impersonation level and no SeImpersonatePrivilege dependency.
             using var pipeClient = new NamedPipeClientStream(
                 ".",
                 StopPipeName,
                 PipeDirection.InOut,
-                PipeOptions.None,
-                TokenImpersonationLevel.Impersonation);
+                PipeOptions.CurrentUserOnly);
             pipeClient.Connect(2000);
 
             using var writer = new StreamWriter(pipeClient, Encoding.ASCII, bufferSize: 1024, leaveOpen: true) { AutoFlush = true };

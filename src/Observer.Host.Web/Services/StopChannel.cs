@@ -1,5 +1,4 @@
 using System.IO.Pipes;
-using System.Security.Principal;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 
@@ -35,7 +34,7 @@ public sealed class StopTokenContext
 }
 
 /// <summary>
-/// Internal, LOCAL Windows Named Pipe stop channel (ADR-005 L2/L3, M2-FIX-03 T11, revised).
+/// Internal, LOCAL Windows Named Pipe stop channel (ADR-005 L2/L3, M2-FIX-03 T11, M2-FIX-04 revised).
 ///
 /// The Launcher mints an UNPREDICTABLE pipe name (passed via <c>--stop-pipe</c>) and a one-time
 /// session token (passed via <c>--stop-token</c>). This hosted service listens on that pipe — a
@@ -43,18 +42,19 @@ public sealed class StopTokenContext
 /// TCP/HTTP/Socket/port is used for control.
 ///
 /// Protocol (minimal): the client sends a single line <c>STOP &lt;session-token&gt;</c>; the server
-/// replies <c>ACK</c> (accepted) or <c>REJECT</c> (bad token / wrong user).
+/// replies <c>ACK</c> (accepted) or <c>REJECT</c> (bad token).
 ///
-/// Security boundaries:
+/// Security boundaries (two layers, OS-enforced where possible — M2-FIX-04):
 /// <list type="bullet">
 ///   <item><description>The pipe name is unguessable (session id + 16-byte random), so another local
 ///     principal cannot even locate the control endpoint.</description></item>
-///   <item><description>Before processing a request, the server impersonates the client
-///     (<see cref="NamedPipeServerStream.RunAsClient"/>) and verifies the caller is the SAME Windows
-///     principal that started this host (the Launcher launches this host as a child process, so they
-///     share the user). A different local user is rejected.</description></item>
-///   <item><description>The session token is validated in constant time and is not expired for the
-///     whole session, so only THIS Launcher's token stops THIS host (pipe-name + token double
+///   <item><description>Layer 1 — <see cref="PipeOptions.CurrentUserOnly"/>: on Windows the OS restricts
+///     the pipe to the SAME Windows user AND the SAME elevation level that created it. This is enforced
+///     by the kernel, requires NO impersonation, and does NOT depend on the
+///     <c>SeImpersonatePrivilege</c> a sandboxed/low-privilege process may lack. A different user (or
+///     a differently-elevated process) is refused at connect time — no runtime caller check needed.</description></item>
+///   <item><description>Layer 2 — the session token is validated in constant time and is not expired for
+///     the whole session, so only THIS Launcher's token stops THIS host (pipe-name + token double
 ///     binding, L3).</description></item>
 /// </list>
 ///
@@ -73,8 +73,8 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
     private readonly IHostApplicationLifetime _lifetime;
     private readonly string _pipeName;
     private readonly StopTokenContext _tokenContext;
-    private readonly string _serverUser;
     private readonly CancellationTokenSource _cts = new();
+    private Task? _listenTask;
     private NamedPipeServerStream? _pipe;
     private bool _disposed;
 
@@ -86,7 +86,6 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
         // for the whole session (not a short 30s window). Pipe-name + token double-binding is the
         // real control boundary; expiry is defense-in-depth against a leaked token.
         _tokenContext = new StopTokenContext(stopToken, TimeSpan.FromHours(24));
-        _serverUser = WindowsIdentity.GetCurrent().Name;
     }
 
     /// <inheritdoc />
@@ -107,8 +106,6 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
         return Task.CompletedTask;
     }
 
-    private Task? _listenTask;
-
     private async Task ListenLoopAsync(CancellationToken token)
     {
         try
@@ -118,7 +115,7 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
                 PipeDirection.InOut,
                 maxNumberOfServerInstances: 1,
                 PipeTransmissionMode.Byte,
-                PipeOptions.Asynchronous,
+                PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly,
                 inBufferSize: 1024,
                 outBufferSize: 1024);
         }
@@ -135,13 +132,11 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
             {
                 await _pipe.WaitForConnectionAsync(token).ConfigureAwait(false);
 
-                // L5: restrict to the same Windows principal that started this host.
-                if (!IsSameWindowsUser(_pipe))
-                {
-                    await WriteLineAsync(_pipe, ResponseReject, token).ConfigureAwait(false);
-                    _pipe.Disconnect();
-                    continue;
-                }
+                // Layer 1 (same Windows user + same elevation level) is enforced by the OS via
+                // PipeOptions.CurrentUserOnly at connect time — no impersonation is required here.
+                // If the caller is not the same user/elevation, the connect or subsequent read throws
+                // and the loop safely disconnects below. There is NO dependency on
+                // SeImpersonatePrivilege.
 
                 string response = await ReadAndValidateAsync(_pipe, token).ConfigureAwait(false);
                 await WriteLineAsync(_pipe, response, token).ConfigureAwait(false);
@@ -162,29 +157,11 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
             }
             catch (Exception)
             {
-                // Pipe closed, client disconnected, or host shutting down. Stop serving.
+                // Pipe closed, client disconnected, host shutting down, or a rejected connection
+                // (different user/elevation refused by CurrentUserOnly). Stop serving.
                 try { _pipe.Disconnect(); } catch { /* no-op */ }
                 break;
             }
-        }
-    }
-
-    /// <summary>Impersonates the connected client and verifies it is the same Windows user that
-    /// started this host. Returns false (reject) on any impersonation failure.</summary>
-    private bool IsSameWindowsUser(NamedPipeServerStream pipe)
-    {
-        try
-        {
-            string? clientUser = null;
-            pipe.RunAsClient(() =>
-            {
-                clientUser = WindowsIdentity.GetCurrent().Name;
-            });
-            return string.Equals(clientUser, _serverUser, StringComparison.Ordinal);
-        }
-        catch
-        {
-            return false;
         }
     }
 

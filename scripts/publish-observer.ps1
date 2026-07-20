@@ -141,6 +141,11 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     # Cleanup happens in `finally` BEFORE any error is emitted, so the trailing Write-Error cannot
     # abort the script and leave residue behind (the previous bug left .failure-probe.staging.<hash>).
     $catchError = $null
+    # M2-FIX-04: tracks whether we reached the success tail. The `finally` block uses this to decide
+    # between KEEPING the release artifacts (observer/, observer.zip, external manifest) on success
+    # vs. removing ALL partial output on failure (residue = 0). This replaces the unconditional
+    # "delete ReleaseZip on exit" bug, which destroyed the formal distribution artifact on success.
+    $publishSucceeded = $false
     try {
     # M2-FIX-01 (Option B, minimal correct closed loop): the committed packages.lock.json is the
     # RID-agnostic (net10.0) source-of-truth dependency snapshot consumed by `build.ps1 -Locked`. The
@@ -339,6 +344,9 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
         try {
             $base = $StagingRoot.TrimEnd([char[]]@('\', '/'))
             Get-ChildItem -LiteralPath $StagingRoot -Recurse -File | ForEach-Object {
+                # M2-FIX-04: never ship the release manifest inside the ZIP
+                # (ZIP_CONTAINS_RELEASE_MANIFEST=NO); it is written as an EXTERNAL file instead.
+                if ($_.Name -eq "release-manifest.json") { return }
                 $rel = $_.FullName.Substring($base.Length + 1).Replace('\', '/')
                 [void][System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($za, $_.FullName, $rel, [System.IO.Compression.CompressionLevel]::Optimal)
             }
@@ -394,6 +402,17 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     # rename (no partial/half-populated state is ever exposed to the final output location).
     Move-Item -LiteralPath $StagingRoot -Destination $OutputRoot -Force
 
+    # M2-FIX-04: For a formal Release, write release-manifest.json as an EXTERNAL file alongside
+    # observer.zip. The ZIP itself must NOT contain the manifest (ZIP_CONTAINS_RELEASE_MANIFEST=NO);
+    # the external file is the distribution's digest signature (EXTERNAL_RELEASE_MANIFEST=YES). It is
+    # kept on success and removed on failure so a partial/zero digest is never shipped. Dev (non
+    # -Release) builds skip this because no release ZIP is produced.
+    if ($Release.IsPresent) {
+        $externalManifestPath = Join-Path $OutputParent "release-manifest.json"
+        Set-Content -LiteralPath $externalManifestPath -Value $manifestJson -Encoding utf8
+        Write-Host "  release-manifest.json (external) -> $externalManifestPath"
+    }
+
     Write-Host "=== Publish package complete ==="
     Write-Host "  CLI    : $cliExe"
     Write-Host "  Web    : $webExe"
@@ -403,6 +422,7 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     if ($Release.IsPresent) { Write-Host "  Release ZIP: $ReleaseZip (sha256 $packageSha)" }
     Write-Host "=== [publish-observer] OK ==="
     # B-02 #7: RC=0 on success.
+    $publishSucceeded = $true
     exit 0
 }
 catch {
@@ -411,14 +431,29 @@ catch {
     $catchError = $_.Exception.Message
 }
 finally {
-    # M2-FIX-03 (T9): remove the partial staging directory and any half-written release ZIP FIRST.
-    # On success this is a no-op (staging was already renamed to the final output via Move-Item).
-    # On failure this guarantees no .failure-probe.staging.<hash> residue remains.
-    if (Test-Path -LiteralPath $StagingRoot) {
-        Remove-Item -LiteralPath $StagingRoot -Recurse -Force -ErrorAction SilentlyContinue
-    }
-    if (Test-Path -LiteralPath $ReleaseZip) {
-        Remove-Item -LiteralPath $ReleaseZip -Force -ErrorAction SilentlyContinue
+    # M2-FIX-04: SUCCESS vs FAILURE cleanup.
+    #   * SUCCESS: keep observer/ (promoted from staging), observer.zip, and the external
+    #     release-manifest.json. Only discard the transient staging directory (already renamed to the
+    #     final output via Move-Item, so this is normally a no-op).
+    #   * FAILURE: guarantee residue = 0 — remove the staging directory, the partial release ZIP, and
+    #     any external release-manifest.json so a zero/partial digest is never shipped. This preserves
+    #     the existing failure-cleanup (C8) semantics: no half-populated output directory,
+    #     no partial release ZIP, non-zero exit.
+    if ($publishSucceeded) {
+        if (Test-Path -LiteralPath $StagingRoot) {
+            Remove-Item -LiteralPath $StagingRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    } else {
+        if (Test-Path -LiteralPath $StagingRoot) {
+            Remove-Item -LiteralPath $StagingRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+        if (Test-Path -LiteralPath $ReleaseZip) {
+            Remove-Item -LiteralPath $ReleaseZip -Force -ErrorAction SilentlyContinue
+        }
+        $externalManifestPath = Join-Path $OutputParent "release-manifest.json"
+        if (Test-Path -LiteralPath $externalManifestPath) {
+            Remove-Item -LiteralPath $externalManifestPath -Force -ErrorAction SilentlyContinue
+        }
     }
 }
 
