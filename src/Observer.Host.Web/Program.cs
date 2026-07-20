@@ -22,6 +22,7 @@ builder.WebHost.UseKestrel(options => options.ListenLocalhost(port));
 // ADR-005 L3: one-time bootstrap token minted by the Launcher and passed via --bootstrap-token.
 // The Host validates it once (BootstrapTokenGate seam); it is never logged or persisted (L9/L16).
 string? bootstrapToken = GetOption(args, "--bootstrap-token");
+string? stopToken = GetOption(args, "--stop-token");
 string requestedUrls = GetOption(args, "--urls");
 builder.Services.AddSingleton(new BootstrapTokenContext(bootstrapToken, TimeSpan.FromSeconds(30)));
 
@@ -49,23 +50,33 @@ builder.Services.AddSingleton<SystemDiagnostics>();
 builder.Services.AddSingleton<Orchestrator>();
 builder.Services.AddSingleton<IntakeAdapter>();
 builder.Services.AddSingleton<OutputAdapter>();
+// M2-FIX-03: a single cancellation source that is signalled when the host begins stopping, so any
+// in-flight analysis (and therefore the Engine worker process) is cancelled cleanly on shutdown.
+builder.Services.AddSingleton<AnalysisShutdownToken>();
 builder.Services.AddSingleton(sp =>
 {
-    string root = RepositoryLayout.FindRoot(AppContext.BaseDirectory);
-    string schemaDirectory = RepositoryLayout.SchemaDirectory(root);
-    string python = Environment.GetEnvironmentVariable("FSP_PRIVATE_PYTHON");
+    // M2-FIX-03: resolve every runtime path via the shared resolver instead of reading
+    // FSP_PRIVATE_PYTHON directly. The resolver derives PackageRoot from AppContext.BaseDirectory,
+    // so the product works from any working directory with the env var UNSET (the formal package
+    // ships runtime/python/python.exe). FSP_PRIVATE_PYTHON remains only a test/diagnostic override.
+    var config = FullSpectrum.Observer.Contracts.RuntimeConfigurationResolver.Resolve();
     var options = new EngineFacadeOptions
     {
-        PythonExecutablePath = python is null ? string.Empty : Path.GetFullPath(python),
-        WorkerScriptPath = Path.Combine(root, "engine", "worker", "worker.py"),
-        EngineRootPath = Path.Combine(root, "engine", "vendor", "full-spectrum-engine"),
-        WorkerLockPath = Path.Combine(root, "engine", "worker.lock.json"),
-        SchemaDirectory = Path.GetFullPath(schemaDirectory),
+        PythonExecutablePath = config.PythonExecutablePath,
+        WorkerScriptPath = config.WorkerScriptPath,
+        EngineRootPath = config.EngineRootPath,
+        WorkerLockPath = config.WorkerLockPath,
+        SchemaDirectory = Path.GetFullPath(config.SchemaDirectory),
     };
     return EngineV15Composition.Create(options);
 });
 
 var app = builder.Build();
+
+// M2-FIX-03 (T12): when the host begins stopping, signal the analysis cancellation source so any
+// in-flight Engine worker is terminated via the existing EngineFacade cancel path (no forced kill).
+app.Lifetime.ApplicationStopping.Register(() =>
+    app.Services.GetRequiredService<AnalysisShutdownToken>().Signal());
 
 // Surface the resolved (stable, absolute) data directory and the actual runtime endpoints
 // on the System Information page.
@@ -93,6 +104,9 @@ app.Lifetime.ApplicationStarted.Register(() =>
 
 // Bootstrap-token handshake seam (L3/L4). Full HttpOnly session exchange is a subsequent module.
 app.UseBootstrapTokenGate();
+// M2-FIX-03 (T11): internal, loopback-only stop channel guarded by the Launcher-minted stop token.
+// The handler calls IHostApplicationLifetime.StopApplication() for a clean graceful shutdown.
+app.MapStopChannel(stopToken ?? string.Empty);
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.MapRazorComponents<App>()

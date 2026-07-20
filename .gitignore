@@ -29,6 +29,10 @@ __pycache__/
 .packages/
 .runtime/
 
+# Generated/published runtime: provisioned into the release package at publish time
+# (scripts/provision-runtime-python.ps1). Never tracked; keeps worktree-clean after a build.
+/runtime/
+
 # Secrets and local overrides
 *.secrets.json
 .env

@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- M2-FIX-03: ship appsettings.json (mirrors the Web host's EngineV15 block with an empty
+         PythonExecutablePath; the runtime path is resolved by RuntimeConfigurationResolver). -->
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
     <ProjectReference Include="../../src/Observer.Application/Observer.Application.csproj" />
     <ProjectReference Include="../../src/Observer.Execution/Observer.Execution.csproj" />

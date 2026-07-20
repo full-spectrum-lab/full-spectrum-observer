@@ -49,7 +49,14 @@ param(
     [switch]$Release,
     [string]$EngineArtifactDigest,
     [string]$EngineManifestPath,
-    [string]$EngineArtifactPath
+    [string]$EngineArtifactPath,
+    # M2-FIX-03: source of the self-contained Python runtime. Supplied by CI / WorkBuddy — a
+    # directory containing python.exe (the pre-built 3.12+ distribution). Do NOT hardcode a network
+    # download inside this script.
+    [string]$PythonSource,
+    # M2-FIX-03: offline wheel cache (directory of .whl files) for numpy + jsonschema, installed
+    # into the provisioned runtime with --no-index.
+    [string]$WheelCache
 )
 
 # B-02 #1: DOT-SOURCE THE GATES SCRIPT.
@@ -129,9 +136,12 @@ Write-Host "=== [publish-observer] output: $OutputRoot ==="
 $engineSourceDigest   = $baselineEngineSourceDigest
 $runtimePayloadDigest = $baselineRuntimePayloadDigest
 
-# B-02 #3: wrap the entire build/stage/release pipeline in try/catch so a failure can NEVER
-# leave a half-populated output directory or a partial release ZIP behind.
-try {
+    # B-02 #3 + M2-FIX-03 (T9): wrap the entire build/stage/release pipeline in try/catch/finally so a
+    # failure can NEVER leave a half-populated output directory or a partial release ZIP behind.
+    # Cleanup happens in `finally` BEFORE any error is emitted, so the trailing Write-Error cannot
+    # abort the script and leave residue behind (the previous bug left .failure-probe.staging.<hash>).
+    $catchError = $null
+    try {
     # M2-FIX-01 (Option B, minimal correct closed loop): the committed packages.lock.json is the
     # RID-agnostic (net10.0) source-of-truth dependency snapshot consumed by `build.ps1 -Locked`. The
     # official publish is win-x64-only, so its restore resolves the win-x64 RID assets for
@@ -275,6 +285,43 @@ try {
     Copy-Item -LiteralPath (Join-Path $RepoRoot "schemas") -Destination (Join-Path $StagingRoot "schemas") -Recurse -Force
     Write-Host "  carried engine/ + baselines.lock.json + schemas/ into staging package"
 
+    # M2-FIX-03 (T7a): carry the Case Pack directory so IG5 "Case Pack directory is missing" is
+    # fixed — the runtime resolver derives CasePackDirectory from <PackageRoot>/packs/foundation-case005.
+    Copy-Item -LiteralPath (Join-Path $RepoRoot "packs") -Destination (Join-Path $StagingRoot "packs") -Recurse -Force
+    Write-Host "  carried packs/ into staging package"
+
+    # M2-FIX-03 (T7b): provision a self-contained Python runtime (python.exe + numpy + jsonschema)
+    # from a pre-built distribution + offline wheel cache. No network egress. When CI does not
+    # supply -PythonSource/-WheelCache (dev build) we skip it and warn; the formal release gate
+    # below asserts the runtime is present.
+    if (-not [string]::IsNullOrWhiteSpace($PythonSource) -and -not [string]::IsNullOrWhiteSpace($WheelCache)) {
+        & (Join-Path $PSScriptRoot "provision-runtime-python.ps1") -PythonSource $PythonSource -WheelCache $WheelCache -Destination $StagingRoot
+        if ($LASTEXITCODE -ne 0) { throw "RELEASE GATE FAILED: runtime Python provisioning failed (exit $LASTEXITCODE)." }
+        $runtimeExe = Join-Path $StagingRoot "runtime/python/python.exe"
+        if (-not (Test-Path -LiteralPath $runtimeExe -PathType Leaf)) {
+            throw "RELEASE GATE FAILED: runtime/python/python.exe missing after provisioning."
+        }
+        Write-Host "  provisioned self-contained runtime/python"
+    } else {
+        Write-Warning "DEV PUBLISH: -PythonSource/-WheelCache not supplied; runtime/python NOT provisioned (formal release requires it)."
+    }
+
+    # M2-FIX-03 (T7c): ensure CLI + Web appsettings.json ship with an empty EngineV15.PythonExecutablePath
+    # (resolved at runtime by RuntimeConfigurationResolver; the value here is a placeholder only).
+    $cfgCli = Join-Path $RepoRoot "src/Observer.Host.Cli/appsettings.json"
+    $cfgWeb = Join-Path $RepoRoot "src/Observer.Host.Web/appsettings.json"
+    if (Test-Path -LiteralPath $cfgCli) { Copy-Item -LiteralPath $cfgCli -Destination (Join-Path $StagingCli "appsettings.json") -Force }
+    if (Test-Path -LiteralPath $cfgWeb) { Copy-Item -LiteralPath $cfgWeb -Destination (Join-Path $StagingWeb "appsettings.json") -Force }
+
+    # M2-FIX-03 (T7d): the formal release must be self-contained — assert the runtime interpreter
+    # exists before promotion (only enforced when a runtime was actually provisioned above).
+    if (-not [string]::IsNullOrWhiteSpace($PythonSource) -and -not [string]::IsNullOrWhiteSpace($WheelCache)) {
+        $finalRuntimeExe = Join-Path $StagingRoot "runtime/python/python.exe"
+        if (-not (Test-Path -LiteralPath $finalRuntimeExe -PathType Leaf)) {
+            throw "RELEASE GATE FAILED: runtime/python/python.exe absent at promotion; package would not be self-contained."
+        }
+    }
+
     # B-02 #5 + #8: build the release manifest.
     #   engine_source_artifact_sha256      = constant Engine source ZIP digest (baseline)
     #   engine_runtime_payload_manifest_sha256 = runtime-payload manifest digest (baseline)
@@ -359,12 +406,26 @@ try {
     exit 0
 }
 catch {
-    # B-02 #3: FAILURE CLEANUP. Remove the partial staging directory and any half-written release
-    # ZIP, then exit non-zero. A failed run must NEVER leave a half-populated output directory.
-    $errMsg = $_.Exception.Message
-    Write-Error "RELEASE BUILD FAILED: $errMsg"
-    if (Test-Path -LiteralPath $StagingRoot) { Remove-Item -LiteralPath $StagingRoot -Recurse -Force }
-    if (Test-Path -LiteralPath $ReleaseZip) { Remove-Item -LiteralPath $ReleaseZip -Force }
+    # M2-FIX-03 (T9): capture the error but do NOT emit it yet. Cleanup is performed in `finally`
+    # so it runs even if the trailing Write-Error re-throws under $ErrorActionPreference="Stop".
+    $catchError = $_.Exception.Message
+}
+finally {
+    # M2-FIX-03 (T9): remove the partial staging directory and any half-written release ZIP FIRST.
+    # On success this is a no-op (staging was already renamed to the final output via Move-Item).
+    # On failure this guarantees no .failure-probe.staging.<hash> residue remains.
+    if (Test-Path -LiteralPath $StagingRoot) {
+        Remove-Item -LiteralPath $StagingRoot -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    if (Test-Path -LiteralPath $ReleaseZip) {
+        Remove-Item -LiteralPath $ReleaseZip -Force -ErrorAction SilentlyContinue
+    }
+}
+
+# M2-FIX-03 (T9): ONLY AFTER cleanup is guaranteed do we emit the error and exit non-zero. A failed
+# run must leave NO half-populated output directory and NO partial release ZIP (residue = 0).
+if ($null -ne $catchError) {
+    Write-Error "RELEASE BUILD FAILED: $catchError"
     Write-Error "Partial staging and partial release ZIP removed. No half-populated output directory was left behind."
     # B-02 #7: non-zero on failure.
     exit 1

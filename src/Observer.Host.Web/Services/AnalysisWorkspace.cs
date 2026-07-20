@@ -34,6 +34,7 @@ public sealed class AnalysisWorkspace
     private readonly AuditViewer _audit;
     private readonly SubjectCatalog _subjects;
     private readonly KnowledgeCatalog _knowledge;
+    private readonly AnalysisShutdownToken _shutdown;
 
     public AnalysisWorkspace(
         ObserverStore store,
@@ -42,7 +43,8 @@ public sealed class AnalysisWorkspace
         OutputAdapter output,
         AuditViewer audit,
         SubjectCatalog subjects,
-        KnowledgeCatalog knowledge)
+        KnowledgeCatalog knowledge,
+        AnalysisShutdownToken shutdown)
     {
         _store = store;
         _engine = engine;
@@ -51,6 +53,7 @@ public sealed class AnalysisWorkspace
         _audit = audit;
         _subjects = subjects;
         _knowledge = knowledge;
+        _shutdown = shutdown;
     }
 
     /// <summary>
@@ -189,7 +192,9 @@ public sealed class AnalysisWorkspace
         EngineResponse response;
         try
         {
-            response = await _engine.AnalyzeAsync(envelope);
+            // M2-FIX-03 (T12): observe the shutdown token so a graceful stop cancels this analysis
+            // and terminates the Engine worker via the existing EngineFacade cancel path.
+            response = await _engine.AnalyzeAsync(envelope, _shutdown.Token);
         }
         catch (DependencyMissingException exception)
         {

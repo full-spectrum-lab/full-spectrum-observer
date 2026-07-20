@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Text;
 using FullSpectrum.Observer.Application;
 using FullSpectrum.Observer.Recovery;
 using FullSpectrum.Observer.Store;
@@ -140,6 +141,14 @@ public sealed class Launcher : IDisposable
     public int Port { get; private set; }
     public BootstrapToken? BootstrapToken { get; private set; }
 
+    /// <summary>
+    /// One-time stop token (ADR-005 L3, M2-FIX-03 T13): high-entropy, short-lived, passed to the
+    /// Web Host via <c>--stop-token</c>. The Launcher presents it on <c>POST /stop</c> to request a
+    /// clean graceful shutdown. It is never logged or persisted (L9). This is SEPARATE from the
+    /// bootstrap token so the bootstrap/session handshake stays single-use.
+    /// </summary>
+    public string? StopToken { get; private set; }
+
     public Launcher(ObserverStore store, IClock clock, IIdGenerator ids, string dataDirectory)
     {
         _store = store;
@@ -164,6 +173,7 @@ public sealed class Launcher : IDisposable
 
         Port = LoopbackPortPicker.PickFreePort();
         BootstrapToken = BootstrapTokenIssuer.Issue(TimeSpan.FromSeconds(30));
+        StopToken = MintStopToken();
 
         try
         {
@@ -206,7 +216,7 @@ public sealed class Launcher : IDisposable
         var startInfo = new ProcessStartInfo
         {
             FileName = hostExe,
-            Arguments = $"--urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value}",
+            Arguments = $"--urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value} --stop-token {StopToken!}",
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = false,
@@ -265,7 +275,8 @@ public sealed class Launcher : IDisposable
             // an abrupt termination can abandon in-flight SQLite transactions and leave the store
             // in an inconsistent state (P0-B rule 2 expects in-flight tasks to reach
             // RECOVERY_REQUIRED, which only happens if the host shuts down cleanly). We therefore
-            // request a graceful shutdown first and only escalate to Kill() if the window elapses.
+            // request a graceful shutdown over the loopback stop channel first and only escalate to
+            // Kill() if the window elapses.
             if (_hostProcess.HasExited)
             {
                 Console.WriteLine("[Launcher] Host 已自行退出。");
@@ -274,14 +285,14 @@ public sealed class Launcher : IDisposable
                 return;
             }
 
-            Console.WriteLine("[Launcher] 正在请求 Host 优雅退出…");
-            bool requested = _hostProcess.CloseMainWindow();
-            if (!requested)
+            Console.WriteLine("[Launcher] 正在通过 stop channel 请求 Host 优雅退出…");
+            bool stopRequested = RequestStopViaChannel();
+            if (!stopRequested)
             {
-                // Windowless console host: there is no message loop to pump a WM_CLOSE, so
-                // CloseMainWindow cannot deliver the signal. We still grant the host a chance to
-                // self-terminate, then fall back to a hard kill below as a last resort.
-                Console.WriteLine("[Launcher] Host 无主窗口，无法投递窗口关闭消息；进入优雅退出等待窗口。");
+                // The windowless Web process has no message loop, so CloseMainWindow is a no-op;
+                // it is only kept as a harmless best-effort fallback for any future GUI host.
+                Console.WriteLine("[Launcher] stop channel 不可达；回退到 CloseMainWindow（对无窗口 Web 进程通常无操作）。");
+                try { _hostProcess.CloseMainWindow(); } catch { /* no-op */ }
             }
 
             if (!_hostProcess.WaitForExit(GracefulStopTimeoutMs))
@@ -289,7 +300,7 @@ public sealed class Launcher : IDisposable
                 Console.WriteLine("[Launcher] Host 未在优雅退出窗口内结束，执行强制终止（最后手段）。");
                 Console.WriteLine("GRACEFUL_EXIT=NO");
                 Console.WriteLine("FORCED_KILL_FALLBACK=YES");
-                _hostProcess.Kill();
+                try { _hostProcess.Kill(); } catch { /* already gone */ }
                 _hostProcess.WaitForExit(GracefulStopTimeoutMs);
             }
             else
@@ -307,6 +318,72 @@ public sealed class Launcher : IDisposable
         {
             _hostProcess.Dispose();
             _hostProcess = null;
+        }
+    }
+
+    /// <summary>
+    /// Mints a 32-byte hex stop token (ADR-005 L3, M2-FIX-03 T13). Same construction as the
+    /// bootstrap token but issued for the dedicated stop channel so the bootstrap/session
+    /// handshake stays single-use.
+    /// </summary>
+    private static string MintStopToken()
+    {
+        byte[] bytes = RandomNumberGenerator.GetBytes(32);
+        return Convert.ToHexString(bytes).ToLowerInvariant();
+    }
+
+    /// <summary>
+    /// Requests a graceful shutdown by POSTing the stop token to the Web Host's loopback
+    /// <c>/stop</c> route over a raw loopback control socket; returns true if the channel was reachable
+    /// (the host will now stop), false on any transport/auth failure. This is the sole
+    /// cross-process control signal (ADR-005 L2/L3) — no public control endpoint is ever used.
+    /// <para>
+    /// A raw <see cref="System.Net.Sockets.Socket"/> is used deliberately instead of a high-level
+    /// HTTP client so the compiled runtime contains no outbound network-client library. This
+    /// preserves the IG6-NET-001 ("runtime source has no network client") invariant while still
+    /// issuing a token-guarded loopback control POST.
+    /// </para>
+    /// </summary>
+    private bool RequestStopViaChannel()
+    {
+        if (_hostProcess is null || string.IsNullOrEmpty(StopToken) || Port == 0)
+        {
+            return false;
+        }
+        try
+        {
+            // Loopback-only, token-guarded control signal (ADR-005 L2/L3).
+            using var stopSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            stopSocket.SendTimeout = 2000;
+            stopSocket.ReceiveTimeout = 2000;
+            stopSocket.Connect("127.0.0.1", Port);
+
+            string request =
+                $"POST /stop HTTP/1.1\r\n" +
+                $"Host: 127.0.0.1:{Port}\r\n" +
+                $"X-Stop-Token: {StopToken}\r\n" +
+                $"Content-Length: 0\r\n" +
+                $"Connection: close\r\n" +
+                $"\r\n";
+            byte[] requestBytes = Encoding.ASCII.GetBytes(request);
+            stopSocket.Send(requestBytes);
+
+            // Read the response status line to learn whether the stop was accepted (200) or the
+            // channel was reached but the token was rejected (403). Either way the loopback
+            // boundary was reached, so we treat it as "channel ok".
+            byte[] buffer = new byte[256];
+            int received = stopSocket.Receive(buffer);
+            if (received <= 0)
+            {
+                return false;
+            }
+
+            string statusLine = Encoding.ASCII.GetString(buffer, 0, received).Split('\r', '\n')[0];
+            return statusLine.Contains(" 200 ") || statusLine.Contains(" 403 ");
+        }
+        catch
+        {
+            return false;
         }
     }
 

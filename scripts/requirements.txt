@@ -7,7 +7,13 @@
 # Fresh clone auto-recovery: the gate command (scripts/test.ps1) dot-sources
 # scripts/bootstrap-python-deps.ps1, which runs:
 #     <private-python> -m pip install -r scripts/requirements.txt
-# so a clean environment self-installs jsonschema before the gates run.
+# so a clean environment self-installs jsonschema (and numpy for the Engine v1.5.0
+# worker) before the gates run.
 #
-# Pinned to the version verified in the M2-FIX-01 narrow-fix environment.
+# Pinned to the version verified in the M2-FIX-03 narrow-fix environment.
+#   * jsonschema==4.26.0 — gate / verification scripts.
+#   * numpy==1.26.4 — Engine v1.5.0 declares numpy>=1.24.0; 1.26.4 is the last
+#     1.26.x (cp312/cp313-compatible) build and is the verified pin against the
+#     formal Python 3.12.8 runtime (OQ-1 adopted).
 jsonschema==4.26.0
+numpy==1.26.4
