@@ -93,7 +93,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # --- Sanity: numpy + jsonschema must import from the provisioned runtime -------------------
-$raw = & $destExe -c "import numpy, jsonschema; print(numpy.__version__); print(jsonschema.__version__)" | Out-String
+$raw = & $destExe -c "import numpy; from importlib.metadata import version; print(numpy.__version__); print(version('jsonschema'))" | Out-String
 if ($LASTEXITCODE -ne 0) {
     throw "provision-runtime-python: post-install import check failed (exit $LASTEXITCODE)"
 }
