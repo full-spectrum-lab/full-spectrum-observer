@@ -10,6 +10,7 @@ using FullSpectrum.Observer.Host.Web.Services;
 using FullSpectrum.Observer.Contracts;
 using FullSpectrum.Observer.Store;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.WebHost.UseKestrel(options => options.ListenLocalhost(port));
 // The Host validates it once (BootstrapTokenGate seam); it is never logged or persisted (L9/L16).
 string? bootstrapToken = GetOption(args, "--bootstrap-token");
 string? stopToken = GetOption(args, "--stop-token");
+string? stopPipe = GetOption(args, "--stop-pipe");
 string requestedUrls = GetOption(args, "--urls");
 builder.Services.AddSingleton(new BootstrapTokenContext(bootstrapToken, TimeSpan.FromSeconds(30)));
 
@@ -53,6 +55,18 @@ builder.Services.AddSingleton<OutputAdapter>();
 // M2-FIX-03: a single cancellation source that is signalled when the host begins stopping, so any
 // in-flight analysis (and therefore the Engine worker process) is cancelled cleanly on shutdown.
 builder.Services.AddSingleton<AnalysisShutdownToken>();
+// M2-FIX-03 (T11 revised): the Launcher passes an unpredictable Named Pipe name (--stop-pipe) and a
+// session token (--stop-token). We host a LOCAL Windows Named Pipe server (no TCP/HTTP/Socket/port)
+// that accepts STOP <token> and triggers a clean graceful shutdown, restricted to the same Windows
+// principal that launched this host. Only registered when the Launcher supplies a pipe name.
+if (!string.IsNullOrEmpty(stopPipe))
+{
+    builder.Services.AddHostedService(sp =>
+        new NamedPipeStopChannel(
+            sp.GetRequiredService<IHostApplicationLifetime>(),
+            stopPipe!,
+            stopToken ?? string.Empty));
+}
 builder.Services.AddSingleton(sp =>
 {
     // M2-FIX-03: resolve every runtime path via the shared resolver instead of reading
@@ -104,9 +118,9 @@ app.Lifetime.ApplicationStarted.Register(() =>
 
 // Bootstrap-token handshake seam (L3/L4). Full HttpOnly session exchange is a subsequent module.
 app.UseBootstrapTokenGate();
-// M2-FIX-03 (T11): internal, loopback-only stop channel guarded by the Launcher-minted stop token.
-// The handler calls IHostApplicationLifetime.StopApplication() for a clean graceful shutdown.
-app.MapStopChannel(stopToken ?? string.Empty);
+// M2-FIX-03 (T11 revised): the stop channel is now a LOCAL Windows Named Pipe hosted service
+// (NamedPipeStopChannel), registered above only when the Launcher supplies --stop-pipe. It is not
+// an HTTP route, so there is no MapStopChannel call here.
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.MapRazorComponents<App>()

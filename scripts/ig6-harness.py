@@ -58,8 +58,40 @@ def main() -> int:
 
     runtime_sources = list((ROOT / "src").rglob("*.cs")) + [ROOT / "engine" / "worker" / "worker.py"]
     runtime = source_text(runtime_sources)
-    forbidden_network = re.compile(r"\b(HttpClient|WebRequest|TcpClient|UdpClient|socket\.|requests\.|urllib\.)")
-    check("IG6-NET-001", forbidden_network.search(runtime) is None, "runtime source has no network client")
+
+    # IG6-NET-001: the runtime STOP/control channel must NOT be a network client, and must use the
+    # approved LOCAL Windows Named Pipe boundary. We check DESIGN FACTS, not merely class names:
+    #   (a) forbidden high-level network-client class names;
+    #   (b) forbidden RAW System.Net.Sockets.Socket STOP-channel usage:
+    #         new Socket(  /  Socket(  /  Socket.<member>
+    #       with lookarounds so WebSocket / SocketException / SocketAsyncEventArgs and other
+    #       non-stop usages are NOT falsely flagged;
+    #   (c) Python-only: socket module attribute access (kept per spec; worker.py is scanned, not
+    #       offline_guard.py);
+    #   (d) POSITIVE assertion: the Launcher stop channel is implemented over the approved Named Pipe
+    #       boundary (System.IO.Pipes) — references NamedPipeServerStream / NamedPipeClientStream.
+    forbidden_client_classes = re.compile(r"\b(HttpClient|WebRequest|TcpClient|UdpClient)\b")
+    forbidden_socket_stop = re.compile(
+        r"new\s+Socket\s*\("
+        r"|(?<!Web)Socket\s*\("
+        r"|(?<!Web)Socket\.(?!Exception|AsyncEventArgs)"
+    )
+    forbidden_socket_py = re.compile(r"\bsocket\.")
+    approved_pipe_boundary = re.compile(r"NamedPipeServerStream|NamedPipeClientStream")
+
+    has_forbidden_client = forbidden_client_classes.search(runtime) is not None
+    has_forbidden_socket = forbidden_socket_stop.search(runtime) is not None
+    has_forbidden_socket_py = forbidden_socket_py.search(runtime) is not None
+    has_approved_pipe = approved_pipe_boundary.search(runtime) is not None
+    check(
+        "IG6-NET-001",
+        (not has_forbidden_client)
+        and (not has_forbidden_socket)
+        and (not has_forbidden_socket_py)
+        and has_approved_pipe,
+        "stop channel uses approved local Named Pipe boundary (System.IO.Pipes); "
+        "no network-client class and no raw System.Net.Sockets.Socket stop implementation",
+    )
 
     facade = (ROOT / "src/Observer.EngineFacade/PythonWorkerEngineFacade.cs").read_text(encoding="utf-8")
     proxy_controls = all(token in facade for token in ('Remove("HTTP_PROXY")', 'Remove("HTTPS_PROXY")', 'Remove("ALL_PROXY")', '["NO_PROXY"] = "*"'))

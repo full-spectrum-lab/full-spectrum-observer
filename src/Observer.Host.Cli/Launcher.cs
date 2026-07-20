@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using FullSpectrum.Observer.Application;
 using FullSpectrum.Observer.Recovery;
@@ -99,8 +101,10 @@ public static class BootstrapTokenIssuer
 }
 
 /// <summary>
-/// Picks a free loopback port (ADR-005 L2). The OS assigns an ephemeral port bound to
-/// 127.0.0.1 only; the Host then listens on that port and must reject any non-loopback source.
+/// Picks a free loopback port (ADR-005 L2) for the Web Host's *HTTP UI* binding. The OS assigns an
+/// ephemeral port bound to 127.0.0.1 only; the Host then listens on that port for the product web
+/// UI. This is NOT the stop channel — control shutdown travels over a separate LOCAL Windows Named
+/// Pipe (see <see cref="Launcher.StopPipeName"/>), which uses no TCP/HTTP/Socket/port.
 /// </summary>
 public static class LoopbackPortPicker
 {
@@ -125,11 +129,14 @@ public static class LoopbackPortPicker
 /// RECOVERY_REQUIRED (P0-B rule 2) so the next start can rebuild from the stored snapshot.
 ///
 /// The Host is launched as a SEPARATE process (the Blazor Web App); the Launcher owns its lifetime
-/// and the data-directory lock, and never binds the network itself.
+/// and the data-directory lock, and never binds the network itself. Graceful shutdown is requested
+/// over a LOCAL Windows Named Pipe (no TCP/HTTP/Socket/port) whose unguessable name + session token
+/// are minted here and passed to the Host via <c>--stop-pipe</c> / <c>--stop-token</c>.
 /// </summary>
 public sealed class Launcher : IDisposable
 {
     private const string HostWebExeEnv = "OBSERVER_HOST_WEB_EXE";
+    private const int GracefulStopTimeoutMs = 5000;
     private readonly SingleInstanceLock _instanceLock;
     private readonly ObserverStore _store;
     private readonly IClock _clock;
@@ -142,12 +149,23 @@ public sealed class Launcher : IDisposable
     public BootstrapToken? BootstrapToken { get; private set; }
 
     /// <summary>
-    /// One-time stop token (ADR-005 L3, M2-FIX-03 T13): high-entropy, short-lived, passed to the
-    /// Web Host via <c>--stop-token</c>. The Launcher presents it on <c>POST /stop</c> to request a
-    /// clean graceful shutdown. It is never logged or persisted (L9). This is SEPARATE from the
-    /// bootstrap token so the bootstrap/session handshake stays single-use.
+    /// One-time stop token (ADR-005 L3, M2-FIX-03 T13): high-entropy, session-scoped, passed to the
+    /// Web Host via <c>--stop-token</c>. The Launcher presents it on the LOCAL Named Pipe stop
+    /// channel (<c>STOP &lt;token&gt;</c>) to request a clean graceful shutdown. It is never logged
+    /// or persisted (L9). This is SEPARATE from the bootstrap token so the bootstrap/session
+    /// handshake stays single-use. Its lifetime is the whole session (the host may run for hours),
+    /// so it is not a short 30s window.
     /// </summary>
     public string? StopToken { get; private set; }
+
+    /// <summary>
+    /// Windows local Named Pipe name for the stop channel (ADR-005 L2/L3, M2-FIX-03). The Launcher
+    /// generates an UNPREDICTABLE name (session id + high-entropy random) and passes it to the Web
+    /// Host via <c>--stop-pipe</c>. The pipe is a local-only IPC boundary — no TCP/HTTP/Socket/port
+    /// is used for control. Combined with <see cref="StopToken"/>, the Web Host accepts a stop
+    /// request only from this Launcher (pipe-name + token double binding, L3).
+    /// </summary>
+    public string? StopPipeName { get; private set; }
 
     public Launcher(ObserverStore store, IClock clock, IIdGenerator ids, string dataDirectory)
     {
@@ -161,8 +179,8 @@ public sealed class Launcher : IDisposable
 
     public bool InstanceAcquired => _instanceLock.Acquired;
 
-    /// <summary>Runs the launch: acquire lock, mint token, start Host, open browser, and on
-    /// shutdown persist recovery state + terminate the Host.</summary>
+    /// <summary>Runs the launch: acquire lock, mint token + pipe, start Host, open browser, and on
+    /// shutdown persist recovery state + terminate the Host (gracefully, over the Named Pipe).</summary>
     public async Task<int> RunAsync(CancellationToken shutdownToken)
     {
         if (!_instanceLock.Acquired)
@@ -174,6 +192,7 @@ public sealed class Launcher : IDisposable
         Port = LoopbackPortPicker.PickFreePort();
         BootstrapToken = BootstrapTokenIssuer.Issue(TimeSpan.FromSeconds(30));
         StopToken = MintStopToken();
+        StopPipeName = MintStopPipeName(_session);
 
         try
         {
@@ -216,7 +235,9 @@ public sealed class Launcher : IDisposable
         var startInfo = new ProcessStartInfo
         {
             FileName = hostExe,
-            Arguments = $"--urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value} --stop-token {StopToken!}",
+            // The stop channel travels over a LOCAL Windows Named Pipe: the Launcher mints an
+            // unpredictable pipe name and a session token, and the Host binds only that pipe.
+            Arguments = $"--urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value} --stop-pipe {StopPipeName!} --stop-token {StopToken!}",
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = false,
@@ -261,8 +282,13 @@ public sealed class Launcher : IDisposable
         }
     }
 
-    private const int GracefulStopTimeoutMs = 5000;
-
+    /// <summary>
+    /// Terminates the Host: requests a GRACEFUL shutdown over the local Named Pipe first, then only
+    /// escalates to <c>Kill()</c> if the host fails to exit within <see cref="GracefulStopTimeoutMs"/>.
+    /// A hard kill must never be the first action: an abrupt termination can abandon in-flight SQLite
+    /// transactions and leave the store inconsistent (P0-B rule 2 expects in-flight tasks to reach
+    /// RECOVERY_REQUIRED, which only happens if the host shuts down cleanly).
+    /// </summary>
     private void TerminateHost()
     {
         if (_hostProcess is null)
@@ -271,12 +297,6 @@ public sealed class Launcher : IDisposable
         }
         try
         {
-            // The Host is a long-lived Web process. We MUST NOT hard-kill it as the first action:
-            // an abrupt termination can abandon in-flight SQLite transactions and leave the store
-            // in an inconsistent state (P0-B rule 2 expects in-flight tasks to reach
-            // RECOVERY_REQUIRED, which only happens if the host shuts down cleanly). We therefore
-            // request a graceful shutdown over the loopback stop channel first and only escalate to
-            // Kill() if the window elapses.
             if (_hostProcess.HasExited)
             {
                 Console.WriteLine("[Launcher] Host 已自行退出。");
@@ -285,13 +305,13 @@ public sealed class Launcher : IDisposable
                 return;
             }
 
-            Console.WriteLine("[Launcher] 正在通过 stop channel 请求 Host 优雅退出…");
-            bool stopRequested = RequestStopViaChannel();
+            Console.WriteLine("[Launcher] 正在通过本地 Named Pipe 请求 Host 优雅退出…");
+            bool stopRequested = RequestStopViaNamedPipe();
             if (!stopRequested)
             {
                 // The windowless Web process has no message loop, so CloseMainWindow is a no-op;
                 // it is only kept as a harmless best-effort fallback for any future GUI host.
-                Console.WriteLine("[Launcher] stop channel 不可达；回退到 CloseMainWindow（对无窗口 Web 进程通常无操作）。");
+                Console.WriteLine("[Launcher] stop pipe 不可达；回退到 CloseMainWindow（对无窗口 Web 进程通常无操作）。");
                 try { _hostProcess.CloseMainWindow(); } catch { /* no-op */ }
             }
 
@@ -333,53 +353,54 @@ public sealed class Launcher : IDisposable
     }
 
     /// <summary>
-    /// Requests a graceful shutdown by POSTing the stop token to the Web Host's loopback
-    /// <c>/stop</c> route over a raw loopback control socket; returns true if the channel was reachable
-    /// (the host will now stop), false on any transport/auth failure. This is the sole
-    /// cross-process control signal (ADR-005 L2/L3) — no public control endpoint is ever used.
+    /// Mints an unpredictable Named Pipe name for the stop channel (ADR-005 L2/L3, M2-FIX-03).
+    /// The name folds in the per-launch session id and a fresh 16-byte random so it cannot be
+    /// enumerated or guessed by another local principal. The pipe is a LOCAL Windows IPC boundary
+    /// only — no TCP/HTTP/Socket/port is involved.
+    /// </summary>
+    private static string MintStopPipeName(string session)
+    {
+        byte[] bytes = RandomNumberGenerator.GetBytes(16);
+        string random = Convert.ToHexString(bytes).ToLowerInvariant();
+        return $"fso-observer-stop-{session}-{random}";
+    }
+
+    /// <summary>
+    /// Requests a graceful shutdown over the LOCAL Windows Named Pipe the Web Host is listening on
+    /// (ADR-005 L2/L3, M2-FIX-03). Sends <c>STOP &lt;session-token&gt;</c> and reads the single-line
+    /// response (<c>ACK</c> = accepted, host stopping; <c>REJECT</c> = bad token/user). Returns true
+    /// if the pipe boundary was reached (so we then wait for a clean exit), false on any transport
+    /// failure. This is the sole cross-process control signal and uses NO network client.
     /// <para>
-    /// A raw <see cref="System.Net.Sockets.Socket"/> is used deliberately instead of a high-level
-    /// HTTP client so the compiled runtime contains no outbound network-client library. This
-    /// preserves the IG6-NET-001 ("runtime source has no network client") invariant while still
-    /// issuing a token-guarded loopback control POST.
+    /// The client requests <see cref="TokenImpersonationLevel.Impersonation"/> so the server can
+    /// verify the caller is the same Windows principal that started it — defense in depth on top of
+    /// the unguessable pipe name + session token.
     /// </para>
     /// </summary>
-    private bool RequestStopViaChannel()
+    private bool RequestStopViaNamedPipe()
     {
-        if (_hostProcess is null || string.IsNullOrEmpty(StopToken) || Port == 0)
+        if (_hostProcess is null || string.IsNullOrEmpty(StopPipeName) || string.IsNullOrEmpty(StopToken))
         {
             return false;
         }
         try
         {
-            // Loopback-only, token-guarded control signal (ADR-005 L2/L3).
-            using var stopSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            stopSocket.SendTimeout = 2000;
-            stopSocket.ReceiveTimeout = 2000;
-            stopSocket.Connect("127.0.0.1", Port);
+            using var pipeClient = new NamedPipeClientStream(
+                ".",
+                StopPipeName,
+                PipeDirection.InOut,
+                PipeOptions.None,
+                TokenImpersonationLevel.Impersonation);
+            pipeClient.Connect(2000);
 
-            string request =
-                $"POST /stop HTTP/1.1\r\n" +
-                $"Host: 127.0.0.1:{Port}\r\n" +
-                $"X-Stop-Token: {StopToken}\r\n" +
-                $"Content-Length: 0\r\n" +
-                $"Connection: close\r\n" +
-                $"\r\n";
-            byte[] requestBytes = Encoding.ASCII.GetBytes(request);
-            stopSocket.Send(requestBytes);
+            using var writer = new StreamWriter(pipeClient, Encoding.ASCII, bufferSize: 1024, leaveOpen: true) { AutoFlush = true };
+            using var reader = new StreamReader(pipeClient, Encoding.ASCII, detectEncodingFromByteOrderMarks: false, bufferSize: 1024, leaveOpen: true);
+            writer.WriteLine($"STOP {StopToken}");
 
-            // Read the response status line to learn whether the stop was accepted (200) or the
-            // channel was reached but the token was rejected (403). Either way the loopback
-            // boundary was reached, so we treat it as "channel ok".
-            byte[] buffer = new byte[256];
-            int received = stopSocket.Receive(buffer);
-            if (received <= 0)
-            {
-                return false;
-            }
-
-            string statusLine = Encoding.ASCII.GetString(buffer, 0, received).Split('\r', '\n')[0];
-            return statusLine.Contains(" 200 ") || statusLine.Contains(" 403 ");
+            string? response = reader.ReadLine();
+            // Either ACK (host will stop) or REJECT (bad token/user) means the local pipe boundary
+            // was exercised; we treat it as "channel ok" and let WaitForExit decide the outcome.
+            return response is not null && (response == "ACK" || response == "REJECT");
         }
         catch
         {
