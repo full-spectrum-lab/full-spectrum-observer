@@ -23,7 +23,7 @@ else
                 <tbody>
                     <tr><td>engine_tag</td><td><code>@_ver.EngineTag</code></td></tr>
                     <tr><td>engine_commit</td><td><code>@_ver.EngineCommit</code></td></tr>
-                    <tr><td>engine_artifact_digest</td><td><code>@_ver.EngineArtifactDigest</code></td></tr>
+                    <tr><td>engine_source_digest</td><td><code>@_ver.EngineSourceDigest</code></td></tr>
                     <tr><td>build_channel</td><td><code>@_ver.BuildChannel</code></td></tr>
                     <tr><td>adapter_version</td><td><code>@_ver.AdapterVersion</code></td></tr>
                     <tr><td>analyzer_version / profile_version</td><td><code>@EngineV15Contract.AnalyzerVersion / @EngineV15Contract.ProfileVersion</code></td></tr>
@@ -36,9 +36,24 @@ else
         @if (_ver.BuildChannel == "DEVELOPMENT")
         {
             <div class="warn-state" role="status">
-                开发/未发布构建：artifact_digest = UNPUBLISHED，build_channel = DEVELOPMENT。正式 Release 由 release-manifest.json 提供真实 SHA-256，且发布 Gate 禁止占位符出货（红线 #4）。
+                开发/未发布构建：engine_source_digest 为冻结基线常量（v1.5.0 源码摘要）；Observer 运行身份（observer_version / observer_commit / observer_package_sha256）来自运行时身份来源，当前实例未检测到包外身份文件或包内发布清单，故显示 NOT_AVAILABLE，identity_source = DEVELOPMENT_WORKTREE，build_channel = DEVELOPMENT。正式 Release 由包外身份文件或发布清单提供真实 SHA-256，且发布 Gate 禁止占位符出货（红线 #4）；候选发布在 Owner UAT 前使用 build_channel = RELEASE_CANDIDATE、release_status = NOT_RELEASED，不得提前显示 RELEASED。
             </div>
         }
+    </div>
+
+    <div class="card">
+        <h2>Observer 运行身份</h2>
+        <div class="region observer">
+            <table>
+                <tbody>
+                    <tr><td>observer_version</td><td><code>@ObsVal(_ver.ObserverVersion)</code></td></tr>
+                    <tr><td>observer_commit</td><td><code>@ObsVal(_ver.ObserverCommit)</code></td></tr>
+                    <tr><td>observer_package_sha256</td><td><code>@ObsVal(_ver.ObserverPackageSha256)</code></td></tr>
+                    <tr><td>identity_source</td><td><code>@_ver.IdentitySource</code></td></tr>
+                </tbody>
+            </table>
+            <p class="muted">以上字段来自运行时身份来源（包外身份文件 / 包内发布清单 / 开发工作树）的真实元数据，不硬编码；若实例非从冻结包启动，则如实显示 NOT_AVAILABLE。包内发布清单不包含包自身 SHA-256，避免自引用。</p>
+        </div>
     </div>
 
     <div class="card">
@@ -49,11 +64,26 @@ else
                     <tr><td>应用版本</td><td><code>@_ver.AppVersion</code></td></tr>
                     <tr><td>.NET 运行时</td><td><code>@_ver.DotNetVersion</code></td></tr>
                     <tr><td>数据目录</td><td><code>@Diagnostics.DataDirectory</code></td></tr>
-                    <tr><td>Console 访问地址</td><td><code>@_ver.RequestedEndpoint</code></td></tr>
-                    <tr><td>实际服务绑定</td><td><code>@_ver.ActualBoundEndpoint</code></td></tr>
+                    <tr><td>Console 访问地址（启动参数）</td><td><code>@_ver.RequestedEndpoint</code></td></tr>
+                    <tr>
+                        <td>实际监听端点</td>
+                        <td>
+                            @if (_ver.ActualBoundEndpoints.Count == 0)
+                            {
+                                <code>NOT_AVAILABLE</code>
+                            }
+                            else
+                            {
+                                @foreach (var ep in _ver.ActualBoundEndpoints)
+                                {
+                                    <div><code>@ep</code></div>
+                                }
+                            }
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            <p class="muted">绑定来自当前运行实例的实际 Kestrel 地址（IServerAddressesFeature），仅环回；绝不暴露 0.0.0.0（网络边界红线）。</p>
+            <p class="muted">@Diagnostics.BuildListenerSecurityNote()</p>
         </div>
     </div>
 
@@ -80,8 +110,13 @@ else
     private string? _error;
     private string _live = "";
 
-    private VersionInfo _ver = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+    private VersionInfo _ver = new(
+        string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+        string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+        string.Empty, Array.Empty<string>(), string.Empty, string.Empty, string.Empty, string.Empty);
     private StoreDiagnostics _diag = new();
+
+    private static string ObsVal(string? v) => string.IsNullOrWhiteSpace(v) ? "NOT_AVAILABLE" : v!;
 
     protected override async Task OnInitializedAsync()
     {

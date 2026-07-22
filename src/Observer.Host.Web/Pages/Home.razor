@@ -18,17 +18,26 @@ else if (_error is not null)
 else
 {
     <div class="card">
-        <h2>审计链完整性</h2>
+        <h2>审计链状态</h2>
         <div class="region observer">
-            @if (_chain is { IsValid: true })
+            @{
+                var auditState = SystemDiagnostics.AuditChainStateLabel(_chain);
+            }
+            @if (auditState == "完整")
             {
                 <p><span class="badge known">完整</span> 共 @_chain.RecordCount 条记录</p>
+                <p class="muted">审计链已通过连续哈希校验，记录连续且未被篡改。</p>
+            }
+            else if (auditState == "尚未建立")
+            {
+                <p><span class="badge warn">尚未建立</span> 当前共 0 条审计记录</p>
+                <p class="muted">尚未产生可验证的审计链。</p>
             }
             else
             {
                 <p><span class="badge hardgate">断裂</span> @(_chain?.BrokenAtAuditId ?? "未知")</p>
+                <p class="muted">@(_chain?.Message)</p>
             }
-            <p class="muted">@(_chain?.Message)</p>
         </div>
     </div>
 
@@ -65,17 +74,42 @@ else
         <div class="region engine">
             <p>engine_tag = <code>@_ver.EngineTag</code></p>
             <p>engine_commit = <code>@_ver.EngineCommit</code></p>
-            <p>artifact_digest = <code>@_ver.EngineArtifactDigest</code></p>
-            <p>build_channel = <code>@_ver.BuildChannel</code></p>
-            <p>adapter_version = <code>@_ver.AdapterVersion</code></p>
+            <p>engine_source_digest = <code>@_ver.EngineSourceDigest</code></p>
             <p>schema_version = <code>@_ver.SchemaVersion</code></p>
             <p>schema_digest = <code>@_ver.SchemaDigest</code></p>
+            <p>adapter_version = <code>@_ver.AdapterVersion</code></p>
             <p>compat_matrix = <code>@_ver.CompatibilityMatrixId</code></p>
+            <p>build_channel = <code>@_ver.BuildChannel</code></p>
         </div>
         <div class="region observer">
-            <p>Console 访问地址：<code>@_ver.RequestedEndpoint</code></p>
-            <p>实际服务绑定：<code>@_ver.ActualBoundEndpoint</code></p>
-            <p class="muted">绑定来自当前运行实例的实际 Kestrel 地址，仅环回（127.0.0.1 / ::1），绝不暴露 0.0.0.0。</p>
+            <h3>Observer 运行身份</h3>
+            <p>observer_version = <code>@ObsVal(_ver.ObserverVersion)</code></p>
+            <p>observer_commit = <code>@ObsVal(_ver.ObserverCommit)</code></p>
+            <p>observer_package_sha256 = <code>@ObsVal(_ver.ObserverPackageSha256)</code></p>
+            <p>identity_source = <code>@_ver.IdentitySource</code></p>
+            <p class="muted">以上字段来自运行时身份来源（包外身份文件 / 包内发布清单 / 开发工作树）的真实元数据，不硬编码；若实例非从冻结包启动，则如实显示 NOT_AVAILABLE。包内发布清单不包含包自身 SHA-256，避免自引用。</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>监听端点</h2>
+        <div class="region observer">
+            <p>Console 访问地址（启动参数）：<code>@_ver.RequestedEndpoint</code></p>
+            <p>实际监听端点：</p>
+            @if (_ver.ActualBoundEndpoints.Count == 0)
+            {
+                <p><code>NOT_AVAILABLE</code></p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var ep in _ver.ActualBoundEndpoints)
+                    {
+                        <li><code>@ep</code></li>
+                    }
+                </ul>
+            }
+            <p class="muted">@Diagnostics.BuildListenerSecurityNote()</p>
         </div>
     </div>
 }
@@ -89,7 +123,12 @@ else
     private string _live = "";
     private StoreDiagnostics _diag = new();
     private AuditChainVerification _chain = new(true, 0, null, string.Empty);
-    private VersionInfo _ver = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+    private VersionInfo _ver = new(
+        string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+        string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+        string.Empty, Array.Empty<string>(), string.Empty, string.Empty, string.Empty, string.Empty);
+
+    private static string ObsVal(string? v) => string.IsNullOrWhiteSpace(v) ? "NOT_AVAILABLE" : v!;
 
     protected override async Task OnInitializedAsync()
     {
