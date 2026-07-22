@@ -87,7 +87,8 @@ else
             <p>observer_commit = <code>@ObsVal(_ver.ObserverCommit)</code></p>
             <p>observer_package_sha256 = <code>@ObsVal(_ver.ObserverPackageSha256)</code></p>
             <p>identity_source = <code>@_ver.IdentitySource</code></p>
-            <p class="muted">以上字段来自运行时身份来源（包外身份文件 / 包内发布清单 / 开发工作树）的真实元数据，不硬编码；若实例非从冻结包启动，则如实显示 NOT_AVAILABLE。包内发布清单不包含包自身 SHA-256，避免自引用。</p>
+            <p>release_status = <code>@ObsVal(_ver.ReleaseStatus)</code></p>
+            <p class="muted">以上字段来自运行时身份来源（包外身份文件 / 包内发布清单 / 开发工作树）的真实元数据，不硬编码；若实例非从冻结包启动，则如实显示 NOT_AVAILABLE。候选发布在 Owner UAT 前 release_status = NOT_RELEASED，不得提前显示 RELEASED。包内发布清单不包含包自身 SHA-256，避免自引用。</p>
         </div>
     </div>
 
@@ -126,7 +127,7 @@ else
     private VersionInfo _ver = new(
         string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
         string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
-        string.Empty, Array.Empty<string>(), string.Empty, string.Empty, string.Empty, string.Empty);
+        string.Empty, Array.Empty<string>(), string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
 
     private static string ObsVal(string? v) => string.IsNullOrWhiteSpace(v) ? "NOT_AVAILABLE" : v!;
 

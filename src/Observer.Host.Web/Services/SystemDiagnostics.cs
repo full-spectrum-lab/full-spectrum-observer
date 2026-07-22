@@ -95,7 +95,8 @@ public sealed class SystemDiagnostics
             ident.ObserverVersion,
             ident.ObserverCommit,
             ident.BuildChannel,
-            ident.Source);
+            ident.Source,
+            ident.ReleaseStatus);
     }
 
     /// <summary>
@@ -125,11 +126,12 @@ public sealed class SystemDiagnostics
                     ext.ObserverCommit,
                     ext.PackageSha256,
                     NormalizeChannel(ext.BuildChannel),
-                    "EXTERNAL_RELEASE_IDENTITY");
+                    "EXTERNAL_RELEASE_IDENTITY",
+                    ext.ReleaseStatus);
             }
 
             // An external identity was expected but could not be established.
-            return new ResolvedIdentity("", "", "", "DEVELOPMENT", "NOT_AVAILABLE");
+            return new ResolvedIdentity("", "", "", "DEVELOPMENT", "NOT_AVAILABLE", "");
         }
 
         var m = ReadManifest();
@@ -137,10 +139,10 @@ public sealed class SystemDiagnostics
         {
             // Package-internal manifest is authoritative for version/commit/channel, but NOT for the
             // package SHA-256 (it cannot sign its own contents) — that stays NOT_AVAILABLE here.
-            return new ResolvedIdentity(m.ObserverVersion, m.ObserverCommit, "", m.BuildChannel, "PACKAGE_MANIFEST");
+            return new ResolvedIdentity(m.ObserverVersion, m.ObserverCommit, "", m.BuildChannel, "PACKAGE_MANIFEST", "");
         }
 
-        return new ResolvedIdentity("", "", "", "DEVELOPMENT", "DEVELOPMENT_WORKTREE");
+        return new ResolvedIdentity("", "", "", "DEVELOPMENT", "DEVELOPMENT_WORKTREE", "");
     }
 
     private static ExternalReleaseIdentity? LoadExternalIdentity(string path)
@@ -155,6 +157,7 @@ public sealed class SystemDiagnostics
                 ObserverCommit = root.TryGetProperty("observer_commit", out var oc) ? (oc.GetString()?.Trim() ?? "") : "",
                 PackageSha256 = root.TryGetProperty("package_sha256", out var ps) ? (ps.GetString()?.Trim() ?? "") : "",
                 BuildChannel = root.TryGetProperty("build_channel", out var c) ? (c.GetString()?.Trim() ?? "") : "",
+                ReleaseStatus = root.TryGetProperty("release_status", out var rs) ? (rs.GetString()?.Trim() ?? "") : "",
             };
         }
         catch
@@ -272,9 +275,10 @@ public sealed class SystemDiagnostics
         public string ObserverCommit { get; init; } = "";
         public string PackageSha256 { get; init; } = "";
         public string BuildChannel { get; init; } = "";
+        public string ReleaseStatus { get; init; } = "";
     }
 
-    private sealed record ResolvedIdentity(string ObserverVersion, string ObserverCommit, string PackageSha256, string BuildChannel, string Source);
+    private sealed record ResolvedIdentity(string ObserverVersion, string ObserverCommit, string PackageSha256, string BuildChannel, string Source, string ReleaseStatus);
 }
 
 /// <summary>Snapshot of version / health metadata for the System Information page.</summary>
@@ -294,6 +298,7 @@ public sealed class SystemDiagnostics
 /// <param name="ObserverCommit">Observer commit (from manifest/external identity; empty for dev).</param>
 /// <param name="BuildChannel">Build channel (DEVELOPMENT / RELEASE_CANDIDATE / RELEASE).</param>
 /// <param name="IdentitySource">Explicit, honest origin of the Observer identity (EXTERNAL_RELEASE_IDENTITY / PACKAGE_MANIFEST / DEVELOPMENT_WORKTREE / NOT_AVAILABLE).</param>
+/// <param name="ReleaseStatus">Release status from the package-external identity file (e.g. NOT_RELEASED for a candidate); empty when no external identity is present.</param>
 public sealed record VersionInfo(
     string EngineTag,
     string EngineCommit,
@@ -310,4 +315,5 @@ public sealed record VersionInfo(
     string ObserverVersion,
     string ObserverCommit,
     string BuildChannel,
-    string IdentitySource);
+    string IdentitySource,
+    string ReleaseStatus);
