@@ -1,9 +1,23 @@
 {
   "runtime": "CPython",
-  "version": "3.11.x",
+  "version": "3.12.8",
+  "exact_patch": "3.12.8",
   "architecture": "x64",
-  "distribution": "Windows embeddable package",
-  "exact_patch": "PENDING_WP03",
-  "sha256": null,
-  "status": "DESIGN_PINNED_BUILD_ARTIFACT_PENDING"
+  "distribution": "Python Software Foundation embeddable package for Windows x64 (python-3.12.8-embed-amd64.zip)",
+  "status": "FROZEN",
+  "frozen_at_utc": "2026-07-23T05:49:04Z",
+  "python_executable_sha256": "1a078825122b059f04b6c1545909f1d3ed0838dd24ab80d1c7fa60ca68ff9af5",
+  "runtime_tree_manifest_sha256": "687a1461b60a2669ce7006e6f0a7d7bce7d9d7f45ff85d5d7e3c569a7ee0cd97",
+  "numpy_version": "1.26.4",
+  "numpy_digest": "08beddf13648eb95f8d867350f6a018a4be2e5ad54c8d8caed89ebca558b2818",
+  "jsonschema_version": "4.26.0",
+  "jsonschema_digest": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce",
+  "transitive_dependencies": {
+    "attrs": "26.1.0",
+    "jsonschema_specifications": "2025.9.1",
+    "referencing": "0.37.0",
+    "rpds_py": "2026.6.3",
+    "typing_extensions": "4.16.0"
+  },
+  "note": "Frozen baseline per M3-FIX-02. CPython 3.12.8 + numpy 1.26.4 + jsonschema 4.26.0, offline-installed from py312-verify-cache/wheels. Package runtime/python ships source-only (no __pycache__/*.pyc)."
 }
