@@ -237,12 +237,68 @@ public sealed class SystemDiagnostics
     /// asserts an unprovable absolute claim (e.g. "never exposes 0.0.0.0"); it reports what was
     /// detected.
     /// </summary>
+    /// <summary>
+    /// Resolves the ACTUAL listener endpoints from <see cref="ActualBoundEndpoints"/>.
+    /// Kestrel's <c>IServerAddressesFeature</c> may report a host of <c>localhost</c>; per the
+    /// listener-endpoint contract we must never present <c>localhost</c> as the actual endpoint —
+    /// it is an operator-supplied alias, not a binding fact. localhost is by definition loopback,
+    /// so it is resolved to its concrete loopback bindings (127.0.0.1 / [::1]); a literal IP (loopback
+    /// or non-loopback) is kept verbatim as the actual endpoint. Unparseable entries are dropped.
+    /// If every input is unresolvable the result is empty and the caller should report
+    /// <c>RESOLVED_LISTENER_ENDPOINTS = NOT_AVAILABLE</c>.
+    /// </summary>
+    public IReadOnlyList<string> GetActualListenerEndpoints()
+    {
+        var resolved = new List<string>();
+        foreach (var raw in ActualBoundEndpoints)
+        {
+            if (string.IsNullOrWhiteSpace(raw) || !Uri.TryCreate(raw, UriKind.Absolute, out var uri))
+            {
+                continue;
+            }
+
+            var host = uri.Host;
+            var scheme = uri.Scheme;
+            var port = uri.Port;
+            if (host == "localhost")
+            {
+                // localhost == loopback: surface the concrete loopback bindings actually used.
+                AddOnce(resolved, $"{scheme}://127.0.0.1:{port}");
+                AddOnce(resolved, $"{scheme}://[::1]:{port}");
+            }
+            else
+            {
+                // A literal IP (127.0.0.1 / ::1 / [::1] / non-loopback) is the actual endpoint.
+                AddOnce(resolved, raw);
+            }
+        }
+        return resolved;
+    }
+
+    /// <summary>
+    /// Classifies listener exposure strictly from the resolved actual endpoints:
+    /// LOOPBACK_ONLY / NON_LOOPBACK_DETECTED / UNKNOWN. Never asserts an unprovable absolute claim.
+    /// </summary>
+    public string GetListenerSecurityStatus()
+    {
+        var endpoints = GetActualListenerEndpoints();
+        if (endpoints.Count == 0) return "UNKNOWN";
+        var nonLoop = endpoints.Where(e => !IsLoopbackAddress(e)).ToList();
+        return nonLoop.Count == 0 ? "LOOPBACK_ONLY" : "NON_LOOPBACK_DETECTED";
+    }
+
     public string BuildListenerSecurityNote()
     {
-        var nonLoop = ActualBoundEndpoints.Where(e => !IsLoopbackAddress(e)).ToList();
+        var endpoints = GetActualListenerEndpoints();
+        var nonLoop = endpoints.Where(e => !IsLoopbackAddress(e)).ToList();
         return nonLoop.Count == 0
             ? "当前运行实例仅检测到环回监听，未检测到非环回监听。"
             : "检测到非环回监听端点：" + string.Join("; ", nonLoop) + "。请确认网络边界与访问控制。";
+    }
+
+    private static void AddOnce(List<string> list, string value)
+    {
+        if (!list.Contains(value)) list.Add(value);
     }
 
     /// <summary>

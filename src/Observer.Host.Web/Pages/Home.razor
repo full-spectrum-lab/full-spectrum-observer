@@ -95,21 +95,25 @@ else
     <div class="card">
         <h2>监听端点</h2>
         <div class="region observer">
-            <p>Console 访问地址（启动参数）：<code>@_ver.RequestedEndpoint</code></p>
-            <p>实际监听端点：</p>
-            @if (_ver.ActualBoundEndpoints.Count == 0)
+            <p>REQUESTED_ENDPOINT（启动参数，非实际绑定）：<code>@_ver.RequestedEndpoint</code></p>
+            <p>RESOLVED_LISTENER_ENDPOINTS（实际绑定）：</p>
+            @{
+                var resolvedEps = Diagnostics.GetActualListenerEndpoints();
+            }
+            @if (resolvedEps.Count == 0)
             {
                 <p><code>NOT_AVAILABLE</code></p>
             }
             else
             {
                 <ul>
-                    @foreach (var ep in _ver.ActualBoundEndpoints)
+                    @foreach (var ep in resolvedEps)
                     {
                         <li><code>@ep</code></li>
                     }
                 </ul>
             }
+            <p>LISTENER_SECURITY_STATUS = <code>@Diagnostics.GetListenerSecurityStatus()</code></p>
             <p class="muted">@Diagnostics.BuildListenerSecurityNote()</p>
         </div>
     </div>

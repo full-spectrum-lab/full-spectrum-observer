@@ -18,7 +18,8 @@
 # =============================================================================
 [CmdletBinding()]
 param(
-    [switch] $AllowKnownNugetAuditBypass
+    [switch] $AllowKnownNugetAuditBypass,
+    [string] $ExternalIdentityPath = ""
 )
 $ErrorActionPreference = 'Continue'
 $dotnet = "C:\Users\wangjian0926\.dotnet10\dotnet.exe"
@@ -26,7 +27,10 @@ $env:DOTNET_ROOT = "C:\Users\wangjian0926\.dotnet10"
 $env:PATH = "C:\Users\wangjian0926\.dotnet10;$env:PATH"
 $repo = "C:\Users\wangjian0926\WorkBuddy\2026-07-12-20-20-07\full-spectrum-observer"
 $log = "C:\Users\wangjian0926\AppData\Local\Temp\m1_verify.log"
-$precheck = "C:\Users\wangjian0926\AppData\Local\Temp\verify_repo_identity.ps1"
+# Use the version-controlled precheck in the repo root (no permanent skip, no stale TEMP copy).
+$precheck = Join-Path $repo "verify_repo_identity.ps1"
+# Frozen-candidate identity: explicit arg, else the v0.3 RC external identity file.
+$identityForPrecheck = if ($ExternalIdentityPath) { $ExternalIdentityPath } else { Join-Path $repo "artifacts/rc/V030_RELEASE_CANDIDATE_IDENTITY.json" }
 
 # Build the optional NuGetAudit bypass argument set. Empty unless the explicit
 # opt-in switch is provided - this keeps the audit enabled by default.
@@ -41,7 +45,7 @@ Log "NuGetAudit effective bypass args: $($bypassArg -join ' ')"
 
 # --- identity precheck ---
 Log "===== IDENTITY PRECHECK ====="
-& "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $precheck
+& "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $precheck -ExternalIdentityPath $identityForPrecheck
 if ($LASTEXITCODE -ne 0) { Log "PRECHECK FAILED -> ABORT"; exit 1 }
 
 cd $repo

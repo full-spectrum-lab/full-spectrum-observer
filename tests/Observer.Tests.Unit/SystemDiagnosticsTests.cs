@@ -285,4 +285,85 @@ public sealed class SystemDiagnosticsTests
         }
         finally { Directory.Delete(dir, true); }
     }
+
+    // 13) localhost 必须解析为实际环回绑定，绝不得作为"实际端点"显示
+    [Fact]
+    public void Localhost_endpoint_resolves_to_actual_loopback_bindings()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fso-sd-" + Path.GetRandomFileName());
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var sd = NewDiagnostics(dir);
+            sd.ActualBoundEndpoints = new List<string> { "http://localhost:11476" };
+            var resolved = sd.GetActualListenerEndpoints();
+            resolved.Should().NotContain("http://localhost:11476");
+            resolved.Should().Contain("http://127.0.0.1:11476");
+            resolved.Should().Contain("http://[::1]:11476");
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    // 14) 字面 IP 端点原样保留为实际端点
+    [Fact]
+    public void Literal_ip_endpoint_is_kept_verbatim()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fso-sd-" + Path.GetRandomFileName());
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var sd = NewDiagnostics(dir);
+            sd.ActualBoundEndpoints = new List<string> { "http://127.0.0.1:11476", "http://[::1]:11476" };
+            var resolved = sd.GetActualListenerEndpoints();
+            var expected = new[] { "http://127.0.0.1:11476", "http://[::1]:11476" };
+            resolved.Should().BeEquivalentTo(expected);
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    // 15) 仅 localhost 输入 → 安全状态为 LOOPBACK_ONLY（localhost == 环回）
+    [Fact]
+    public void Localhost_only_resolves_to_LOOPBACK_ONLY()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fso-sd-" + Path.GetRandomFileName());
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var sd = NewDiagnostics(dir);
+            sd.ActualBoundEndpoints = new List<string> { "http://localhost:11476" };
+            sd.GetListenerSecurityStatus().Should().Be("LOOPBACK_ONLY");
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    // 16) 非环回字面端点 → NON_LOOPBACK_DETECTED
+    [Fact]
+    public void Non_loopback_literal_endpoint_is_NON_LOOPBACK_DETECTED()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fso-sd-" + Path.GetRandomFileName());
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var sd = NewDiagnostics(dir);
+            sd.ActualBoundEndpoints = new List<string> { "http://10.0.0.5:11476" };
+            sd.GetListenerSecurityStatus().Should().Be("NON_LOOPBACK_DETECTED");
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    // 17) 无端点 → UNKNOWN（不得臆造监听说明）
+    [Fact]
+    public void No_endpoints_resolves_to_UNKNOWN()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fso-sd-" + Path.GetRandomFileName());
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var sd = NewDiagnostics(dir);
+            sd.ActualBoundEndpoints = new List<string>();
+            sd.GetActualListenerEndpoints().Should().BeEmpty();
+            sd.GetListenerSecurityStatus().Should().Be("UNKNOWN");
+        }
+        finally { Directory.Delete(dir, true); }
+    }
 }
