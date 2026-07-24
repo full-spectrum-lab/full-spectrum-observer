@@ -97,6 +97,10 @@ public sealed class EngineFacade : IEngineFacade
             OutputSerialization = "FSE-PYJSON-1",
         };
 
+        // Seed domain guard: reject any out-of-domain seed BEFORE spawning the Worker, so an
+        // invalid seed can never surface as ENGINE_SIMULATION_ERROR / RECOVERY_REQUIRED.
+        EngineSeedContract.ValidateOrThrow(workerRequest.Seed);
+
         // 5. Spawn the worker EXACTLY like PythonWorkerEngineFacade.EvaluateAsync.
         byte[] requestBytes = FoundationJson.Serialize(workerRequest);
         var startInfo = new ProcessStartInfo
@@ -263,19 +267,17 @@ public sealed class EngineFacade : IEngineFacade
     /// </remarks>
     private static string DetermineUnknownState() => UnknownStateContract.FailClosed;
 
-    /// <summary>Deterministic seed derived from the request content digest (first 8 hex chars).</summary>
+    /// <summary>
+    /// Deterministic seed derived from the request content digest (first 8 hex chars).
+    /// Delegates to the typed <see cref="EngineSeedContract"/> so the seed is ALWAYS a non-negative
+    /// value in the UInt32 domain [0, 4294967295] — never the sign-truncated negative produced by the
+    /// legacy <c>unchecked((int)value)</c> logic.
+    /// </summary>
     private static long ComputeSeed(string contentDigest)
     {
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(contentDigest) && contentDigest.Length >= 8)
-            {
-                long value = long.Parse(contentDigest.AsSpan(0, 8), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                return unchecked((int)value);
-            }
-        }
-        catch (Exception exception) when (exception is FormatException or OverflowException or ArgumentException) { }
-        return 1L;
+        long seed = EngineSeedContract.FromContentDigest(contentDigest);
+        EngineSeedContract.ValidateOrThrow(seed);
+        return seed;
     }
 
     private async Task TerminateAsync(Process process)

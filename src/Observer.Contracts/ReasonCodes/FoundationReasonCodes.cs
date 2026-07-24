@@ -29,6 +29,7 @@ public static class FoundationReasonCodes
     public const string FACADE_WORKER_HASH_MISMATCH = "FACADE_WORKER_HASH_MISMATCH";
     public const string FACADE_RESPONSE_TOO_LARGE = "FACADE_RESPONSE_TOO_LARGE";
     public const string ENGINE_SIMULATION_ERROR = "ENGINE_SIMULATION_ERROR";
+    public const string INVALID_ENGINE_SEED_CONTRACT = "INVALID_ENGINE_SEED_CONTRACT";
     public const string ENGINE_TIMEOUT = "ENGINE_TIMEOUT";
     public const string ENGINE_CANCELLED = "ENGINE_CANCELLED";
     public const string ENGINE_OUTPUT_INVALID = "ENGINE_OUTPUT_INVALID";

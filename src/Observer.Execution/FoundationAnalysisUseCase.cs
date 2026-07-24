@@ -99,6 +99,9 @@ public sealed class FoundationAnalysisUseCase : IAnalyzeUseCase
             RuntimeConfigurationSnapshot snapshot = _snapshotResolver.Resolve();
             await TransitionAsync(operationId, OperationStates.SnapshotFixed, "[]", false, cancellationToken).ConfigureAwait(false);
 
+            long requestedRuntimeSeed = request.RequestedRuntime.GetProperty("seed").GetInt64();
+            EngineSeedContract.ValidateOrThrow(requestedRuntimeSeed);
+
             EngineFacadeRequest engineRequest = new()
             {
                 Protocol = "fs-observer-engine-facade/1",
@@ -109,7 +112,7 @@ public sealed class FoundationAnalysisUseCase : IAnalyzeUseCase
                     version = BuildIdentity.EngineVersion,
                     commit = BuildIdentity.EngineCommit,
                 }, FoundationJson.CreateOptions()),
-                Seed = request.RequestedRuntime.GetProperty("seed").GetInt64(),
+                Seed = requestedRuntimeSeed,
                 FixedTimeUtc = request.RequestedRuntime.GetProperty("fixed_time_utc").GetString()
                     ?? throw new InvalidDataException("fixed_time_utc is missing."),
                 Scenario = adapted.CanonicalContext.Clone(),
