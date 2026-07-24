@@ -67,7 +67,7 @@ if (!string.IsNullOrEmpty(stopPipe))
             stopPipe!,
             stopToken ?? string.Empty));
 }
-builder.Services.AddSingleton(sp =>
+builder.Services.AddSingleton<IEngineFacade>(sp =>
 {
     // M2-FIX-03: resolve every runtime path via the shared resolver instead of reading
     // FSP_PRIVATE_PYTHON directly. The resolver derives PackageRoot from AppContext.BaseDirectory,

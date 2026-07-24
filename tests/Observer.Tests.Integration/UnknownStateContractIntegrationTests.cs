@@ -117,9 +117,10 @@ public sealed class UnknownStateContractIntegrationTests
 
         return new EngineResponse
         {
-            // The real Engine v1.5.0 worker emits engine_version "1.5.0" (no "v" prefix), matching the
-            // runtime_snapshots DB CHECK; only unknown_state was historically wrong (M3-DIAG-01).
-            EngineVersion = "1.5.0",
+            // The frozen Engine v1.5.0 identity is "v1.5.0" (EngineV15Contract.EngineTag); the store
+            // CHECK now pins the canonical 'v1.5.0'. M3-FIX-05 / SD-001: never scatter the bare
+            // literal — route through EngineVersionContract.CanonicalVersion.
+            EngineVersion = EngineVersionContract.CanonicalVersion,
             EngineCommit = EngineV15Contract.EngineCommit,
             SchemaVersion = "1.0.0",
             SchemaDigest = "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
@@ -130,7 +131,7 @@ public sealed class UnknownStateContractIntegrationTests
             UnknownState = unknownState,
             HardGate = false,
             RuntimeDigest = new string('a', 64),
-            ReplayRef = new EngineReplayRef { Digest = new string('a', 64), EngineVersion = "1.5.0" },
+            ReplayRef = new EngineReplayRef { Digest = new string('a', 64), EngineVersion = EngineVersionContract.CanonicalVersion },
             Evidence = new EngineEvidence { EvidenceDigest = new string('a', 64), References = new List<string> { "CER/rv1" } },
         };
     }
@@ -348,7 +349,7 @@ public sealed class UnknownStateContractIntegrationTests
 
             RuntimeSnapshot? snapshot = await store.GetRuntimeSnapshotByResultAsync($"RES-{taskId}");
             snapshot.Should().NotBeNull();
-            snapshot!.EngineVersion.Should().Be("1.5.0");
+            snapshot!.EngineVersion.Should().Be(EngineVersionContract.CanonicalVersion);
         }
         finally { await CleanupAsync(store, dbPath); }
     }

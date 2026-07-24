@@ -29,7 +29,7 @@ namespace FullSpectrum.Observer.Host.Web.Services;
 public sealed class AnalysisWorkspace
 {
     private readonly ObserverStore _store;
-    private readonly FullSpectrum.Observer.EngineFacade.EngineFacade _engine;
+    private readonly IEngineFacade _engine;
     private readonly IntakeAdapter _intake;
     private readonly OutputAdapter _output;
     private readonly AuditViewer _audit;
@@ -39,7 +39,7 @@ public sealed class AnalysisWorkspace
 
     public AnalysisWorkspace(
         ObserverStore store,
-        FullSpectrum.Observer.EngineFacade.EngineFacade engine,
+        IEngineFacade engine,
         IntakeAdapter intake,
         OutputAdapter output,
         AuditViewer audit,
@@ -239,7 +239,33 @@ public sealed class AnalysisWorkspace
                 $"输出契约校验失败（unknown_state 非法）：'{response.UnknownState ?? "null"}' 不是合法值（UNKNOWN / KNOWN / PARTIAL），已在落库前拦截。");
         }
 
+        // M3-FIX-05 (SD-001): explicit pre-commit contract gate for runtime_snapshots.engine_version.
+        // The canonical, frozen Engine version is "v1.5.0" (EngineV15Contract.EngineTag). An illegal
+        // value MUST fail HERE at OUTPUT_VALIDATION (reason INVALID_ENGINE_VERSION_CONTRACT) and MUST
+        // NEVER reach the SQLite INSERT that would otherwise surface as COMMIT_FAILED ->
+        // RECOVERY_REQUIRED. The DB CHECK is defence-in-depth; this gate is the authoritative,
+        // fail-closed interception. On rejection the task lands in OUTPUT_VALIDATION_FAILED
+        // (FAILED_VALIDATION), never RECOVERY_REQUIRED, and no store write is attempted. The legacy
+        // wire form "1.5.0" is explicitly canonicalized to "v1.5.0" so only the canonical form
+        // reaches SQLite; any other value is rejected outright (no fabricated conversion).
+        if (!EngineVersionContract.IsSupported(response.EngineVersion))
+        {
+            await _audit.AppendAsync(
+                "OUTPUT_VALIDATION_REJECTED",
+                taskId,
+                $"INVALID_ENGINE_VERSION_CONTRACT: runtime_snapshots.engine_version '{response.EngineVersion ?? "null"}' is not a supported canonical Engine version (expected {EngineVersionContract.CanonicalVersion}); blocked before store write.");
+            await TransitionAsync(taskId, AnalysisTaskStatus.OutputValidationFailed, "OUTPUT_VALIDATION_FAILED");
+            return await FailedReloaded(
+                taskId,
+                $"输出契约校验失败（engine_version 非法）：'{response.EngineVersion ?? "null"}' 不是受支持的 Engine 版本（应为 {EngineVersionContract.CanonicalVersion}），已在落库前拦截。");
+        }
+
+        // Canonicalize the Engine version (idempotent for "v1.5.0"; normalizes legacy "1.5.0" ->
+        // "v1.5.0") so the snapshot carries the single canonical form before the R1-D commit chain.
+        string canonicalEngineVersion = EngineVersionContract.NormalizeLegacy(response.EngineVersion);
+
         AnalysisOutput output = _output.Parse(response, task, SystemClock.UtcNow);
+        output = output with { Snapshot = output.Snapshot with { EngineVersion = canonicalEngineVersion } };
 
         // R1-D ordered commit chain. Any failure leaves prior partial artifacts and enters RECOVERY_REQUIRED.
         try

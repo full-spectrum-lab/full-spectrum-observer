@@ -15,6 +15,10 @@
     <ProjectReference Include="../../src/Observer.Execution/Observer.Execution.csproj" />
     <ProjectReference Include="../../src/Observer.EngineFacade/Observer.EngineFacade.csproj" />
     <ProjectReference Include="../../src/Observer.Evidence/Observer.Evidence.csproj" />
+    <!-- M3-FIX-05 E2E: the EngineVersionWorkspaceE2ETests exercise the REAL AnalysisWorkspace
+         (Observer.Host.Web.Services), so the integration test project must reference the Web host.
+         The Unit project already references it; adding it here keeps the E2E suite co-located. -->
+    <ProjectReference Include="../../src/Observer.Host.Web/Observer.Host.Web.csproj" />
     <ProjectReference Include="../../src/Observer.Store/Observer.Store.csproj" />
     <ProjectReference Include="../../src/Observer.Recovery/Observer.Recovery.csproj" />
   </ItemGroup>

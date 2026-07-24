@@ -20,7 +20,7 @@ namespace FullSpectrum.Observer.EngineFacade;
 /// job. Never forges replay_ref / evidence digests: the runtime_digest / replay_ref.digest /
 /// evidence_digest are taken verbatim from the worker's REAL <c>output_sha256</c>.
 /// </summary>
-public sealed class EngineFacade
+public sealed class EngineFacade : IEngineFacade
 {
     private readonly EngineFacadeOptions _options;
 

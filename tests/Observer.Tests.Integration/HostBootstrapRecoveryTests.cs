@@ -122,7 +122,7 @@ public sealed class HostBootstrapRecoveryTests
             SnapshotId = "SNP-1",
             ResultId = "RES-1",
             AnalyzerVersion = "1.5.0",
-            EngineVersion = "1.5.0",
+            EngineVersion = "v1.5.0",
             ProfileVersion = "1.0.0",
             SchemaVersion = "1.0.0",
             InputDigest = new string('a', 64),

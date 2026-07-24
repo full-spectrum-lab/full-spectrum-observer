@@ -44,6 +44,24 @@ public sealed class ObserverStore : IAsyncDisposable
         command.CommandText = sql;
         await command.ExecuteNonQueryAsync();
         await EnsureReviewStatusColumnAsync(connection);
+        // SD-001 / M3-FIX-05: canonicalize runtime_snapshots.engine_version from the legacy
+        // '1.5.0' form to the frozen canonical 'v1.5.0' (== EngineV15Contract.EngineTag). Safe
+        // rebuild, transactional, idempotent — runs on every open so both fresh and pre-fix
+        // databases converge to the canonical CHECK.
+        await EngineVersionCanonicalizationMigration.ApplyAsync(connection);
+    }
+
+    /// <summary>
+    /// SD-001 / M3-FIX-05 — applies (or re-confirms) the Engine-version canonicalization migration
+    /// outside the normal <see cref="EnsureSchemaAsync"/> boot path. Opens its own connection and
+    /// delegates to <see cref="EngineVersionCanonicalizationMigration"/>. Idempotent and
+    /// transactional — on any failure the change is rolled back and the original data is preserved.
+    /// </summary>
+    public async Task ApplyEngineVersionCanonicalizationAsync()
+    {
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await EngineVersionCanonicalizationMigration.ApplyAsync(connection);
     }
 
     /// <summary>

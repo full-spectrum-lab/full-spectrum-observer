@@ -3,7 +3,7 @@
 -- Red-line aligned:
 --   #1  subjects carry NO login/auth/session/token fields.
 --   #7  audit_records is INSERT-only; the store exposes no UPDATE/DELETE for it.
---   #8  runtime_snapshots.engine_version pinned to '1.5.0'; evidence/input digests stored verbatim.
+--   #8  runtime_snapshots.engine_version pinned to the canonical 'v1.5.0' (== EngineV15Contract.EngineTag); evidence/input digests stored verbatim.
 -- ADR-001 versioning: status/seq + partial unique index enforcing <=1 Active per subject/source.
 
 CREATE TABLE IF NOT EXISTS subjects (
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS runtime_snapshots (
   snapshot_id     TEXT PRIMARY KEY,
   result_id       TEXT NOT NULL REFERENCES analysis_results(result_id) ON DELETE RESTRICT,
   analyzer_version TEXT NOT NULL,
-  engine_version   TEXT NOT NULL CHECK (engine_version = '1.5.0'),
+  engine_version   TEXT NOT NULL CHECK (engine_version = 'v1.5.0'),
   profile_version  TEXT NOT NULL,
   schema_version   TEXT NOT NULL,
   input_digest     TEXT NOT NULL,

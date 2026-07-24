@@ -59,4 +59,13 @@ public static class FoundationReasonCodes
     /// OUTPUT_VALIDATION, before any SQLite write is attempted.
     /// </summary>
     public const string INVALID_UNKNOWN_STATE_CONTRACT = "INVALID_UNKNOWN_STATE_CONTRACT";
+
+    /// <summary>
+    /// The persisted <c>runtime_snapshots.engine_version</c> value violates the Observer Engine
+    /// version contract (canonical form: "v1.5.0", equal to EngineV15Contract.EngineTag; legacy
+    /// wire form "1.5.0" also accepted and canonicalized). M3-FIX-05 / SD-001: the orchestrator
+    /// rejects a non-conforming value at OUTPUT_VALIDATION, before any SQLite write is attempted,
+    /// so it never surfaces as a COMMIT_FAILED → RECOVERY_REQUIRED CHECK failure.
+    /// </summary>
+    public const string INVALID_ENGINE_VERSION_CONTRACT = "INVALID_ENGINE_VERSION_CONTRACT";
 }
