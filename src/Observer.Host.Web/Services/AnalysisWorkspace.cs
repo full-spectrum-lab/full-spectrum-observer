@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using FullSpectrum.Observer.Contracts.Models;
+using FullSpectrum.Observer.Contracts.ReasonCodes;
 using FullSpectrum.Observer.EngineFacade;
 using FullSpectrum.Observer.Store;
 
@@ -219,6 +220,24 @@ public sealed class AnalysisWorkspace
 
         await TransitionAsync(taskId, AnalysisTaskStatus.EngineCompleted, "ENGINE_COMPLETED");
         await TransitionAsync(taskId, AnalysisTaskStatus.OutputValidated, "OUTPUT_VALIDATED");
+
+        // M3-FIX-04: explicit pre-commit contract gate for analysis_results.unknown_state.
+        // An illegal value MUST fail HERE at OUTPUT_VALIDATION (with a clear reason code) and MUST
+        // NEVER reach the SQLite INSERT that would otherwise surface as COMMIT_FAILED ->
+        // RECOVERY_REQUIRED. The DB CHECK is defence-in-depth; this gate is the authoritative,
+        // fail-closed interception. On rejection the task lands in OUTPUT_VALIDATION_FAILED
+        // (FAILED_VALIDATION), never RECOVERY_REQUIRED, and no store write is attempted.
+        if (!UnknownStateContract.IsValid(response.UnknownState))
+        {
+            await _audit.AppendAsync(
+                "OUTPUT_VALIDATION_REJECTED",
+                taskId,
+                $"INVALID_UNKNOWN_STATE_CONTRACT: analysis_results.unknown_state '{response.UnknownState ?? "null"}' is not a legal value (UNKNOWN / KNOWN / PARTIAL); blocked before store write.");
+            await TransitionAsync(taskId, AnalysisTaskStatus.OutputValidationFailed, "OUTPUT_VALIDATION_FAILED");
+            return await FailedReloaded(
+                taskId,
+                $"输出契约校验失败（unknown_state 非法）：'{response.UnknownState ?? "null"}' 不是合法值（UNKNOWN / KNOWN / PARTIAL），已在落库前拦截。");
+        }
 
         AnalysisOutput output = _output.Parse(response, task, SystemClock.UtcNow);
 

@@ -235,13 +235,33 @@ public sealed class EngineFacade
             ProfileVersion = EngineV15Contract.ProfileVersion,
             Conclusion = response.Output,
             ConflictObservations = new List<EngineConflictObservation>(),
-            UnknownState = "RESOLVED",
+            // M3-FIX-04: the Engine v1.5.0 worker does NOT emit an explicit unknown-state
+            // completeness signal. We MUST NOT infer KNOWN from a successful Worker run, nor hide
+            // any missing-context signal. Per the ADAPTER_POLICY fail-closed rule the analysis
+            // defaults to UNKNOWN (the DB CHECK allows UNKNOWN / KNOWN / PARTIAL). A future
+            // Engine/Adapter release that supplies an explicit, contract-valid completeness signal
+            // would be honoured by UnknownStateContract.FromVerbatimOrFailClosed.
+            UnknownState = DetermineUnknownState(),
             HardGate = false,
             RuntimeDigest = response.OutputSha256,
             ReplayRef = new EngineReplayRef { Digest = response.OutputSha256, EngineVersion = response.EngineVersion },
             Evidence = new EngineEvidence { EvidenceDigest = response.OutputSha256, References = new List<string>() },
         };
     }
+
+    /// <summary>
+    /// Determines the persisted unknown-state for a SUCCESS Engine response.
+    /// </summary>
+    /// <remarks>
+    /// M3-FIX-04: the Engine v1.5.0 worker output carries NO explicit unknown-state completeness
+    /// signal, so we cannot prove the analysis context is fully known. We therefore MUST NOT map a
+    /// successful Worker run to <c>KNOWN</c>, and we MUST NOT suppress a missing-context signal.
+    /// Per the ADAPTER_POLICY fail-closed rule we default to <see cref="UnknownStateContract.FailClosed"/>
+    /// (UNKNOWN). If a future Engine/Adapter release supplies an explicit, contract-valid
+    /// completeness signal, it would be honoured by
+    /// <see cref="UnknownStateContract.FromVerbatimOrFailClosed"/> here.
+    /// </remarks>
+    private static string DetermineUnknownState() => UnknownStateContract.FailClosed;
 
     /// <summary>Deterministic seed derived from the request content digest (first 8 hex chars).</summary>
     private static long ComputeSeed(string contentDigest)

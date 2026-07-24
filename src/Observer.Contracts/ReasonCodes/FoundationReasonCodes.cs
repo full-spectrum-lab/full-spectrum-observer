@@ -52,4 +52,11 @@ public static class FoundationReasonCodes
     public const string SYSTEM_CONFIGURATION_INVALID = "SYSTEM_CONFIGURATION_INVALID";
     public const string SYSTEM_UNSUPPORTED_PLATFORM = "SYSTEM_UNSUPPORTED_PLATFORM";
     public const string SYSTEM_DEPENDENCY_MISSING = "SYSTEM_DEPENDENCY_MISSING";
+
+    /// <summary>
+    /// The persisted <c>analysis_results.unknown_state</c> value violates the Observer contract
+    /// (legal set: UNKNOWN / KNOWN / PARTIAL). M3-FIX-04: the orchestrator rejects such a value at
+    /// OUTPUT_VALIDATION, before any SQLite write is attempted.
+    /// </summary>
+    public const string INVALID_UNKNOWN_STATE_CONTRACT = "INVALID_UNKNOWN_STATE_CONTRACT";
 }
