@@ -19,4 +19,7 @@ public sealed record EvidenceBundle
 
     /// <summary>Evidence reference list (CER/RV file refs). Verbatim.</summary>
     public required ImmutableArray<string> References { get; init; }
+
+    /// <summary>DET-001-FIX — the simulation_id resolved and sent to the Engine worker (audit trace).</summary>
+    public string? ResolvedSimulationId { get; init; }
 }

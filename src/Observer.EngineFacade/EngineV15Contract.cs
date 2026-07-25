@@ -145,4 +145,11 @@ public sealed record EngineResponse
     [JsonPropertyName("runtime_digest")] public required string RuntimeDigest { get; init; }
     [JsonPropertyName("replay_ref")] public EngineReplayRef? ReplayRef { get; init; }
     [JsonPropertyName("evidence")] public EngineEvidence? Evidence { get; init; }
+
+    /// <summary>
+    /// DET-001-FIX — the simulation_id that was resolved and sent to the Engine worker for this
+    /// analysis (either caller-supplied or derived deterministically from the content digest).
+    /// Surfaced for auditability of the Evidence / Observation / Audit identity.
+    /// </summary>
+    [JsonPropertyName("resolved_simulation_id")] public string? ResolvedSimulationId { get; init; }
 }

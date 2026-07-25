@@ -115,14 +115,16 @@ CREATE TABLE IF NOT EXISTS runtime_snapshots (
   schema_version   TEXT NOT NULL,
   input_digest     TEXT NOT NULL,
   config_digest    TEXT NOT NULL,
-  runtime_digest   TEXT NOT NULL
+  runtime_digest   TEXT NOT NULL,
+  resolved_simulation_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS evidence_bundles (
   bundle_id        TEXT PRIMARY KEY,
   result_id        TEXT NOT NULL REFERENCES analysis_results(result_id) ON DELETE RESTRICT,
   evidence_digest  TEXT NOT NULL,
-  "references"     TEXT NOT NULL
+  "references"     TEXT NOT NULL,
+  resolved_simulation_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS audit_records (

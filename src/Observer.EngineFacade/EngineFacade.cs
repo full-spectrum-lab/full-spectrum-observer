@@ -80,6 +80,14 @@ public sealed class EngineFacade : IEngineFacade
         }
 
         // 4. Translate the v1.5 EngineRequest into the worker protocol request.
+        // DET-001-FIX: guarantee a deterministic simulation_id at the single unified Envelope
+        // boundary. Web FORM / CLI / case-pack intake all pass through here, so no other call
+        // site can omit the field again. Fails closed on an invalid content digest (never falls
+        // back to time / GUID / random / process id / machine name / task creation time).
+        (JsonElement normalizedScenario, string resolvedSimulationId) =
+            EnvelopeNormalizer.EnsureDeterministicSimulationId(
+                request.Input.CanonicalInput,
+                request.Input.ContentDigest);
         JsonElement engineIdentity = JsonSerializer.SerializeToElement(new
         {
             version = request.EngineVersion,
@@ -93,7 +101,7 @@ public sealed class EngineFacade : IEngineFacade
             Engine = engineIdentity,
             Seed = ComputeSeed(request.Input.ContentDigest),
             FixedTimeUtc = "2026-07-04T00:00:00Z",
-            Scenario = request.Input.CanonicalInput,
+            Scenario = normalizedScenario,
             OutputSerialization = "FSE-PYJSON-1",
         };
 
@@ -237,6 +245,7 @@ public sealed class EngineFacade : IEngineFacade
             SchemaDigest = EngineV15Contract.SchemaDigest,
             AnalyzerVersion = EngineV15Contract.AnalyzerVersion,
             ProfileVersion = EngineV15Contract.ProfileVersion,
+            ResolvedSimulationId = resolvedSimulationId,
             Conclusion = response.Output,
             ConflictObservations = new List<EngineConflictObservation>(),
             // M3-FIX-04: the Engine v1.5.0 worker does NOT emit an explicit unknown-state

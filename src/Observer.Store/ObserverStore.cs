@@ -573,7 +573,7 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var command = connection.CreateCommand();
         command.CommandText = @"
             SELECT s.snapshot_id, s.result_id, s.analyzer_version, s.engine_version, s.profile_version,
-                   s.schema_version, s.input_digest, s.config_digest, s.runtime_digest
+                   s.schema_version, s.input_digest, s.config_digest, s.runtime_digest, s.resolved_simulation_id
             FROM runtime_snapshots s
             JOIN analysis_results r ON r.result_id = s.result_id
             WHERE r.task_id = @tid";
@@ -592,6 +592,7 @@ public sealed class ObserverStore : IAsyncDisposable
                 InputDigest = reader.GetString(6),
                 ConfigDigest = reader.GetString(7),
                 RuntimeDigest = reader.GetString(8),
+                ResolvedSimulationId = reader.IsDBNull(9) ? null : reader.GetString(9),
             };
         }
         return null;
@@ -632,8 +633,8 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var command = connection.CreateCommand();
         command.CommandText = @"
             INSERT INTO runtime_snapshots
-                (snapshot_id, result_id, analyzer_version, engine_version, profile_version, schema_version, input_digest, config_digest, runtime_digest)
-            VALUES (@id, @rid, @av, @ev, @pv, @sv, @idig, @cdig, @rdig)";
+                (snapshot_id, result_id, analyzer_version, engine_version, profile_version, schema_version, input_digest, config_digest, runtime_digest, resolved_simulation_id)
+            VALUES (@id, @rid, @av, @ev, @pv, @sv, @idig, @cdig, @rdig, @rsid)";
         command.Parameters.AddWithValue("@id", snapshot.SnapshotId);
         command.Parameters.AddWithValue("@rid", snapshot.ResultId);
         command.Parameters.AddWithValue("@av", snapshot.AnalyzerVersion);
@@ -643,6 +644,7 @@ public sealed class ObserverStore : IAsyncDisposable
         command.Parameters.AddWithValue("@idig", snapshot.InputDigest);
         command.Parameters.AddWithValue("@cdig", snapshot.ConfigDigest);
         command.Parameters.AddWithValue("@rdig", snapshot.RuntimeDigest);
+        command.Parameters.AddWithValue("@rsid", (object?)snapshot.ResolvedSimulationId ?? DBNull.Value);
         await command.ExecuteNonQueryAsync();
     }
 
@@ -651,11 +653,12 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var connection = Open();
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO evidence_bundles (bundle_id, result_id, evidence_digest, \"references\") VALUES (@id, @rid, @ed, @refs)";
+        command.CommandText = "INSERT INTO evidence_bundles (bundle_id, result_id, evidence_digest, \"references\", resolved_simulation_id) VALUES (@id, @rid, @ed, @refs, @rsid)";
         command.Parameters.AddWithValue("@id", bundle.BundleId);
         command.Parameters.AddWithValue("@rid", bundle.ResultId);
         command.Parameters.AddWithValue("@ed", bundle.EvidenceDigest);
         command.Parameters.AddWithValue("@refs", SerializeArray(bundle.References));
+        command.Parameters.AddWithValue("@rsid", (object?)bundle.ResolvedSimulationId ?? DBNull.Value);
         await command.ExecuteNonQueryAsync();
     }
 
@@ -700,6 +703,7 @@ public sealed class ObserverStore : IAsyncDisposable
                 ResultId = reader.GetString(1),
                 EvidenceDigest = reader.GetString(2),
                 References = DeserializeArray(reader.GetString(3)),
+                ResolvedSimulationId = reader.IsDBNull(4) ? null : reader.GetString(4),
             };
         }
         return null;
@@ -711,7 +715,7 @@ public sealed class ObserverStore : IAsyncDisposable
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
         command.CommandText = @"
-            SELECT snapshot_id, result_id, analyzer_version, engine_version, profile_version, schema_version, input_digest, config_digest, runtime_digest
+            SELECT snapshot_id, result_id, analyzer_version, engine_version, profile_version, schema_version, input_digest, config_digest, runtime_digest, resolved_simulation_id
             FROM runtime_snapshots WHERE result_id = @rid";
         command.Parameters.AddWithValue("@rid", resultId);
         await using var reader = await command.ExecuteReaderAsync();
@@ -728,6 +732,7 @@ public sealed class ObserverStore : IAsyncDisposable
                 InputDigest = reader.GetString(6),
                 ConfigDigest = reader.GetString(7),
                 RuntimeDigest = reader.GetString(8),
+                ResolvedSimulationId = reader.IsDBNull(9) ? null : reader.GetString(9),
             };
         }
         return null;

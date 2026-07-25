@@ -57,6 +57,7 @@ public sealed class OutputAdapter
             InputDigest = task.ContentDigest, // replay anchor (must equal content_digest)
             ConfigDigest = response.SchemaDigest,
             RuntimeDigest = response.RuntimeDigest,
+            ResolvedSimulationId = response.ResolvedSimulationId, // DET-001-FIX traceability
         };
 
         var evidence = new EvidenceBundle
@@ -65,6 +66,7 @@ public sealed class OutputAdapter
             ResultId = resultId,
             EvidenceDigest = response.Evidence?.EvidenceDigest ?? string.Empty, // verbatim
             References = (response.Evidence?.References ?? new List<string>()).ToImmutableArray(),
+            ResolvedSimulationId = response.ResolvedSimulationId, // DET-001-FIX traceability
         };
 
         return new AnalysisOutput(result, conflicts, snapshot, evidence);

@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using FullSpectrum.Observer.Application;
 using FullSpectrum.Observer.Contracts;
+using FullSpectrum.Observer.EngineFacade;
 using FullSpectrum.Observer.Contracts.Canonicalization;
 using FullSpectrum.Observer.Contracts.Models;
 using FullSpectrum.Observer.Contracts.ReasonCodes;
@@ -115,7 +116,12 @@ public sealed class FoundationAnalysisUseCase : IAnalyzeUseCase
                 Seed = requestedRuntimeSeed,
                 FixedTimeUtc = request.RequestedRuntime.GetProperty("fixed_time_utc").GetString()
                     ?? throw new InvalidDataException("fixed_time_utc is missing."),
-                Scenario = adapted.CanonicalContext.Clone(),
+                // DET-001-FIX: guarantee a deterministic simulation_id at the unified Worker Envelope
+                // boundary (CLI path). Mirrors EngineFacade.AnalyzeAsync on the Web path. Fails closed
+                // on an invalid content digest (never time / GUID / random / process id / machine name).
+                Scenario = EnvelopeNormalizer.EnsureDeterministicSimulationId(
+                    adapted.CanonicalContext.Clone(),
+                    adapted.CanonicalContextSha256).NormalizedScenario,
                 OutputSerialization = "FSE-PYJSON-1",
             };
 

@@ -33,4 +33,7 @@ public sealed record RuntimeSnapshot
 
     /// <summary>Runtime configuration digest (sha256 of Engine runtime config).</summary>
     public required string RuntimeDigest { get; init; }
+
+    /// <summary>DET-001-FIX — the simulation_id resolved and sent to the Engine worker (audit trace).</summary>
+    public string? ResolvedSimulationId { get; init; }
 }
