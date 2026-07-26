@@ -134,7 +134,6 @@ public static class LoopbackPortPicker
 /// </summary>
 public sealed class Launcher : IDisposable
 {
-    private const string HostWebExeEnv = "OBSERVER_HOST_WEB_EXE";
     private const int GracefulStopTimeoutMs = 5000;
     private readonly SingleInstanceLock _instanceLock;
     private readonly ObserverStore _store;
@@ -220,51 +219,36 @@ public sealed class Launcher : IDisposable
 
     private void StartHostProcess()
     {
-        string? hostExe = ResolveHostWebExecutable();
-        if (hostExe is null)
+        string dotnetExe = Path.Combine(AppContext.BaseDirectory, "runtime", "dotnet", "dotnet.exe");
+        string webDir = Path.Combine(AppContext.BaseDirectory, "web");
+        string webDll = Path.Combine(webDir, "Observer.Host.Web.dll");
+
+        if (!File.Exists(dotnetExe) || !File.Exists(webDll))
         {
-            string expected = Path.Combine(AppContext.BaseDirectory, "web", "Observer.Host.Web.exe");
+            string expected = webDll;
             throw new FileNotFoundException(
-                $"未找到 Observer Web Host（Observer.Host.Web.exe）。发布包应在 CLI 安装目录下包含 " +
-                $"web/Observer.Host.Web.exe（预期位置：{expected}）。请重新发布完整包，不要手动复制文件。" +
-                $"如需覆盖，可设置环境变量 {HostWebExeEnv} 指向其绝对路径。",
+                $"未找到 Observer Web Host（{webDll}）或包内运行时（{dotnetExe}）。发布包应在 CLI 安装目录下包含 " +
+                $"web/Observer.Host.Web.dll 及 runtime/dotnet/dotnet.exe（预期位置：{expected}）。请重新发布完整包，不要手动复制文件。",
                 "Observer.Host.Web");
         }
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = hostExe,
+            FileName = dotnetExe,
             // The stop channel travels over a LOCAL Windows Named Pipe: the Launcher mints an
             // unpredictable pipe name and a session token, and the Host binds only that pipe.
-            Arguments = $"--urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value} --stop-pipe {StopPipeName!} --stop-token {StopToken!}",
+            // The Web Host's content root is pinned to <PackageRoot>/web via WorkingDirectory, so
+            // static assets (web/wwwroot) resolve correctly regardless of the caller's cwd
+            // (V030-RC-ENTRY-FIX-01 / DEFECT_3).
+            Arguments = $"\"{webDll}\" --urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value} --stop-pipe {StopPipeName!} --stop-token {StopToken!}",
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = false,
             RedirectStandardError = false,
+            WorkingDirectory = webDir,
         };
         _hostProcess = Process.Start(startInfo)
             ?? throw new InvalidOperationException("无法启动 Host 进程（Observer.Host.Web）。");
-    }
-
-    private static string? ResolveHostWebExecutable()
-    {
-        // Preferred: the Web Host is bundled under the CLI install directory as `web/`.
-        string webSubdir = Path.Combine(AppContext.BaseDirectory, "web", "Observer.Host.Web.exe");
-        if (File.Exists(webSubdir))
-        {
-            return webSubdir;
-        }
-
-        // Explicit override via environment variable (absolute path).
-        string? fromEnv = Environment.GetEnvironmentVariable(HostWebExeEnv);
-        if (!string.IsNullOrWhiteSpace(fromEnv) && File.Exists(fromEnv))
-        {
-            return fromEnv;
-        }
-
-        // Legacy co-location next to the CLI exe (kept for backward compatibility).
-        string nextToLauncher = Path.Combine(AppContext.BaseDirectory, "Observer.Host.Web.exe");
-        return File.Exists(nextToLauncher) ? nextToLauncher : null;
     }
 
     private static void OpenBrowser(string url)

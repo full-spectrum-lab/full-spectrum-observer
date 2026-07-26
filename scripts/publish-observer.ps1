@@ -290,6 +290,12 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     Copy-Item -LiteralPath (Join-Path $RepoRoot "schemas") -Destination (Join-Path $StagingRoot "schemas") -Recurse -Force
     Write-Host "  carried engine/ + baselines.lock.json + schemas/ into staging package"
 
+    # V030-RC-ENTRY-FIX-01 (DEFECT_1): carry the official entry launcher into the package root
+    if (Test-Path -LiteralPath (Join-Path $RepoRoot "observer.cmd")) {
+        Copy-Item -LiteralPath (Join-Path $RepoRoot "observer.cmd") -Destination (Join-Path $StagingRoot "observer.cmd") -Force
+        Write-Host "  carried observer.cmd (official entry launcher) into staging package"
+    }
+
     # M2-FIX-03 (T7a): carry the Case Pack directory so IG5 "Case Pack directory is missing" is
     # fixed — the runtime resolver derives CasePackDirectory from <PackageRoot>/packs/foundation-case005.
     Copy-Item -LiteralPath (Join-Path $RepoRoot "packs") -Destination (Join-Path $StagingRoot "packs") -Recurse -Force

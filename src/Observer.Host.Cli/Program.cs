@@ -127,7 +127,7 @@ static int Version(string[] args)
         schema_baseline = BuildIdentity.SchemaBaseline,
         engine_version = BuildIdentity.EngineVersion,
         engine_commit = BuildIdentity.EngineCommit,
-        maturity = "IG8_PASS_RELEASED_ALPHA",
+        maturity = BuildIdentity.ImplementationGate,
     };
     Console.WriteLine(json
         ? JsonSerializer.Serialize(value, FoundationJson.CreateOptions())
