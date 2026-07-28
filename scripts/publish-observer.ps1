@@ -302,7 +302,7 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     # copy, producing a non-startable package. Restore it so the package is self-starting and the
     # build is reproducible from this script alone (no manual staging edits).
     if (-not [string]::IsNullOrWhiteSpace($DotnetRoot) -and (Test-Path -LiteralPath (Join-Path $DotnetRoot "dotnet.exe"))) {
-        $dotnetDst = Join-Path $StagingRoot "runtime" "dotnet"
+        $dotnetDst = Join-Path (Join-Path $StagingRoot "runtime") "dotnet"
         if (-not (Test-Path -LiteralPath (Join-Path $dotnetDst "dotnet.exe"))) {
             New-Item -ItemType Directory -Force -Path $dotnetDst | Out-Null
             Copy-Item -LiteralPath (Join-Path $DotnetRoot "dotnet.exe") -Destination $dotnetDst -Force
@@ -311,8 +311,8 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
             Copy-Item -LiteralPath (Join-Path $DotnetRoot "host") -Destination $dotnetDst -Recurse -Force
             Copy-Item -LiteralPath (Join-Path $DotnetRoot "shared") -Destination $dotnetDst -Recurse -Force
             # Headless CLI/Blazor host does not need the Windows Desktop shared framework (~250 MB).
-            $wdApp = Join-Path $dotnetDst "shared" "Microsoft.WindowsDesktop.App"
-            if (Test-Path -LiteralPath $wdApp) { Remove-Item -LiteralPath $wdApp -Recurse -Force }
+            $wdApp = Join-Path (Join-Path $dotnetDst "shared") "Microsoft.WindowsDesktop.App"
+            if (Test-Path -LiteralPath $wdApp) { [System.IO.Directory]::Delete($wdApp, $true) }
             Write-Host "  bundled .NET runtime into staging runtime/dotnet (from $DotnetRoot)"
         } else {
             Write-Host "  runtime/dotnet already present, skipped bundling"
@@ -324,7 +324,7 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     # V030-RC-ENTRY-FIX-01 (packaging): ensure <StagingRoot>/runtime/sqlite/sqlite3.dll exists so
     # generate-release-metadata.py (which hashes it) and the .NET native SQLite provider resolve.
     # The native lib ships as e_sqlite3.dll at the staging root; mirror it into runtime/sqlite.
-    $sqliteDstDir = Join-Path $StagingRoot "runtime" "sqlite"
+    $sqliteDstDir = Join-Path (Join-Path $StagingRoot "runtime") "sqlite"
     $sqliteSrc = Join-Path $StagingRoot "e_sqlite3.dll"
     if ((Test-Path -LiteralPath $sqliteSrc) -and -not (Test-Path -LiteralPath (Join-Path $sqliteDstDir "sqlite3.dll"))) {
         New-Item -ItemType Directory -Force -Path $sqliteDstDir | Out-Null
@@ -483,18 +483,18 @@ finally {
     #     no partial release ZIP, non-zero exit.
     if ($publishSucceeded) {
         if (Test-Path -LiteralPath $StagingRoot) {
-            Remove-Item -LiteralPath $StagingRoot -Recurse -Force -ErrorAction SilentlyContinue
+            [System.IO.Directory]::Delete($StagingRoot, $true)
         }
     } else {
         if (Test-Path -LiteralPath $StagingRoot) {
-            Remove-Item -LiteralPath $StagingRoot -Recurse -Force -ErrorAction SilentlyContinue
+            [System.IO.Directory]::Delete($StagingRoot, $true)
         }
         if (Test-Path -LiteralPath $ReleaseZip) {
-            Remove-Item -LiteralPath $ReleaseZip -Force -ErrorAction SilentlyContinue
+            [System.IO.File]::Delete($ReleaseZip)
         }
         $externalManifestPath = Join-Path $OutputParent "release-manifest.json"
         if (Test-Path -LiteralPath $externalManifestPath) {
-            Remove-Item -LiteralPath $externalManifestPath -Force -ErrorAction SilentlyContinue
+            [System.IO.File]::Delete($externalManifestPath)
         }
     }
 }

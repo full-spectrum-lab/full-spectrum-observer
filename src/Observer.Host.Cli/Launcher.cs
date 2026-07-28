@@ -247,6 +247,15 @@ public sealed class Launcher : IDisposable
             RedirectStandardError = false,
             WorkingDirectory = webDir,
         };
+        // V030-RC-ENTRY / RC3: expose the package-external release identity file to the Web Host via
+        // an environment variable so SystemDiagnostics resolves EXTERNAL_RELEASE_IDENTITY
+        // (observer_version / observer_commit / build_channel / release_status / package_sha256)
+        // instead of falling back to DEVELOPMENT. The file is written by the build at
+        // <PackageRoot>/release-identity.json. AppContext.BaseDirectory is the CLI's directory,
+        // which equals the package root (observer.cmd launches the CLI dll from there), so the
+        // child Web process always resolves the same absolute path regardless of the caller's cwd.
+        startInfo.Environment["OBSERVER_RELEASE_IDENTITY_PATH"] =
+            Path.Combine(AppContext.BaseDirectory, "release-identity.json");
         _hostProcess = Process.Start(startInfo)
             ?? throw new InvalidOperationException("无法启动 Host 进程（Observer.Host.Web）。");
     }
