@@ -87,13 +87,20 @@ if (Test-Path -LiteralPath $pthPath -PathType Leaf) {
 
 # --- Offline install of declared dependencies ------------------------------
 Write-Host "provision-runtime-python: offline pip install numpy==1.26.4 jsonschema==4.26.0 from $WheelCache"
-& $destExe -m pip install --no-index --find-links $WheelCache numpy==1.26.4 jsonschema==4.26.0
-if ($LASTEXITCODE -ne 0) {
-    throw "provision-runtime-python: pip install failed (exit $LASTEXITCODE)"
+# M2-FIX-03 (PS5.1 compat): --no-warn-script-location suppresses pip's benign
+# "script f2py.exe is installed ... which is not on PATH" notice. Under Windows
+# PowerShell 5.1 + $ErrorActionPreference=Stop, that stderr warning is promoted to a
+# terminating error and aborts the build. 2>&1 capture prevents the promotion while
+# $pipExit still reflects pip's real exit code.
+$pipOut = & $destExe -m pip install --no-index --find-links $WheelCache --no-warn-script-location numpy==1.26.4 jsonschema==4.26.0 2>&1
+$pipExit = $LASTEXITCODE
+$pipOut | ForEach-Object { Write-Host $_ }
+if ($pipExit -ne 0) {
+    throw "provision-runtime-python: pip install failed (exit $pipExit)"
 }
 
 # --- Sanity: numpy + jsonschema must import from the provisioned runtime -------------------
-$raw = & $destExe -c "import numpy; from importlib.metadata import version; print(numpy.__version__); print(version('jsonschema'))" | Out-String
+$raw = & $destExe -c "import numpy; from importlib.metadata import version; print(numpy.__version__); print(version('jsonschema'))" 2>&1 | Out-String
 if ($LASTEXITCODE -ne 0) {
     throw "provision-runtime-python: post-install import check failed (exit $LASTEXITCODE)"
 }
