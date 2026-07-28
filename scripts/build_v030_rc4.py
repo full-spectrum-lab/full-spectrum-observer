@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
-"""RC4 release-assembly orchestrator (OWNER RC4 clean-rebuild spec).
+"""RC4 release-assembly orchestrator (OWNER RC4 clean-rebuild spec, v2).
 
-Single-pass, strict order so that NO file is mutated after its digest is recorded:
+STRICT ORDER — no file is ever mutated after its digest is recorded:
 
   0. bundle runtime/dotnet            (idempotent; publish usually already did this)
   1. carry LICENSE + runtime/sqlite/sqlite3.dll   (idempotent safety copy)
   2. PURGE every .pyc / __pycache__   (so the final manifest has ZERO pyc ghosts)
   3. write in-package release-identity.json  (MINIMAL: NO package sha -> no self-reference)
-  4. generate FINAL ReleaseManifest.json     (files enumerated from DISK, post-purge)
-  5. generate FINAL SBOM.cdx.json
-  6. generate FINAL SHA256SUMS.txt           (over ALL files incl. the final identity)
-  7. VERIFY SHA256SUMS: 0 missing, 0 mismatch  (hard gate; aborts on failure)
-  8. build the FINAL zip                      (every file in ROOT)
-  9. compute STANDARD full-archive SHA256     (what `sha256sum <zip>` returns)
- 10. write out-of-package V030-RC4 identity + SHA256.txt  (standard full-archive sha)
+  4. generate FINAL ReleaseManifest.json  (capital; files enumerated from DISK, post-purge)
+  5. patch release-manifest.json (lowercase, publisher descriptor) to RC4 values
+  6. generate FINAL SBOM.cdx.json
+  7. generate FINAL SHA256SUMS.txt  (over ALL files incl. final identity + patches)
+  8. VERIFY SHA256SUMS: 0 missing, 0 mismatch  (HARD GATE; aborts on failure)
+  9. build the FINAL zip                      (every file in ROOT)
+ 10. compute STANDARD full-archive SHA256     (what `sha256sum <zip>` returns)
+ 11. write out-of-package V030-RC4 identity + SHA256.txt  (standard full-archive sha)
+
+Two distinct manifest files intentionally coexist (product contract):
+  - ReleaseManifest.json   (capital)  : integrity manifest with files[] + sbom ref
+  - release-manifest.json  (lowercase): publisher build descriptor read by Web
 
 Usage:
   python build_v030_rc4.py <REPO> <STAGING> <OUT>
-    REPO    : the fresh clone root (used only to read git HEAD / LICENSE)
-    STAGING : the published package root produced by publish-observer.ps1
-    OUT     : directory where the 3 RC4 deliverables are written
 """
 from __future__ import annotations
 
@@ -28,18 +30,14 @@ import datetime
 import hashlib
 import json
 import mimetypes
-import os
 import pathlib
-import shutil
 import subprocess
 import sys
 import uuid
 import zipfile
 
-# --------------------------------------------------------------------------- #
-# RC4 constants (single source of truth; all four source_commit fields derive
-# from git HEAD, so they are provably equal).
-# --------------------------------------------------------------------------- #
+
+# --- RC4 constants (single source of truth) ------------------------------- #
 ZIP_NAME = "observer-v0.3.0-beta-rc4.zip"
 RC_TAG = "V030-RC4"
 PRODUCT_VERSION = "v0.3.0-beta"
@@ -51,9 +49,8 @@ PY_VERSION = "3.12.8"
 NUMPY_VERSION = "1.26.4"
 JSONSCHEMA_VERSION = "4.26.0"
 SQLITE_VERSION = "3.53.3"
-CPYTHON_VERSION = "3.12.8"
 DOTNET_VERSION = "10.0.9"
-DOTNET_SRC = os.environ.get("DOTNET_ROOT", r"C:/Users/wangjian0926/.dotnet10")
+DOTNET_SRC = "C:/Users/wangjian0926/.dotnet10"
 
 
 def sha(path: pathlib.Path) -> str:
@@ -66,7 +63,6 @@ def canonical(value: object) -> bytes:
 
 
 def tree_sha(root: pathlib.Path) -> str:
-    """Deterministic digest of a directory tree (matches generate-release-metadata.py)."""
     digest = hashlib.sha256()
     for path in sorted((p for p in root.rglob("*") if p.is_file()),
                        key=lambda p: p.relative_to(root).as_posix()):
@@ -126,11 +122,12 @@ def purge_pyc(root: pathlib.Path):
             pass
     for d in list(root.rglob("__pycache__")):
         if d.is_dir():
+            import shutil
             shutil.rmtree(d, ignore_errors=True); nd += 1
     return nf, nd
 
 
-def fail(msg: str) -> "NoReturn":  # type: ignore[name-defined]
+def fail(msg: str):
     print("RC4 BUILD FAILED:", msg, file=sys.stderr)
     sys.exit(1)
 
@@ -155,15 +152,14 @@ def main() -> int:
     dotnet_dst = ROOT / "runtime" / "dotnet"
     if not (dotnet_dst / "dotnet.exe").exists():
         src = pathlib.Path(DOTNET_SRC)
-        if not (src / "dotnet.exe").exists():
-            print("WARN: dotnet source missing; relying on publish output")
-        else:
+        if (src / "dotnet.exe").exists():
             dotnet_dst.mkdir(parents=True, exist_ok=True)
             for name in ["dotnet.exe", "host", "shared", "LICENSE.txt", "ThirdPartyNotices.txt"]:
                 item = src / name
                 if not item.exists():
                     continue
                 tgt = dotnet_dst / name
+                import shutil
                 if item.is_dir():
                     if tgt.exists():
                         shutil.rmtree(tgt, ignore_errors=True)
@@ -171,12 +167,13 @@ def main() -> int:
                 else:
                     shutil.copy2(item, tgt)
             print("bundled runtime/dotnet")
-    else:
-        print("runtime/dotnet already present; skipping re-bundle")
+        else:
+            print("WARN: dotnet source missing; relying on publish output")
 
-    # 1) carry LICENSE + runtime/sqlite/sqlite3.dll (idempotent safety copies)
+    # 1) carry LICENSE + runtime/sqlite/sqlite3.dll (idempotent)
     lic_src = REPO / "LICENSE"
     if lic_src.exists() and not (ROOT / "LICENSE").exists():
+        import shutil
         shutil.copy2(lic_src, ROOT / "LICENSE")
         print("carried LICENSE into staging")
     sqlite_dst = ROOT / "runtime" / "sqlite" / "sqlite3.dll"
@@ -184,6 +181,7 @@ def main() -> int:
         src = ROOT / "e_sqlite3.dll"
         if src.exists():
             sqlite_dst.parent.mkdir(parents=True, exist_ok=True)
+            import shutil
             shutil.copy2(src, sqlite_dst)
             print("carried runtime/sqlite/sqlite3.dll")
         else:
@@ -206,13 +204,12 @@ def main() -> int:
         json.dumps(release_identity, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("wrote in-package release-identity.json (minimal, no package sha)")
 
-    # 4) FINAL ReleaseManifest.json  (files enumerated from DISK, post-purge)
+    # 4) FINAL ReleaseManifest.json (capital; files from DISK, post-purge)
     license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
     project_license_expression = "MulanPSL-2.0 OR Apache-2.0"
     project_license_status = ("DECIDED"
                               if "SPDX-License-Identifier: MulanPSL-2.0 OR Apache-2.0" in license_text
                               else "PENDING_OWNER_DECISION")
-    # engine / case_pack / schema_set digests are computed from the published tree
     engine_sha = tree_sha(ROOT / "engine/vendor/full-spectrum-engine")
     case_sha = tree_sha(ROOT / "packs/foundation-case005")
     schema_sha = tree_sha(ROOT / "schemas/foundation-kernel")
@@ -245,10 +242,9 @@ def main() -> int:
         ("sqlite", SQLITE_VERSION, "runtime/sqlite/sqlite3.dll", "Public Domain"),
     ]:
         dependencies.append({"name": name, "version": version,
-                              "sha256": sha(ROOT / relative), "license": lic})
+                             "sha256": sha(ROOT / relative), "license": lic})
 
-    sbom_path = ROOT / "SBOM.cdx.json"
-    sbom_sha = sha(sbom_path) if sbom_path.exists() else ""
+    sbom_sha = ""  # filled after SBOM is written (step 6); manifest rewritten then
 
     manifest = {
         "contract": "fs-observer/release-manifest/1",
@@ -280,7 +276,7 @@ def main() -> int:
             "V030-RC-ENTRY-FIX-01: official entry observer.cmd, product identity v0.3.0-beta, "
             "Web content root pinned to web/.",
             "Web Console (Blazor) included at web/; Launcher injects OBSERVER_RELEASE_IDENTITY_PATH "
-            "so the Web reads EXTERNAL_RELEASE_IDENTITY.",
+            "so the Web reads EXTERNAL_RELEASE_IDENTITY from release-identity.json.",
             "Pinned to Engine v1.5.0 (commit 88493007); Engine v1.5 is the bundled version.",
             "Synthetic CASE005 only; not production or enterprise validated.",
             "Dual license applies only to Observer-owned work; bundled components retain their own licenses.",
@@ -292,7 +288,27 @@ def main() -> int:
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"wrote ReleaseManifest.json: {len(files)} files, 0 pyc ghosts")
 
-    # 5) FINAL SBOM.cdx.json
+    # 5) patch release-manifest.json (lowercase, publisher descriptor) to RC4 values
+    low = ROOT / "release-manifest.json"
+    if low.exists():
+        try:
+            low_obj = json.loads(low.read_text(encoding="utf-8"))
+        except Exception:
+            low_obj = {}
+        low_obj["build_channel"] = BUILD_CHANNEL
+        low_obj["observer_version"] = PRODUCT_VERSION
+        low_obj["observer_commit"] = COMMIT
+        # package-internal manifest must NOT carry the package's own sha (per Web contract);
+        # the authoritative sha lives in the external identity file.
+        low_obj["observer_package_sha256"] = "SEE_EXTERNAL_IDENTITY_FILE"
+        low_obj["artifact_digest"] = "SEE_EXTERNAL_IDENTITY_FILE"
+        low_obj["generated_at"] = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        low.write_text(json.dumps(low_obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print("patched release-manifest.json (lowercase) -> RC4 values")
+    else:
+        print("WARN: release-manifest.json (lowercase) absent; skipping patch")
+
+    # 6) FINAL SBOM.cdx.json
     observer = {
         "type": "application", "name": "full-spectrum-observer",
         "version": PRODUCT_VERSION, "source_commit": COMMIT,
@@ -302,7 +318,7 @@ def main() -> int:
     components = [
         {"type": "framework", "name": "Microsoft.NETCore.App", "version": DOTNET_VERSION,
          "licenses": [{"expression": "MIT"}]},
-        {"type": "framework", "name": "CPython", "version": CPYTHON_VERSION,
+        {"type": "framework", "name": "CPython", "version": PY_VERSION,
          "licenses": [{"expression": "Python-2.0"}]},
         {"type": "library", "name": "SQLite", "version": SQLITE_VERSION,
          "licenses": [{"license": {"name": "Public Domain"}}]},
@@ -319,21 +335,21 @@ def main() -> int:
     }
     (ROOT / "SBOM.cdx.json").write_text(
         json.dumps(sbom, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    # refresh the manifest's sbom sha now that SBOM is final
+    # refresh manifest sbom sha + re-emit manifest
     manifest["sbom"]["sha256"] = sha(ROOT / "SBOM.cdx.json")
     manifest["manifest_sha256"] = hashlib.sha256(canonical(manifest)).hexdigest()
     (ROOT / "ReleaseManifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"wrote SBOM.cdx.json: {len(components)} components")
 
-    # 6) FINAL SHA256SUMS.txt  (over ALL files except itself; includes the final identity)
+    # 7) FINAL SHA256SUMS.txt  (over ALL files except itself; includes final identity + patches)
     all_payload = sorted(
         (p for p in ROOT.rglob("*") if p.is_file() and p.name != "SHA256SUMS.txt"),
         key=lambda p: p.relative_to(ROOT).as_posix())
     sums_text = "".join(f"{sha(p)} *{p.relative_to(ROOT).as_posix()}\n" for p in all_payload)
     (ROOT / "SHA256SUMS.txt").write_text(sums_text, encoding="utf-8")
 
-    # 7) VERIFY SHA256SUMS: 0 missing, 0 mismatch  (hard gate)
+    # 8) VERIFY SHA256SUMS: 0 missing, 0 mismatch  (HARD GATE)
     missing = mismatch = 0
     for line in sums_text.splitlines():
         recorded, rel = line.split(" *", 1)
@@ -350,7 +366,7 @@ def main() -> int:
         fail(f"SHA256SUMS integrity violated (missing={missing}, mismatch={mismatch})")
     print("SHA256SUMS verified: 0 missing, 0 mismatch")
 
-    # 8) build the FINAL zip (every file in ROOT)
+    # 9) build the FINAL zip (every file in ROOT)
     zip_files = sorted((p for p in ROOT.rglob("*") if p.is_file()),
                        key=lambda p: p.relative_to(ROOT).as_posix())
     zp = OUT / ZIP_NAME
@@ -361,11 +377,11 @@ def main() -> int:
             z.write(p, p.relative_to(ROOT).as_posix())
     print(f"built zip: {zp.name} ({zp.stat().st_size} bytes, {len(zip_files)} entries)")
 
-    # 9) STANDARD full-archive SHA256
+    # 10) STANDARD full-archive SHA256
     FULL_ARCHIVE_SHA = sha(zp)
     print("FULL_ARCHIVE_SHA256 (standard):", FULL_ARCHIVE_SHA)
 
-    # 10) out-of-package identity + SHA256.txt  (standard full-archive sha only)
+    # 11) out-of-package identity + SHA256.txt  (standard full-archive sha only)
     ident = {
         "rc_identity": RC_TAG,
         "product_version": PRODUCT_VERSION,
@@ -392,16 +408,11 @@ def main() -> int:
         "web_runtime_identity_closed": "YES (Launcher injects OBSERVER_RELEASE_IDENTITY_PATH -> release-identity.json; Web reads EXTERNAL_RELEASE_IDENTITY)",
         "serve_smoke": "INCONCLUSIVE (sandbox cannot bind/verify live Blazor serve)",
         "ready_for_codex_full_retest": "YES (all identity/artifact fields closed; serve left INCONCLUSIVE)",
-        "baseline_release": {"version": "v0.1.0-alpha", "status": "RELEASED",
-                             "commit": "afe0a6a672b2008a6ba3aa048e6099f84bf5199f",
-                             "released_at": "2026-07-24",
-                             "source": "Gitee Wiki efd77e90788d13abefbc26ea9aa7c9cba4153608"},
     }
     identity_json_path = OUT / f"{RC_TAG}_RELEASE_CANDIDATE_IDENTITY.json"
     identity_json_path.write_text(json.dumps(ident, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (OUT / f"{RC_TAG}_RELEASE_CANDIDATE_SHA256.txt").write_text(
         f"{FULL_ARCHIVE_SHA} *{ZIP_NAME}\n", encoding="utf-8")
-    # supplementary external release manifest (distinct name; never overwrites RC3)
     rel_manifest = {
         "rc_identity": RC_TAG,
         "product_version": PRODUCT_VERSION,
