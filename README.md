@@ -38,6 +38,10 @@ The latest `main` Foundation-gate workflow is the public CI source of truth. His
 
 ## Architecture boundary
 
+[![Governance event and evidence loop](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/governance-event-evidence-loop-en-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/visual-index.md)
+
+This diagram is a public architecture orientation, not a v0.3 release claim. The current public release remains `v0.2.0-alpha.2`; `v0.3.0-beta` is not released and production readiness is `NO`.
+
 ```text
 Observer application (.NET 10)
   → Application / Evidence Core
