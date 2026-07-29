@@ -9,7 +9,7 @@
 **Where Observer fits:** Protocol defines subjects and governance contracts; Engine provides deterministic analysis; Observer connects authorized local facts to evidence, replay and a human decision point. The public Observer line remains observation-only and does not execute final enterprise or production actions.
 
 [![Foundation gates](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml/badge.svg)](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml)
-[![Release](https://img.shields.io/badge/release-v0.2.0--alpha.2-orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2)
+[![Release](https://img.shields.io/badge/release-v0.3.0--beta-orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MulanPSL--2.0%20OR%20Apache--2.0-blue)](LICENSE)
 
@@ -18,10 +18,10 @@
 | Line | Status | Scope |
 | --- | --- | --- |
 | [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **Public pre-release** | Engine v1.0/v1.5 compatibility adapter over the Foundation Kernel. |
-| `v0.3.0-beta` | **In development — not released** | Local single-user Operator Console. |
+| [`v0.3.0-beta`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta) | **Public beta pre-release** | Local single-user Operator Console, evidence storage, audit/replay and bounded human review. Windows x64 verified; production ready: **NO**. |
 | `v0.4`–`v1.0` | **Designed — not implemented** | Scenario Packs, enterprise node, multi-principal service and real-organization validation. |
 
-The current GitHub Release is a source release. A roadmap or Wiki document is not an installable client and is not presented as a shipped capability.
+The current public release is `v0.3.0-beta`. Its authoritative Windows x64 package and independent verification evidence are attached to the release. It is a beta engineering release, not a production-readiness or compliance claim.
 
 ## What is implemented
 
@@ -40,7 +40,7 @@ The latest `main` Foundation-gate workflow is the public CI source of truth. His
 
 [![Governance event and evidence loop](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/governance-event-evidence-loop-en-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/visual-index.md)
 
-This diagram is a public architecture orientation, not a v0.3 release claim. The current public release remains `v0.2.0-alpha.2`; `v0.3.0-beta` is not released and production readiness is `NO`.
+This diagram is a public architecture orientation. The current public release is `v0.3.0-beta`; production readiness remains `NO`.
 
 ```text
 Observer application (.NET 10)
