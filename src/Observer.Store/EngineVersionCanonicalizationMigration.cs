@@ -43,10 +43,6 @@ internal static class EngineVersionCanonicalizationMigration
 
     private const string CanonicalCheckLiteral = "'v1.5.0'";
 
-    private const string RuntimeSnapshotsColumns = @"
-        snapshot_id, result_id, analyzer_version, engine_version, profile_version,
-        schema_version, input_digest, config_digest, runtime_digest";
-
     public static async Task ApplyAsync(SqliteConnection connection)
     {
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
@@ -130,7 +126,8 @@ internal static class EngineVersionCanonicalizationMigration
                   schema_version   TEXT NOT NULL,
                   input_digest     TEXT NOT NULL,
                   config_digest    TEXT NOT NULL,
-                  runtime_digest   TEXT NOT NULL
+                  runtime_digest   TEXT NOT NULL,
+                  resolved_simulation_id TEXT NULL
                 )";
             await create.ExecuteNonQueryAsync();
         }
@@ -140,7 +137,13 @@ internal static class EngineVersionCanonicalizationMigration
         await using (var read = connection.CreateCommand())
         {
             read.Transaction = transaction;
-            read.CommandText = $"SELECT {RuntimeSnapshotsColumns} FROM runtime_snapshots";
+            bool hasResolvedSimulationId = await HasColumnAsync(
+                connection, transaction, "runtime_snapshots", "resolved_simulation_id");
+            read.CommandText = @"
+                SELECT snapshot_id, result_id, analyzer_version, engine_version, profile_version,
+                       schema_version, input_digest, config_digest, runtime_digest, " +
+                (hasResolvedSimulationId ? "resolved_simulation_id" : "NULL AS resolved_simulation_id") +
+                " FROM runtime_snapshots";
             await using var reader = await read.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
@@ -149,8 +152,8 @@ internal static class EngineVersionCanonicalizationMigration
                 insert.Transaction = transaction;
                 insert.CommandText = @"
                     INSERT INTO runtime_snapshots_new
-                        (snapshot_id, result_id, analyzer_version, engine_version, profile_version, schema_version, input_digest, config_digest, runtime_digest)
-                    VALUES (@id, @rid, @av, @ev, @pv, @sv, @idig, @cdig, @rdig)";
+                        (snapshot_id, result_id, analyzer_version, engine_version, profile_version, schema_version, input_digest, config_digest, runtime_digest, resolved_simulation_id)
+                    VALUES (@id, @rid, @av, @ev, @pv, @sv, @idig, @cdig, @rdig, @rsid)";
                 insert.Parameters.AddWithValue("@id", reader.GetString(0));
                 insert.Parameters.AddWithValue("@rid", reader.GetString(1));
                 insert.Parameters.AddWithValue("@av", reader.GetString(2));
@@ -160,6 +163,7 @@ internal static class EngineVersionCanonicalizationMigration
                 insert.Parameters.AddWithValue("@idig", reader.GetString(6));
                 insert.Parameters.AddWithValue("@cdig", reader.GetString(7));
                 insert.Parameters.AddWithValue("@rdig", reader.GetString(8));
+                insert.Parameters.AddWithValue("@rsid", reader.IsDBNull(9) ? DBNull.Value : reader.GetString(9));
                 try
                 {
                     await insert.ExecuteNonQueryAsync();
@@ -216,6 +220,26 @@ internal static class EngineVersionCanonicalizationMigration
                     "Foreign-key violation detected after engine-version canonicalization rebuild.");
             }
         }
+    }
+
+    private static async Task<bool> HasColumnAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        string tableName,
+        string columnName)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = $"PRAGMA table_info(\"{tableName}\")";
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            if (string.Equals(reader.GetString(1), columnName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static async Task RecordAppliedAsync(SqliteConnection connection, SqliteTransaction transaction)

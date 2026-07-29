@@ -692,7 +692,7 @@ public sealed class ObserverStore : IAsyncDisposable
         await using var connection = Open();
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
-        command.CommandText = "SELECT bundle_id, result_id, evidence_digest, \"references\" FROM evidence_bundles WHERE result_id = @rid";
+        command.CommandText = "SELECT bundle_id, result_id, evidence_digest, \"references\", resolved_simulation_id FROM evidence_bundles WHERE result_id = @rid";
         command.Parameters.AddWithValue("@rid", resultId);
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
