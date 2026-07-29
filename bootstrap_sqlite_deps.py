@@ -116,7 +116,10 @@ def main():
 
     # native sqlite3.dll (win-x64). Provisioned at test time into bin outputs.
     dll = os.path.join(RUNTIME_DIR, "sqlite3.dll")
-    fallback = r"C:\Users\wangjian0926\Desktop\codex专属仓库\full-spectrum-observer\.runtime\sqlite\sqlite3.dll"
+    fallback = os.environ.get(
+        "FSP_SQLITE_DLL",
+        os.path.join(ROOT, ".runtime", "sqlite", "sqlite3.dll"),
+    )
     if not os.path.exists(dll):
         url = os.environ.get("SQLITE_DLL_URL", "")
         if url:
@@ -126,7 +129,7 @@ def main():
             print(f"[copy]     sqlite3.dll <- {fallback}")
             shutil.copyfile(fallback, dll)
         else:
-            print("[skip]     sqlite3.dll not available; set SQLITE_DLL_URL or provide fallback")
+            print("[skip]     sqlite3.dll not available; set FSP_SQLITE_DLL or SQLITE_DLL_URL")
     else:
         print("[cached]   sqlite3.dll")
     if os.path.exists(dll):

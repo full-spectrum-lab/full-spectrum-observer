@@ -33,7 +33,7 @@
 
 .EXAMPLE
     # from a fresh clone, any current working directory:
-    $env:DOTNET_ROOT = "C:\Users\wangjian0926\.dotnet10"
+    $env:DOTNET_ROOT = "C:\path\to\dotnet"
     pwsh scripts/publish-observer.ps1 -OutputDirectory C:\tmp\publish\observer
     # then:
     cd C:\some\unrelated\dir

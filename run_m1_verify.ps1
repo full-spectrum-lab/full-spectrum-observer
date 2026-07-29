@@ -19,14 +19,20 @@
 [CmdletBinding()]
 param(
     [switch] $AllowKnownNugetAuditBypass,
-    [string] $ExternalIdentityPath = ""
+    [string] $ExternalIdentityPath = "",
+    [string] $DotnetRoot = $env:DOTNET_ROOT,
+    [string] $RepoRoot = $PSScriptRoot,
+    [string] $LogPath = (Join-Path $env:TEMP "m1_verify.log")
 )
 $ErrorActionPreference = 'Continue'
-$dotnet = "C:\Users\wangjian0926\.dotnet10\dotnet.exe"
-$env:DOTNET_ROOT = "C:\Users\wangjian0926\.dotnet10"
-$env:PATH = "C:\Users\wangjian0926\.dotnet10;$env:PATH"
-$repo = "C:\Users\wangjian0926\WorkBuddy\2026-07-12-20-20-07\full-spectrum-observer"
-$log = "C:\Users\wangjian0926\AppData\Local\Temp\m1_verify.log"
+$dotnet = Join-Path $DotnetRoot "dotnet.exe"
+if (-not (Test-Path -LiteralPath $dotnet -PathType Leaf)) {
+    throw "dotnet not found; set DOTNET_ROOT or pass -DotnetRoot"
+}
+$env:DOTNET_ROOT = $DotnetRoot
+$env:PATH = "$DotnetRoot;$env:PATH"
+$repo = (Resolve-Path -LiteralPath $RepoRoot).Path
+$log = $LogPath
 # Use the version-controlled precheck in the repo root (no permanent skip, no stale TEMP copy).
 $precheck = Join-Path $repo "verify_repo_identity.ps1"
 # Frozen-candidate identity: explicit arg, else the v0.3 RC external identity file.

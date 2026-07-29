@@ -30,6 +30,7 @@ import datetime
 import hashlib
 import json
 import mimetypes
+import os
 import pathlib
 import subprocess
 import sys
@@ -50,7 +51,7 @@ NUMPY_VERSION = "1.26.4"
 JSONSCHEMA_VERSION = "4.26.0"
 SQLITE_VERSION = "3.53.3"
 DOTNET_VERSION = "10.0.9"
-DOTNET_SRC = "C:/Users/wangjian0926/.dotnet10"
+DOTNET_SRC = os.environ.get("FSP_DOTNET_ROOT") or os.environ.get("DOTNET_ROOT") or ""
 
 
 def sha(path: pathlib.Path) -> str:

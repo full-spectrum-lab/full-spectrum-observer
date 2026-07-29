@@ -41,6 +41,7 @@ import datetime
 import hashlib
 import json
 import mimetypes
+import os
 import pathlib
 import subprocess
 import sys
@@ -61,7 +62,7 @@ NUMPY_VERSION = "1.26.4"
 JSONSCHEMA_VERSION = "4.26.0"
 SQLITE_VERSION = "3.53.3"
 DOTNET_VERSION = "10.0.9"
-DOTNET_SRC = "C:/Users/wangjian0926/.dotnet10"
+DOTNET_SRC = os.environ.get("FSP_DOTNET_ROOT") or os.environ.get("DOTNET_ROOT") or ""
 
 
 def sha(path: pathlib.Path) -> str:
@@ -345,7 +346,7 @@ def main() -> int:
         "known_limitations": [
             "DET-001 (non-deterministic simulation_id) fixed at unified Worker Envelope boundary; "
             "verified via real Normalizer + pinned Engine v1.5.0 (commit 88493007).",
-            "V030-RC-ENTRY-FIX-01: official entry observer.cmd, product identity v0.3.0-beta, "
+            f"V030-RC-ENTRY-FIX-01: official entry observer.cmd, product identity {PRODUCT_VERSION}, "
             "Web content root pinned to web/.",
             "Web Console (Blazor) included at web/; Launcher injects OBSERVER_RELEASE_IDENTITY_PATH "
             "so the Web reads EXTERNAL_RELEASE_IDENTITY from release-identity.json.",
@@ -443,14 +444,14 @@ def main() -> int:
         "product_version": PRODUCT_VERSION,
         "build_channel": BUILD_CHANNEL,
         "release_status": RELEASE_STATUS,
-        "authorized_for_release": False,
+        "authorized_for_release": RELEASE_STATUS == "RELEASED",
         "source_commit": COMMIT,
         "engine_version": ENGINE_VERSION,
         "engine_commit": ENGINE_COMMIT,
         "package_filename": ZIP_NAME,
         "package_sha256": FULL_ARCHIVE_SHA,
         "package_sha256_full_archive": FULL_ARCHIVE_SHA,
-        "authoritative_sha_convention": "SHA256 of the complete observer-v0.3.0-beta-rc5.zip file (standard sha256sum)",
+        "authoritative_sha_convention": f"SHA256 of the complete {ZIP_NAME} file (standard sha256sum)",
         "python_runtime_version": PY_VERSION,
         "numpy_version": NUMPY_VERSION,
         "jsonschema_version": JSONSCHEMA_VERSION,

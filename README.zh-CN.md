@@ -13,10 +13,11 @@
 | 版本线 | 状态 | 范围 |
 |---|---|---|
 | [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **公开预发布** | Foundation Kernel 上的 Engine v1.0/v1.5 兼容适配层 |
-| [`v0.3.0-beta`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta) | **公开 Beta 预发布** | 本地单用户 Operator Console、证据存储、审计/回放与受约束的人工复核；Windows x64 已验证，生产就绪：**否** |
+| [`v0.3.0-beta.1`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.1) | **公开 Beta 预发布** | 发布身份闭合的 Windows x64 包：本地 Operator Console、证据存储、审计/回放与受约束人工复核；生产就绪：**否** |
+| [`v0.3.0-beta`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta) | **已被替代** | 保留历史 RC5；其包内候选状态由 beta.1 补正 |
 | `v0.4`～`v1.0` | **已设计，尚未实现** | Scenario Pack、企业节点、多主体 Service 与真实组织验证 |
 
-当前公开版本为 `v0.3.0-beta`。权威 Windows x64 安装包和独立复测证据已附在 Release 中；它是 Beta 工程预发布，不构成生产就绪或合规声明。
+当前公开版本为 `v0.3.0-beta.1`。权威 Windows x64 包和独立复测证据附在 Release 中；它是 Beta 工程预发布，不构成生产就绪或合规声明。
 
 ## 当前已实现能力
 

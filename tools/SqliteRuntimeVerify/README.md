@@ -6,8 +6,8 @@ Standalone, solution-excluded console tool that **empirically** proves which SQL
 ## Run
 ```bash
 # set the isolated SDK
-export DOTNET_ROOT="C:\\Users\\wangjian0926\\.dotnet10"
-export PATH="/c/Users/wangjian0926/.dotnet10:$PATH"
+export DOTNET_ROOT="/path/to/dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
 FEED="https://api.nuget.org/v3/index.json"
 
 dotnet restore SqliteRuntimeVerify.csproj -s "$FEED"

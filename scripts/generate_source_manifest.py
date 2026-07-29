@@ -48,11 +48,11 @@ import tarfile
 import tempfile
 from datetime import datetime, timezone
 
-# --- Identity of the v0.2.0-alpha.1 source package -------------------------
-SYSTEM_VERSION = "0.2.0-alpha.2"
-PACKAGE_ID = "full-spectrum-observer-source-v0.2.0-alpha.2"
+# --- Identity of the current source package --------------------------------
+SYSTEM_VERSION = "0.3.0-beta.1"
+PACKAGE_ID = "full-spectrum-observer-source-v0.3.0-beta.1"
 REPOSITORY = "full-spectrum/full-spectrum-observer"
-DEFAULT_RELEASE_TAG = "v0.2.0-alpha.2"
+DEFAULT_RELEASE_TAG = "v0.3.0-beta.1"
 MANIFEST_FILENAME = "SOURCE_PACKAGE_MANIFEST.json"
 
 # Substrings that must never appear in the emitted file list.
@@ -201,12 +201,12 @@ def build_manifest(repo: str, release_tag: str, source_commit: str | None = None
         "source_head": source_head,
         "system_version": SYSTEM_VERSION,
         "scope": (
-            "Engine v1.0/v1.5 Compatibility Adapter (Python layer); "
-            "v0.1 Foundation Kernel .NET gates inherited, not re-executed here"
+            "Observer v0.3.0-beta.1 source tree: local Operator Console, "
+            "evidence, audit/replay and Engine v1.5 compatibility"
         ),
         "dotnet_build": (
-            "NOT_EXECUTED_IN_V02 (v0.2 is Python compat layer; "
-            "v0.1 .NET gates IG0-IG8 remain authoritative from v0.1 release)"
+            "Source manifest only; executable build and test evidence are "
+            "published separately with the v0.3.0-beta.1 release"
         ),
         "files": files,
     }
@@ -242,8 +242,8 @@ def verify(manifest: dict, tracked: list[str]) -> None:
         ".git directory must not appear in the manifest"
     )
 
-    assert manifest["system_version"] == "0.2.0-alpha.2", (
-        f"system_version must be 0.2.0-alpha.2, got {manifest['system_version']!r}"
+    assert manifest["system_version"] == "0.3.0-beta.1", (
+        f"system_version must be 0.3.0-beta.1, got {manifest['system_version']!r}"
     )
 
     # Every digest must be a 64-char hex SHA-256.
