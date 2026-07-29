@@ -327,7 +327,7 @@ public sealed record ReleaseManifest
     public required string Contract { get; init; } // const: fs-observer/release-manifest/1
 
     [JsonPropertyName("system_version")]
-    public required string SystemVersion { get; init; } // const: 0.1.0-alpha
+    public required string SystemVersion { get; init; } // const: v0.3.0-beta
 
     [JsonPropertyName("release_commit")]
     public required string ReleaseCommit { get; init; }

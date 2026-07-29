@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib,json,pathlib,re,xml.etree.ElementTree as ET,sys
+import hashlib,json,os,pathlib,re,xml.etree.ElementTree as ET,sys
 ROOT=pathlib.Path(__file__).resolve().parents[1]
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible).
+EVIDENCE_ROOT=pathlib.Path(os.environ.get("FSP_EVIDENCE_ROOT") or (ROOT/"evidence"))
 checks=[]
 def add(i,ok,detail=''): checks.append({'id':i,'status':'PASS' if ok else 'FAIL','detail':detail})
 # Frozen baseline hashes.
@@ -30,7 +33,7 @@ for item in wlock['files']:
  p=ROOT/'engine'/item['path']; h=hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
  if h!=item['sha256'] or (p.stat().st_size if p.exists() else None)!=item['size_bytes']: wfail.append(item['path'])
 add('worker_lock',not wfail,','.join(wfail))
-add('engine_identity',wlock['engine_version']=='v1.0.0' and wlock['engine_commit']=='09062bae2c7608bda79ee4bfde5779109e8e6197')
+add('engine_identity',wlock['engine_version']=='v1.5.0' and wlock['engine_commit']=='88493007d4e00344c70a70ed0e5a5d652dec86f5')
 # Migration controls.
 sql=(ROOT/'src/Observer.Evidence/Migrations/001_foundation.sql').read_text()
 for token in ('CREATE TABLE IF NOT EXISTS audit_events','tr_audit_events_no_update','tr_audit_events_no_delete','tr_runtime_snapshots_no_update','BEGIN'):
@@ -39,5 +42,5 @@ for token in ('CREATE TABLE IF NOT EXISTS audit_events','tr_audit_events_no_upda
 add('csharp_source_inventory',len(cs)>=40,f'count={len(cs)}')
 status='PASS' if all(c['status']=='PASS' for c in checks) else 'FAIL'
 report={'gate':'IG3_IG4_SOURCE_INTEGRATION','status':status,'checks':checks,'csharp_build':'NOT_EXECUTED','formal_ig3':'NOT_PASSED','formal_ig4':'NOT_PASSED'}
-out=ROOT/'evidence/ig3-ig4/source-integration-static.json'; out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+out=EVIDENCE_ROOT/'ig3-ig4/source-integration-static.json'; out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps(report,ensure_ascii=False,indent=2)); raise SystemExit(0 if status=='PASS' else 1)

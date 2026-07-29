@@ -97,8 +97,9 @@ async Task FinalizationIsAtomicAtSourceLevel()
 
 async Task RunEngineFacadeSmoke()
 {
-    string python = Environment.GetEnvironmentVariable("FSP_PRIVATE_PYTHON")
-        ?? throw new InvalidOperationException("FSP_PRIVATE_PYTHON must point to the absolute private Python executable.");
+    // M2-FIX-03: resolve the Python interpreter via the shared resolver (FSP_PRIVATE_PYTHON is the
+    // test/diagnostic override; in a formal package it resolves to runtime/python/python.exe).
+    string python = FullSpectrum.Observer.Contracts.RuntimeConfigurationResolver.Resolve().PythonExecutablePath;
     if (!Path.IsPathFullyQualified(python) || !File.Exists(python))
         throw new FileNotFoundException("Private Python executable is missing or is not an absolute path.", python);
     await FullSpectrum.Observer.Tests.Integration.EngineFacadeSourceTests.RunAsync(
@@ -387,7 +388,7 @@ Task RecoverAfterAdapterFailure()
     }, FoundationJson.CreateOptions()));
     var options = new EngineFacadeOptions
     {
-        PythonExecutablePath = Environment.GetEnvironmentVariable("FSP_PRIVATE_PYTHON")!,
+        PythonExecutablePath = FullSpectrum.Observer.Contracts.RuntimeConfigurationResolver.Resolve().PythonExecutablePath,
         WorkerScriptPath = worker,
         EngineRootPath = Path.Combine(repository, "engine", "vendor", "full-spectrum-engine"),
         WorkerLockPath = lockPath,
@@ -414,8 +415,9 @@ Task RecoverAfterAdapterFailure()
 
 async Task RunFoundationPipelineSmoke()
 {
-    string python = Environment.GetEnvironmentVariable("FSP_PRIVATE_PYTHON")
-        ?? throw new InvalidOperationException("FSP_PRIVATE_PYTHON must point to the pinned private Python executable.");
+    string python = FullSpectrum.Observer.Contracts.RuntimeConfigurationResolver.Resolve().PythonExecutablePath;
+    if (!Path.IsPathFullyQualified(python) || !File.Exists(python))
+        throw new FileNotFoundException("Private Python executable is missing or is not an absolute path.", python);
     string root = FullSpectrum.Observer.Contracts.RepositoryLayout.FindRoot();
     string data = Path.Combine(Path.GetTempPath(), "fsp-pipeline-" + Guid.NewGuid().ToString("N"));
     Directory.CreateDirectory(data);

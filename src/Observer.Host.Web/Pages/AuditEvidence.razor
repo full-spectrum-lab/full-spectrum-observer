@@ -1,0 +1,114 @@
+@page "/audit"
+@rendermode InteractiveServer
+@inject AuditViewer Audit
+
+<PageTitle>审计与证据 — Observer 控制台</PageTitle>
+
+<h1>审计与证据</h1>
+<p class="muted">审计链追加写（INSERT ONLY），不可更新或删除（红线 #7）。每条记录通过 prev_audit_id 链式相连并由摘要锚定。</p>
+
+@if (_error is not null)
+{
+    <div class="error-state" role="alert">@_error</div>
+}
+
+<div class="card">
+    <button type="button" class="btn" disabled="@_busy" @onclick="VerifyAsync">校验审计链</button>
+    @if (_chain is not null)
+    {
+        <div class="region observer">
+            @if (_chain.IsValid)
+            {
+                <p><span class="badge known">完整</span> 共 @_chain.RecordCount 条记录</p>
+            }
+            else
+            {
+                <p><span class="badge hardgate">断裂</span> @(_chain.BrokenAtAuditId ?? "未知")</p>
+            }
+            <p class="muted">@_chain.Message</p>
+        </div>
+    }
+</div>
+
+@if (_loading)
+{
+    <p class="muted">正在加载…</p>
+}
+else if (_chainList.Count == 0)
+{
+    <div class="empty-state">暂无审计记录。</div>
+}
+else
+{
+    <div class="card">
+        <h2>审计链（按时间倒序）</h2>
+        <table>
+            <thead><tr><th>审计ID</th><th>时间</th><th>动作</th><th>任务</th><th>前驱</th><th>摘要</th></tr></thead>
+            <tbody>
+                @foreach (var a in _chainList)
+                {
+                    <tr>
+                        <td><code>@a.AuditId</code></td>
+                        <td>@a.At</td>
+                        <td>@a.Action</td>
+                        <td>@(a.TaskId ?? "—")</td>
+                        <td>@(a.PrevAuditId ?? "—")</td>
+                        <td><code>@Short(a.Digest)</code></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="sr-only" aria-live="polite">@_live</div>
+
+@code {
+    private bool _loading = true;
+    private bool _busy;
+    private string? _error;
+    private string _live = "";
+
+    private List<AuditRecord> _chainList = new();
+    private AuditChainVerification? _chain;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        try
+        {
+            _chainList = await Audit.ListChainAsync();
+            _chainList.Reverse(); // newest first
+            _chain = await Audit.VerifyAsync();
+            _error = null;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task VerifyAsync()
+    {
+        _busy = true;
+        try
+        {
+            _chain = await Audit.VerifyAsync();
+            _live = _chain.IsValid ? "审计链完整。" : "审计链存在断裂，请检查。";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string Short(string digest) => digest.Length <= 16 ? digest : digest[..16] + "…";
+}

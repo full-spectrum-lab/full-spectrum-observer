@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "Microsoft.AspNetCore.App.Internal.Assets": {
+        "type": "Direct",
+        "requested": "[10.0.9, )",
+        "resolved": "10.0.9",
+        "contentHash": "E9Wp/LPKAYkGOVBv4lt5U5TnUA/7pov7QZAwF3eI64kK8AAXqkPDwuadEOwpL1WXEfgecYm0fccluvABp32D8g=="
+      },
+      "Microsoft.Data.Sqlite.Core": {
+        "type": "Transitive",
+        "resolved": "8.0.10",
+        "contentHash": "i95bgLqp6rJzmhQEtGhVVHnk1nYAhr/pLDul676PnwI/d7uDSSGs2ZPU9aP0VOuppkZaNinQOUCrD7cstDbQiQ==",
+        "dependencies": {
+          "SQLitePCLRaw.core": "2.1.6"
+        }
+      },
+      "SourceGear.sqlite3": {
+        "type": "Transitive",
+        "resolved": "3.53.3",
+        "contentHash": "PaDT7JwQ00HmXZT1xSGSC0c24A5lVpJYHMrXBuJATdpB2t0nf4Kq9HyPaZhxVW0elPq4XI1s5BLh7qLuObmzFA=="
+      },
+      "SQLitePCLRaw.core": {
+        "type": "Transitive",
+        "resolved": "2.1.6",
+        "contentHash": "wO6v9GeMx9CUngAet8hbO7xdm+M42p1XeJq47ogyRoYSvNSp0NGLI+MgC0bhrMk9C17MTVFlLiN6ylyExLCc5w=="
+      },
+      "SQLitePCLRaw.provider.e_sqlite3": {
+        "type": "Transitive",
+        "resolved": "2.1.6",
+        "contentHash": "PQ2Oq3yepLY4P7ll145P3xtx2bX8xF4PzaKPRpw9jZlKvfe4LE/saAV82inND9usn1XRpmxXk7Lal3MTI+6CNg==",
+        "dependencies": {
+          "SQLitePCLRaw.core": "2.1.6"
+        }
+      },
+      "FullSpectrum.Observer.Application": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+        }
+      },
+      "FullSpectrum.Observer.Contracts": {
+        "type": "Project"
+      },
+      "FullSpectrum.Observer.EngineFacade": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Application": "[1.0.0, )",
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "FullSpectrum.Observer.Store": "[1.0.0, )"
+        }
+      },
+      "FullSpectrum.Observer.Store": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "Microsoft.Data.Sqlite.Core": "[8.0.10, )",
+          "SQLitePCLRaw.core": "[2.1.6, )",
+          "SQLitePCLRaw.provider.e_sqlite3": "[2.1.6, )",
+          "SourceGear.sqlite3": "[3.53.3, )"
+        }
+      }
+    }
+  }
+}

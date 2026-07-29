@@ -2,13 +2,17 @@
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible).
+EVIDENCE_ROOT = pathlib.Path(os.environ.get("FSP_EVIDENCE_ROOT") or (ROOT / "evidence"))
 EXECUTION = ROOT / "src" / "Observer.Execution"
 HOST = ROOT / "src" / "Observer.Host.Cli"
-EVIDENCE = ROOT / "evidence" / "ig5" / "source-static.json"
+EVIDENCE = EVIDENCE_ROOT / "ig5" / "source-static.json"
 
 checks: list[dict[str, str]] = []
 

@@ -29,6 +29,7 @@ public static class FoundationReasonCodes
     public const string FACADE_WORKER_HASH_MISMATCH = "FACADE_WORKER_HASH_MISMATCH";
     public const string FACADE_RESPONSE_TOO_LARGE = "FACADE_RESPONSE_TOO_LARGE";
     public const string ENGINE_SIMULATION_ERROR = "ENGINE_SIMULATION_ERROR";
+    public const string INVALID_ENGINE_SEED_CONTRACT = "INVALID_ENGINE_SEED_CONTRACT";
     public const string ENGINE_TIMEOUT = "ENGINE_TIMEOUT";
     public const string ENGINE_CANCELLED = "ENGINE_CANCELLED";
     public const string ENGINE_OUTPUT_INVALID = "ENGINE_OUTPUT_INVALID";
@@ -52,4 +53,20 @@ public static class FoundationReasonCodes
     public const string SYSTEM_CONFIGURATION_INVALID = "SYSTEM_CONFIGURATION_INVALID";
     public const string SYSTEM_UNSUPPORTED_PLATFORM = "SYSTEM_UNSUPPORTED_PLATFORM";
     public const string SYSTEM_DEPENDENCY_MISSING = "SYSTEM_DEPENDENCY_MISSING";
+
+    /// <summary>
+    /// The persisted <c>analysis_results.unknown_state</c> value violates the Observer contract
+    /// (legal set: UNKNOWN / KNOWN / PARTIAL). M3-FIX-04: the orchestrator rejects such a value at
+    /// OUTPUT_VALIDATION, before any SQLite write is attempted.
+    /// </summary>
+    public const string INVALID_UNKNOWN_STATE_CONTRACT = "INVALID_UNKNOWN_STATE_CONTRACT";
+
+    /// <summary>
+    /// The persisted <c>runtime_snapshots.engine_version</c> value violates the Observer Engine
+    /// version contract (canonical form: "v1.5.0", equal to EngineV15Contract.EngineTag; legacy
+    /// wire form "1.5.0" also accepted and canonicalized). M3-FIX-05 / SD-001: the orchestrator
+    /// rejects a non-conforming value at OUTPUT_VALIDATION, before any SQLite write is attempted,
+    /// so it never surfaces as a COMMIT_FAILED → RECOVERY_REQUIRED CHECK failure.
+    /// </summary>
+    public const string INVALID_ENGINE_VERSION_CONTRACT = "INVALID_ENGINE_VERSION_CONTRACT";
 }

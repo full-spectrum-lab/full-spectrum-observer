@@ -16,7 +16,10 @@ CASE = ROOT / "packs" / "foundation-case005" / "case005.input.json"
 GOLDEN = ROOT / "packs" / "foundation-case005" / "engine-golden.json"
 WORKER = ROOT / "engine" / "worker" / "worker.py"
 ENGINE = ROOT / "engine" / "vendor" / "full-spectrum-engine"
-EVIDENCE = ROOT / "evidence" / "ig5" / "reference-pipeline.json"
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible).
+EVIDENCE_ROOT = pathlib.Path(os.environ.get("FSP_EVIDENCE_ROOT") or (ROOT / "evidence"))
+EVIDENCE = EVIDENCE_ROOT / "ig5" / "reference-pipeline.json"
 
 
 def encode(value: object) -> bytes:
@@ -44,8 +47,8 @@ def main() -> int:
         "request_id": request_id,
         "operation": "evaluate",
         "engine": {
-            "version": "v1.0.0",
-            "commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
+            "version": "v1.5.0",
+            "commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5",
         },
         "seed": 42,
         "fixed_time_utc": "2026-07-04T00:00:00Z",
@@ -132,8 +135,8 @@ def main() -> int:
         )
         snapshot_payload = {
             "engine": {
-                "version": "v1.0.0",
-                "source_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
+                "version": "v1.5.0",
+                "source_commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5",
             },
             "case": "CASE005_KNOWLEDGE_CONFLICT",
             "seed": 42,

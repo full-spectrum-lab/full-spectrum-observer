@@ -60,7 +60,7 @@ public sealed class PythonWorkerEngineFacade : IObserverEngineFacade
         var stopwatch = Stopwatch.StartNew();
         try
         {
-            if (!process.Start())
+            if (!WorkerProcessHost.Start(process))
                 throw new EngineFacadeException(FoundationReasonCodes.FACADE_WORKER_NOT_FOUND, "Python Worker process did not start.");
         }
         catch (EngineFacadeException) { throw; }

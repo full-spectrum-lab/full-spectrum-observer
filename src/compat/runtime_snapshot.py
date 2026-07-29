@@ -95,11 +95,11 @@ ENGINE_V1_0_0_DIGEST = (
     "sha256:b38aabad7be19abf96acaeb7dd622a3c47eead1436e4cd274c3d862ff25dace6"
 )
 
-# Frozen Engine v1.5.0 baseline (commit f6eb92ae… is sealed & published).
+# Frozen Engine v1.5.0 baseline (commit 88493007… is the Gitee authoritative, Owner-signed anchor).
 ENGINE_V1_5_0_TAG = "v1.5.0"
-ENGINE_V1_5_0_COMMIT = "f6eb92aee24a706f1b71dc073de6a760fca31092"
+ENGINE_V1_5_0_COMMIT = "88493007d4e00344c70a70ed0e5a5d652dec86f5"
 ENGINE_V1_5_0_DIGEST = (
-    "sha256:f1836bb56245c1f5cd7f6496aef504e1bdd3bb16b2255ee5af94ced215ac73cb"
+    "sha256:9646d5742fe644522b6bf17dd5eab3cdf4c42ce87f4bcfa4b61284ee7a1e321c"
 )
 
 # Tokens that are forbidden in any pinned field (floating / untracked).

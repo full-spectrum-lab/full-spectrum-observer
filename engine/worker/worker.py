@@ -9,8 +9,10 @@ from offline_guard import install as install_offline_guard
 install_offline_guard()
 
 PROTOCOL='fs-observer-engine-facade/1'
-ENGINE_VERSION='v1.0.0'
-ENGINE_COMMIT='09062bae2c7608bda79ee4bfde5779109e8e6197'
+# Pinned to the Observer's authoritative Engine baseline (engine/engine-baseline.json).
+# Must match engine_version/engine_commit there; do NOT hardcode a divergent value.
+ENGINE_VERSION='v1.5.0'
+ENGINE_COMMIT='88493007d4e00344c70a70ed0e5a5d652dec86f5'
 OUTPUT_SERIALIZATION='FSE-PYJSON-1'
 MAX_REQUEST_BYTES=1024*1024
 UUID_RE=re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')

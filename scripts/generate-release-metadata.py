@@ -83,9 +83,9 @@ def main() -> int:
         {"type": "framework", "name": "CPython", "version": "3.11.9", "licenses": [{"expression": "Python-2.0"}]},
         {"type": "library", "name": "SQLite", "version": "3.50.4", "licenses": [{"license": {"name": "Public Domain"}}]},
         {
-            "type": "application", "name": "full-spectrum-engine", "version": "1.0.0",
+            "type": "application", "name": "full-spectrum-engine", "version": "v1.5.0",
             "licenses": [{"expression": "MulanPSL-2.0 OR Apache-2.0"}],
-            "properties": [{"name": "source_commit", "value": "09062bae2c7608bda79ee4bfde5779109e8e6197"}],
+            "properties": [{"name": "source_commit", "value": "88493007d4e00344c70a70ed0e5a5d652dec86f5"}],
         },
     ]
     components.extend(python_components(root / "runtime/python/Lib/site-packages"))
@@ -126,14 +126,14 @@ def main() -> int:
     manifest = {
         "contract": "fs-observer/release-manifest/1", "system_version": "0.1.0-alpha", "release_commit": args.release_commit,
         "build": {"dotnet_target": "net10.0", "runtime_identifier": "win-x64", "configuration": "Release", "built_at_utc": "2026-07-13T00:00:00Z"},
-        "engine": {"id": "full-spectrum-engine", "version": "v1.0.0", "sha256": tree_sha(root / "engine/vendor/full-spectrum-engine"), "source_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197"},
+        "engine": {"id": "full-spectrum-engine", "version": "v1.5.0", "sha256": tree_sha(root / "engine/vendor/full-spectrum-engine"), "source_commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5"},
         "case_pack": {"id": "fsp.foundation.case005", "version": "1.0.0-alpha.1", "sha256": tree_sha(root / "packs/foundation-case005")},
         "schema_set": {"id": "FS-OBS-V010-SCHEMA-BL-1.0", "version": "1.0.0-alpha.1", "sha256": tree_sha(root / "schemas/foundation-kernel")},
         "dependencies": dependencies, "files": files,
         "sbom": {"format": "CycloneDX-1.6", "relative_path": "SBOM.cdx.json", "sha256": sha(sbom_path)},
         "known_limitations": [
             "Foundation Kernel CLI only; no Web Console.",
-            "Pinned to Engine v1.0.0; Engine v1.5 is not supported by this package.",
+            "Pinned to Engine v1.5.0 (commit 88493007d4e00344c70a70ed0e5a5d652dec86f5); Engine v1.5 is the bundled version.",
             "Synthetic CASE005 only; not production or enterprise validated.",
             "Dual license applies only to Observer-owned work; bundled components retain their own licenses.",
             "Foundation Kernel release evidence applies to the exact package digest only.",

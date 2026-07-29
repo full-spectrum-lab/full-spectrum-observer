@@ -48,7 +48,7 @@ try {
         analyze_case005 = $true
         audit_verified = $true
         tamper_detected = $TamperDetected
-        engine_version = "v1.0.0"
+        engine_version = "v1.5.0"
         engine_1_4_supported = $false
     }
     $Destination = if ([IO.Path]::IsPathRooted($EvidencePath)) { $EvidencePath } else { Join-Path $RepoRoot $EvidencePath }

@@ -4,11 +4,27 @@ param(
     [string]$Gate = "IG1",
     [string]$PrivatePython = $env:FSP_PRIVATE_PYTHON,
     [string]$SqliteNativeDirectory = $env:FSP_SQLITE_NATIVE_DIR,
-    [switch]$GenerateEvidence
+    [switch]$GenerateEvidence,
+    # Explicit re-seal mode: write tracked repository evidence snapshots back into the
+    # repo (evidence/) for maintainers intentionally updating the frozen baseline.
+    [switch]$GenerateRepositoryEvidence
 )
 
 $ErrorActionPreference = "Stop"
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+
+# Determine the evidence root.
+# - Re-seal mode: write back into the repository's tracked evidence/ folder.
+# - Otherwise: external out-of-repo directory so a fresh clone stays clean.
+if ($GenerateRepositoryEvidence) {
+    $env:FSP_EVIDENCE_ROOT = Join-Path $RepoRoot "evidence"
+} elseif ([string]::IsNullOrWhiteSpace($env:FSP_EVIDENCE_ROOT)) {
+    $env:FSP_EVIDENCE_ROOT = Join-Path $env:TEMP ("full-spectrum-observer/evidence/" + [System.Guid]::NewGuid().ToString("N").Substring(0,12))
+}
+
+# Pre-run worktree cleanliness gate: the tree must already be clean before we run.
+& (Join-Path $PSScriptRoot "verify-worktree-clean.ps1") -RepoRoot $RepoRoot -Stage PRE_RUN
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 function Invoke-Ig2Prerequisites {
     & dotnet run --project (Join-Path $RepoRoot "tests/Observer.Tests.Unit/Observer.Tests.Unit.csproj") --configuration Release --no-restore
@@ -30,11 +46,21 @@ function Require-PrivatePython {
     }
 }
 
-& (Join-Path $PSScriptRoot "build.ps1") -Configuration Release -Locked
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-if ($Gate -eq "IG1") { exit 0 }
+try {
+    & (Join-Path $PSScriptRoot "build.ps1") -Configuration Release -Locked
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    if ($Gate -eq "IG1") { exit 0 }
 
 Require-PrivatePython
+
+# Fresh-clone auto-recovery: install the formal Python test/verification deps
+# (scripts/requirements.txt) into the pinned private Python before running gates.
+. (Join-Path $PSScriptRoot "bootstrap-python-deps.ps1")
+Install-FspPythonDeps -Python $PrivatePython
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Python test/verification dependency bootstrap returned $LASTEXITCODE; gates requiring jsonschema may fail."
+}
+
 Invoke-Ig2Prerequisites
 if ($Gate -eq "IG2") { exit 0 }
 
@@ -108,5 +134,12 @@ if ($Gate -eq "IG6") {
     exit $LASTEXITCODE
 }
 
-Write-Error "$Gate test execution is not implemented in this source candidate."
-exit 3
+    Write-Error "$Gate test execution is not implemented in this source candidate."
+    exit 3
+}
+finally {
+    # Post-run worktree cleanliness gate: the run must not have dirtied the repo with
+    # regenerated evidence files. A dirty tracked tree (outside untracked files) fails.
+    & (Join-Path $PSScriptRoot "verify-worktree-clean.ps1") -RepoRoot $RepoRoot -Stage POST_TEST
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}

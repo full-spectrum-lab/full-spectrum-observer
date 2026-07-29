@@ -3,8 +3,11 @@ from __future__ import annotations
 import hashlib, json, os, sqlite3, tempfile, pathlib, shutil, sys
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
+# Evidence root: FSP_EVIDENCE_ROOT if set, otherwise the repository's tracked
+# evidence/ folder (backward compatible).
+EVIDENCE_ROOT=pathlib.Path(os.environ.get("FSP_EVIDENCE_ROOT") or (ROOT/"evidence"))
 SQL=(ROOT/'src/Observer.Evidence/Migrations/001_foundation.sql').read_text(encoding='utf-8')
-EVIDENCE=ROOT/'evidence/ig3/reference-validation.json'
+EVIDENCE=EVIDENCE_ROOT/'ig3/reference-validation.json'
 
 def canon(value):
     return json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False).encode()

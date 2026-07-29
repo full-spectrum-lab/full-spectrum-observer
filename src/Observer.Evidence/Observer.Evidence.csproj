@@ -13,4 +13,16 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations/001_foundation.sql" />
   </ItemGroup>
+
+  <!--
+    M2-RUN-01: the Evidence layer binds SQLite through raw P/Invoke (see NativeSqlite.cs) and
+    relies on a native library being deployed next to the app. We standardize on the patched
+    SourceGear.sqlite3 native library (e_sqlite3.dll, engine >= 3.50.2) so the entire product —
+    the Evidence store AND the Observer console store — uses a single audited native runtime.
+    This also removes the incidental dependency on the vulnerable sqlite3.dll that the full
+    Microsoft.Data.Sqlite package used to deploy.
+  -->
+  <ItemGroup>
+    <PackageReference Include="SourceGear.sqlite3" Version="3.53.3" />
+  </ItemGroup>
 </Project>

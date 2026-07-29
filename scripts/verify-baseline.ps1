@@ -1,10 +1,17 @@
 [CmdletBinding()]
 param(
-    [string]$OutputPath = "evidence/ig0/baseline-verify.json"
+    # Default output is ig0/baseline-verify.json under the evidence root, which is
+    # FSP_EVIDENCE_ROOT when set, otherwise the repository's tracked evidence/ folder
+    # (backward compatible). The -OutputPath override still wins when provided.
+    [string]$OutputPath = ""
 )
 
 $ErrorActionPreference = "Stop"
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$EvidenceRoot = if ($env:FSP_EVIDENCE_ROOT) { $env:FSP_EVIDENCE_ROOT } else { Join-Path $RepoRoot "evidence" }
+if ([string]::IsNullOrWhiteSpace($OutputPath)) {
+    $OutputPath = Join-Path $EvidenceRoot "ig0/baseline-verify.json"
+}
 $LockPath = Join-Path $RepoRoot "baselines.lock.json"
 $Lock = Get-Content -Raw -Encoding UTF8 -LiteralPath $LockPath | ConvertFrom-Json
 
@@ -67,7 +74,14 @@ $Report = [ordered]@{
     files = $Results
 }
 
-$Destination = Join-Path $RepoRoot ($OutputPath -replace "/", [IO.Path]::DirectorySeparatorChar)
+$NormalizedOutput = $OutputPath -replace "/", [IO.Path]::DirectorySeparatorChar
+# When -OutputPath is an absolute path (e.g. the default resolved under FSP_EVIDENCE_ROOT)
+# use it directly; when it is relative (legacy override) resolve against the repository root.
+$Destination = if ([System.IO.Path]::IsPathRooted($NormalizedOutput)) {
+    $NormalizedOutput
+} else {
+    Join-Path $RepoRoot $NormalizedOutput
+}
 New-Item -ItemType Directory -Path (Split-Path $Destination) -Force | Out-Null
 $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [IO.File]::WriteAllText($Destination, ($Report | ConvertTo-Json -Depth 8), $Utf8NoBom)

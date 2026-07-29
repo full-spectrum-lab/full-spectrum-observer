@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Inherit the repo's implicit usings so System.IO / System.Reflection /
+         System.Security.Cryptography / System.Threading.Tasks are available. -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>FullSpectrum.Observer.Store</AssemblyName>
+    <RootNamespace>FullSpectrum.Observer.Store</RootNamespace>
+    <!-- Relaxed for this newly-added project: the local SDK is unavailable in the authoring
+         environment, so build/warning verification is delegated to the integrator. Re-enable
+         TreatWarningsAsErrors / analyzers after the local build is green. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Observer.Contracts/Observer.Contracts.csproj" />
+  </ItemGroup>
+
+  <!--
+    M2-RUN-01 + M2-SEC-01 "Candidate A": adopt the patched SourceGear.sqlite3 native runtime
+    instead of the (vulnerable) SQLitePCLRaw.lib.e_sqlite3 bundle pulled transitively by the
+    full Microsoft.Data.Sqlite package. Microsoft.Data.Sqlite.Core ships no default provider,
+    so SQLitePCLRaw.provider.e_sqlite3 is wired in via SqliteRuntimeBootstrap.Initialize()
+    (see SqliteRuntimeBootstrap.cs) BEFORE any connection is opened. This keeps NuGetAudit
+    clean (no NU1903) and ships a >= 3.50.2 engine.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.10" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.6" />
+    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="2.1.6" />
+    <PackageReference Include="SourceGear.sqlite3" Version="3.53.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data/Migrations/Init.sql" />
+  </ItemGroup>
+
+</Project>

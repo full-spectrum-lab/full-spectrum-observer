@@ -1,0 +1,17 @@
+@inherits LayoutComponentBase
+
+<div class="app-shell">
+    <nav class="nav-rail" aria-label="主导航">
+        <h1 class="brand">Observer 控制台</h1>
+        <NavLink href="" Match="NavLinkMatch.All">首页</NavLink>
+        <NavLink href="subjects">主体管理</NavLink>
+        <NavLink href="knowledge">知识库管理</NavLink>
+        <NavLink href="new-analysis">新建分析</NavLink>
+        <NavLink href="records">分析记录</NavLink>
+        <NavLink href="audit">审计与证据</NavLink>
+        <NavLink href="system">系统信息</NavLink>
+    </nav>
+    <main class="content" tabindex="-1" id="main-content">
+        @Body
+    </main>
+</div>

@@ -10,13 +10,19 @@ public static class ObserverHostFactory
 {
     public static HostComponents Create(string dataDirectory, string allowedInputRoot)
     {
-        string root = RepositoryLayout.FindRoot();
-        string schemaDirectory = RepositoryLayout.SchemaDirectory(root);
-        string packDirectory = Path.Combine(root, "packs", "foundation-case005");
-        string worker = Path.Combine(root, "engine", "worker", "worker.py");
-        string engineRoot = Path.Combine(root, "engine", "vendor", "full-spectrum-engine");
-        string workerLock = Path.Combine(root, "engine", "worker.lock.json");
-        string? python = Environment.GetEnvironmentVariable("FSP_PRIVATE_PYTHON");
+        // M2-FIX-03: resolve every runtime path from the package root via the shared resolver.
+        // The resolver derives PackageRoot from AppContext.BaseDirectory (the host's own assembly
+        // directory), so this works from any working directory — including a movable published
+        // package launched from an unrelated cwd — without reading FSP_PRIVATE_PYTHON except as a
+        // test/diagnostic escape hatch.
+        var config = FullSpectrum.Observer.Contracts.RuntimeConfigurationResolver.Resolve();
+        string root = config.PackageRoot;
+        string schemaDirectory = config.SchemaDirectory;
+        string packDirectory = config.CasePackDirectory;
+        string worker = config.WorkerScriptPath;
+        string engineRoot = config.EngineRootPath;
+        string workerLock = config.WorkerLockPath;
+        string python = config.PythonExecutablePath;
 
         var clock = new SystemClock();
         var ids = new GuidIdGenerator();
@@ -25,9 +31,10 @@ public static class ObserverHostFactory
             DataDirectory = Path.GetFullPath(dataDirectory),
         }, clock, ids);
 
-        bool engineReady = !string.IsNullOrWhiteSpace(python)
-            && Path.IsPathFullyQualified(python)
-            && File.Exists(python)
+        // `python` is always an absolute path (the resolver returns either the FSP_PRIVATE_PYTHON
+        // override or <PackageRoot>/runtime/python/python.exe), so the only validity check is that
+        // the interpreter and the Engine artifacts actually exist on disk.
+        bool engineReady = File.Exists(python)
             && File.Exists(worker)
             && File.Exists(workerLock)
             && Directory.Exists(engineRoot);

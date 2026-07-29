@@ -1,9 +1,10 @@
 {
   "contract": "fs-observer-engine-bridge-source-manifest/1",
-  "status": "SOURCE_CANDIDATE",
-  "engine_version": "v1.0.0",
-  "engine_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
+  "status": "RECONCILED",
+  "engine_version": "v1.5.0",
+  "engine_commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5",
   "vendored_source_root": "engine/vendor/full-spectrum-engine",
+  "_source_of_truth": "engine/engine-baseline.json",
   "worker_lock": "engine/worker.lock.json",
   "files": [
     {
@@ -13,13 +14,13 @@
     },
     {
       "path": "engine/vendor/full-spectrum-engine/pyproject.toml",
-      "size_bytes": 1718,
-      "sha256": "9bc9542a59f7aa606a36729e6512bcaa9540562c2e76ec6cade00658c9f970f4"
+      "size_bytes": 1789,
+      "sha256": "48911c6cf0caf0eb625bc518ef55bf7c1a6e58bf2ac6e7f0a118b89229806fb0"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/requirements.txt",
-      "size_bytes": 208,
-      "sha256": "b6358709415266be0569d043b556da0083b642f550a18f68ebc142a68330c967"
+      "size_bytes": 267,
+      "sha256": "3a386c5e0781397f6804d9921428d15e423066db26e702cd0766e36dc797c019"
     },
     {
       "path": "engine/vendor/full-spectrum-engine/simulate.py",
@@ -27,12 +28,12 @@
       "sha256": "da795b469fded500f75c837e34e0af8de046fe1fc01cc455e161fbc1e888111d"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/__init__.py",
-      "size_bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "path": "engine/vendor/full-spectrum-engine/src/report_generator.py",
+      "size_bytes": 10428,
+      "sha256": "43fa0b65b540da7338a78bd991befa226678572781b35a3d45215061b17aef8b"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/bridge/__init__.py",
+      "path": "engine/vendor/full-spectrum-engine/src/__init__.py",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -42,7 +43,7 @@
       "sha256": "dade75d5427911cdb6aabfd814feb28b3fb804152f95aafc067706afdfa6c27e"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/core/__init__.py",
+      "path": "engine/vendor/full-spectrum-engine/src/bridge/__init__.py",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -57,7 +58,7 @@
       "sha256": "29abf594836b2d34860b5699d1246c05f9369d9f130ae5049a931760f3ae9f74"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/engine/__init__.py",
+      "path": "engine/vendor/full-spectrum-engine/src/core/__init__.py",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -72,7 +73,7 @@
       "sha256": "fe3c6638d3f8a0c50686313f23649adda0122113fd535b827df9f01dc13e9b89"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/governance/__init__.py",
+      "path": "engine/vendor/full-spectrum-engine/src/engine/__init__.py",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -87,7 +88,7 @@
       "sha256": "f82ff852b34ed976ba78f11687803438d855b2a79c2174afb078ce1458e58bb5"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/guardian/__init__.py",
+      "path": "engine/vendor/full-spectrum-engine/src/governance/__init__.py",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -102,7 +103,7 @@
       "sha256": "1aaea52196281b97fba284a57f2ee80681361ff0a3bc6799a8721a6050a8fffd"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/observation/__init__.py",
+      "path": "engine/vendor/full-spectrum-engine/src/guardian/__init__.py",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -112,12 +113,7 @@
       "sha256": "e12b5207b2ad350f5a0506267779f01d2a270942eaae2186d4b1c4e802e5dc5a"
     },
     {
-      "path": "engine/vendor/full-spectrum-engine/src/report_generator.py",
-      "size_bytes": 10428,
-      "sha256": "43fa0b65b540da7338a78bd991befa226678572781b35a3d45215061b17aef8b"
-    },
-    {
-      "path": "engine/vendor/full-spectrum-engine/src/safety/__init__.py",
+      "path": "engine/vendor/full-spectrum-engine/src/observation/__init__.py",
       "size_bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -125,6 +121,11 @@
       "path": "engine/vendor/full-spectrum-engine/src/safety/emergency.py",
       "size_bytes": 8785,
       "sha256": "c9bcd31dc06cbe59b083dcff7ff4be12cb7b67f3ecd6bc034776e1eb24ae176d"
+    },
+    {
+      "path": "engine/vendor/full-spectrum-engine/src/safety/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   ]
 }
