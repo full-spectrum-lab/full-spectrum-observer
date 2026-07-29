@@ -153,8 +153,12 @@ public sealed class SystemDiagnostics
             var root = doc.RootElement;
             return new ExternalReleaseIdentity
             {
-                ObserverVersion = root.TryGetProperty("observer_version", out var ov) ? (ov.GetString()?.Trim() ?? "") : "",
-                ObserverCommit = root.TryGetProperty("observer_commit", out var oc) ? (oc.GetString()?.Trim() ?? "") : "",
+                ObserverVersion = root.TryGetProperty("observer_version", out var ov)
+                    ? (ov.GetString()?.Trim() ?? "")
+                    : root.TryGetProperty("product_version", out var pv) ? (pv.GetString()?.Trim() ?? "") : "",
+                ObserverCommit = root.TryGetProperty("observer_commit", out var oc)
+                    ? (oc.GetString()?.Trim() ?? "")
+                    : root.TryGetProperty("source_commit", out var sc) ? (sc.GetString()?.Trim() ?? "") : "",
                 PackageSha256 = root.TryGetProperty("package_sha256", out var ps) ? (ps.GetString()?.Trim() ?? "") : "",
                 BuildChannel = root.TryGetProperty("build_channel", out var c) ? (c.GetString()?.Trim() ?? "") : "",
                 ReleaseStatus = root.TryGetProperty("release_status", out var rs) ? (rs.GetString()?.Trim() ?? "") : "",
@@ -166,10 +170,10 @@ public sealed class SystemDiagnostics
         }
     }
 
-    /// <summary>Restrict build_channel to the three explicit, non-promotional values.</summary>
+    /// <summary>Restrict build_channel to the explicit lifecycle values.</summary>
     private static string NormalizeChannel(string? channel)
     {
-        var allowed = new HashSet<string> { "DEVELOPMENT", "RELEASE_CANDIDATE", "RELEASE" };
+        var allowed = new HashSet<string> { "DEVELOPMENT", "RELEASE_CANDIDATE", "BETA", "RELEASE" };
         var trimmed = (channel ?? "").Trim();
         return allowed.Contains(trimmed) ? trimmed : "DEVELOPMENT";
     }

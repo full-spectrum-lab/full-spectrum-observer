@@ -111,6 +111,36 @@ public sealed class SystemDiagnosticsTests
         }
     }
 
+    [Fact]
+    public void Published_beta_identity_accepts_release_assembler_field_names()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fso-sd-" + Path.GetRandomFileName());
+        var extDir = Path.Combine(Path.GetTempPath(), "fso-ext-" + Path.GetRandomFileName());
+        try
+        {
+            Directory.CreateDirectory(dir);
+            Directory.CreateDirectory(extDir);
+            var extPath = Path.Combine(extDir, "V030-BETA1_RELEASE_IDENTITY.json");
+            File.WriteAllText(extPath,
+                "{\"product_version\":\"v0.3.0-beta.1\"," +
+                "\"source_commit\":\"76c1eefc1311b6a3725c8f042384fc69848bd9f9\"," +
+                "\"package_sha256\":\"" + ValidSha + "\"," +
+                "\"build_channel\":\"BETA\"," +
+                "\"release_status\":\"RELEASED\"}");
+
+            var ver = NewDiagnostics(dir, extPath).GetVersionInfo();
+            ver.ObserverVersion.Should().Be("v0.3.0-beta.1");
+            ver.ObserverCommit.Should().Be("76c1eefc1311b6a3725c8f042384fc69848bd9f9");
+            ver.BuildChannel.Should().Be("BETA");
+            ver.ReleaseStatus.Should().Be("RELEASED");
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+            Directory.Delete(extDir, true);
+        }
+    }
+
     // 5) Manifest 缺失时显示 NOT_AVAILABLE
     [Fact]
     public void Missing_manifest_reports_NOT_AVAILABLE_and_dev_worktree()
@@ -133,6 +163,7 @@ public sealed class SystemDiagnosticsTests
     [Theory]
     [InlineData("DEVELOPMENT")]
     [InlineData("RELEASE_CANDIDATE")]
+    [InlineData("BETA")]
     [InlineData("RELEASE")]
     public void BuildChannel_accepts_only_three_allowed_values(string channel)
     {
