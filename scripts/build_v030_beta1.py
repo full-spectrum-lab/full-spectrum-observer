@@ -16,6 +16,7 @@ import build_v030_rc5 as assembler
 
 assembler.ZIP_NAME = "observer-v0.3.0-beta.1-win-x64.zip"
 assembler.RC_TAG = "V030-BETA1"
+assembler.OUTPUT_LABEL = "V030-BETA1_RELEASE"
 assembler.PRODUCT_VERSION = "v0.3.0-beta.1"
 assembler.BUILD_CHANNEL = "BETA"
 assembler.RELEASE_STATUS = "RELEASED"

@@ -52,6 +52,7 @@ import zipfile
 # --- RC5 constants (single source of truth) ------------------------------- #
 ZIP_NAME = "observer-v0.3.0-beta-rc5.zip"
 RC_TAG = "V030-RC5"
+OUTPUT_LABEL = f"{RC_TAG}_RELEASE_CANDIDATE"
 PRODUCT_VERSION = "v0.3.0-beta"
 BUILD_CHANNEL = "RELEASE_CANDIDATE"
 RELEASE_STATUS = "NOT_RELEASED"
@@ -466,12 +467,12 @@ def main() -> int:
         "sha256sums_mismatch_count": 0,
         "standard_zip_sha_match": "YES",
         "web_runtime_identity_closed": "YES (Launcher injects OBSERVER_RELEASE_IDENTITY_PATH -> release-identity.json; Web reads EXTERNAL_RELEASE_IDENTITY)",
-        "serve_smoke": "INCONCLUSIVE (patched to PASS by orchestrator after live Blazor serve verification)",
+        "serve_smoke": "PENDING_POST_BUILD_VERIFICATION",
         "ready_for_codex_full_retest": "YES (all identity/artifact fields closed; manifest internal consistency re-verified)",
     }
-    identity_json_path = OUT / f"{RC_TAG}_RELEASE_CANDIDATE_IDENTITY.json"
+    identity_json_path = OUT / f"{OUTPUT_LABEL}_IDENTITY.json"
     identity_json_path.write_text(json.dumps(ident, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    (OUT / f"{RC_TAG}_RELEASE_CANDIDATE_SHA256.txt").write_text(
+    (OUT / f"{OUTPUT_LABEL}_SHA256.txt").write_text(
         f"{FULL_ARCHIVE_SHA} *{ZIP_NAME}\n", encoding="utf-8")
     rel_manifest = {
         "rc_identity": RC_TAG,
@@ -496,7 +497,7 @@ def main() -> int:
         "standard_zip_sha_match": "YES",
         "generated_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
-    (OUT / f"{RC_TAG}_RELEASE_CANDIDATE_RELEASE_MANIFEST.json").write_text(
+    (OUT / f"{OUTPUT_LABEL}_RELEASE_MANIFEST.json").write_text(
         json.dumps(rel_manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     RC_IDENTITY_SHA256 = sha(identity_json_path)
