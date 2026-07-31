@@ -4,6 +4,8 @@
 
 > Local-first Observer application for reproducible evidence, audit traces and bounded human review.
 
+**Identity boundary:** Observer connects authorized reality input to Observation, Evidence, Audit, Replay and bounded human review. It is independently usable and is **not** APM, generic logging/token tracing, an agent planner or a production controller.
+
 [![Full Spectrum three entries and three core components](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/architecture/three-entry-three-core-components-zh-v10.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/three-entry-three-core-components.md)
 
 **Where Observer fits:** Protocol defines subjects and governance contracts; Engine provides deterministic analysis; Observer connects authorized local facts to evidence, replay and a human decision point. The public Observer line remains observation-only and does not execute final enterprise or production actions.

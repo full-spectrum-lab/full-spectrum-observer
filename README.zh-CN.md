@@ -8,6 +8,8 @@
 
 > 面向可复现 Evidence、审计追踪和有限人工复核的本地优先 Observer 应用。
 
+**产品边界：**Observer 可独立使用，将获得授权的现实输入连接到 Observation、Evidence、Audit、Replay 与有边界的人工复核；它不是 APM、通用日志/Token 监控平台、Agent Planner 或生产控制器。
+
 ## 版本真相
 
 | 版本线 | 状态 | 范围 |
