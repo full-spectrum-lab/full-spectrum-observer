@@ -1,0 +1,5 @@
+name: Document metadata gate
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  metadata:
+    uses: full-spectrum-lab/.github/.github/workflows/document-metadata.yml@main
