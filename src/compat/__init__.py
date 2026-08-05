@@ -38,7 +38,7 @@ from .runtime_snapshot import RuntimeConfigurationSnapshot
 from .schema_validator import SchemaValidator, ValidationResult
 from .version_resolver import EngineVersionResolver, UnsupportedVersionError
 
-__version__ = "0.2.0-alpha.2"
+__version__ = "0.3.0-beta.2"
 
 __all__ = [
     "UNKNOWN",
