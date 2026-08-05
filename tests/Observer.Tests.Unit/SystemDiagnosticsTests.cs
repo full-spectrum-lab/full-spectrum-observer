@@ -122,14 +122,14 @@ public sealed class SystemDiagnosticsTests
             Directory.CreateDirectory(extDir);
             var extPath = Path.Combine(extDir, "V030-BETA1_RELEASE_IDENTITY.json");
             File.WriteAllText(extPath,
-                "{\"product_version\":\"v0.3.0-beta.1\"," +
+                "{\"product_version\":\"v0.3.0-beta.2\"," +
                 "\"source_commit\":\"76c1eefc1311b6a3725c8f042384fc69848bd9f9\"," +
                 "\"package_sha256\":\"" + ValidSha + "\"," +
                 "\"build_channel\":\"BETA\"," +
                 "\"release_status\":\"RELEASED\"}");
 
             var ver = NewDiagnostics(dir, extPath).GetVersionInfo();
-            ver.ObserverVersion.Should().Be("v0.3.0-beta.1");
+            ver.ObserverVersion.Should().Be("v0.3.0-beta.2");
             ver.ObserverCommit.Should().Be("76c1eefc1311b6a3725c8f042384fc69848bd9f9");
             ver.BuildChannel.Should().Be("BETA");
             ver.ReleaseStatus.Should().Be("RELEASED");
