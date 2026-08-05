@@ -30,7 +30,7 @@ Observer.EngineFacade         Observer.Evidence
 Pinned Python Worker              │
   │                               │
   ▼                               │
-Vendored Engine v1.0.0            │
+Vendored Engine v1.5.0            │
   └──────── structured output ────┘
 ```
 
@@ -42,12 +42,12 @@ Vendored Engine v1.0.0            │
 |---|---|---|
 | Observer.Contracts | wire model、Schema、canonical JSON、digest、reason code、状态机 | 无 Observer 项目依赖 |
 | Observer.Application | Engine/Evidence/Clock/ID 等端口 | Contracts |
-| Observer.Execution | 输入、Adapter、校验、Snapshot、用例和输出组装 | Application、Contracts |
-| Observer.EngineFacade | Worker 完整性、子进程、超时、输出上限、错误映射 | Application、Contracts |
+| Observer.Execution | 输入、Adapter、校验、Snapshot、用例和输出组装 | Application、Contracts、EngineFacade |
+| Observer.EngineFacade | Worker 完整性、子进程、超时、输出上限、错误映射 | Application、Contracts、Store |
 | Observer.Evidence | SQLite、Artifact、Observation、Operation、Idempotency、Audit | Application、Contracts |
 | Observer.Host.Cli | CLI 参数与 composition root | 上述全部运行组件 |
 
-依赖方向由 `scripts/verify-architecture.py` 校验。Engine Facade、Evidence 和 Execution 之间没有横向项目引用，由 Host 统一组装。
+依赖方向由 `scripts/verify-architecture.py` 校验。Execution → EngineFacade 为已批准的下行依赖（Execution 经 EngineFacade 启动 Python Worker）；EngineFacade 与 Evidence 之间无横向项目引用，各组件由 Host 统一组装。
 
 ## 5. 端到端执行链
 
@@ -92,7 +92,7 @@ INTAKE
 - 区分取消、超时、Worker 缺失、版本不匹配和 Engine 错误；
 - 不调用 Engine SQLite 或 FastAPI。
 
-固定 Engine 为 v1.0.0、commit `09062bae2c7608bda79ee4bfde5779109e8e6197`。
+固定 Engine 为 v1.5.0、commit `88493007d4e00344c70a70ed0e5a5d652dec86f5`。
 
 ### 5.6 Output
 
@@ -143,7 +143,7 @@ Audit Event 使用 FS-OBS-CANON-1 canonical serialization、SHA-256、sequence �
 | NumPy | 1.26.4 |
 | jsonschema | 4.25.1 |
 | SQLite | 3.50.4 win-x64 |
-| Engine | v1.0.0 / `09062bae…` |
+| Engine | v1.5.0 / `88493007…` |
 
 NuGet 使用无外部 package source 的 locked restore。Python/SQLite 当前用于正式本地 Gate，IG7 将把运行时、wheelhouse、SBOM 和许可证固化进离线包。
 

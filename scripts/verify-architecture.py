@@ -9,7 +9,7 @@ EVIDENCE_ROOT = Path(os.environ.get("FSP_EVIDENCE_ROOT") or (root/"evidence"))
 allowed={
  'Observer.Contracts':set(),
  'Observer.Application':{'Observer.Contracts'},
- 'Observer.Execution':{'Observer.Contracts','Observer.Application'},
+ 'Observer.Execution':{'Observer.Contracts','Observer.Application','Observer.EngineFacade'},
  'Observer.EngineFacade':{'Observer.Contracts','Observer.Application','Observer.Store'},
  'Observer.Evidence':{'Observer.Contracts','Observer.Application'},
  'Observer.Host.Cli':{'Observer.Contracts','Observer.Application','Observer.Execution','Observer.EngineFacade','Observer.Evidence','Observer.Recovery','Observer.Store'},
