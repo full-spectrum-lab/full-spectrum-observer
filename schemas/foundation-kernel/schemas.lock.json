@@ -63,7 +63,7 @@
       "file": "release-manifest.schema.json",
       "schema_id": "https://fullspectrumprotocol.com/schemas/observer/foundation-kernel/release-manifest/1.0.0-alpha.1",
       "title": "ReleaseManifest",
-        "sha256": "dc688ff41e603a736557e176eaf92d29d438d77bd318b374c36041b41fb188d9"
+        "sha256": "f0e7fe78735739ce3bbe487a7d009dcf0ebe89fc2b0057e1bdde0490239a7cee"
     },
     {
       "file": "runtime-configuration-snapshot.schema.json",
@@ -147,7 +147,7 @@
       "file": "examples/release-manifest.example.json",
       "schema_id": null,
       "title": "release-manifest.example",
-      "sha256": "35f16151a52644102811ea9f760bec97ac23595dca6390c0198ee092defdbeb7"
+      "sha256": "a76fbafa76e42389db03df9998391eb0fcc4acc7dba9bb74bad2022dde595b3a"
     },
     {
       "file": "examples/runtime-configuration-snapshot.example.json",

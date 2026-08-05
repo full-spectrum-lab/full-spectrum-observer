@@ -211,8 +211,8 @@
     },
     {
       "path": "schemas/foundation-kernel/release-manifest.schema.json",
-      "size_bytes": 6307,
-      "sha256": "dc688ff41e603a736557e176eaf92d29d438d77bd318b374c36041b41fb188d9"
+      "size_bytes": 6308,
+      "sha256": "f0e7fe78735739ce3bbe487a7d009dcf0ebe89fc2b0057e1bdde0490239a7cee"
     },
     {
       "path": "schemas/foundation-kernel/runtime-configuration-snapshot.schema.json",

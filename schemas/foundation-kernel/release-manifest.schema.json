@@ -25,7 +25,7 @@
       "const": "fs-observer/release-manifest/1"
     },
     "system_version": {
-      "const": "0.1.0-alpha"
+      "const": "0.3.0-beta.2"
     },
     "release_commit": {
       "type": "string",

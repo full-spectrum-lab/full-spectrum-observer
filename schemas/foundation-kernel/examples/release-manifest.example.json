@@ -1,6 +1,6 @@
 {
   "contract": "fs-observer/release-manifest/1",
-  "system_version": "0.1.0-alpha",
+  "system_version": "0.3.0-beta.2",
   "release_commit": "09062bae2c7608bda79ee4bfde5779109e8e6197",
   "build": {
     "dotnet_target": "net10.0",

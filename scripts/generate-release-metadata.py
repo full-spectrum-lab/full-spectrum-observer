@@ -74,7 +74,7 @@ def main() -> int:
     observer = {
         "type": "application",
         "name": "full-spectrum-observer",
-        "version": "0.1.0-alpha",
+        "version": "0.3.0-beta.2",
         "licenses": [{"expression": project_license_expression}],
         "properties": [{"name": "license_status", "value": project_license_status}],
     }
@@ -89,7 +89,7 @@ def main() -> int:
         },
     ]
     components.extend(python_components(root / "runtime/python/Lib/site-packages"))
-    sbom_id = uuid.uuid5(uuid.NAMESPACE_URL, f"full-spectrum-observer:{args.release_commit}:0.1.0-alpha")
+    sbom_id = uuid.uuid5(uuid.NAMESPACE_URL, f"full-spectrum-observer:{args.release_commit}:0.3.0-beta.2")
     sbom = {
         "bomFormat": "CycloneDX", "specVersion": "1.6", "serialNumber": f"urn:uuid:{sbom_id}", "version": 1,
         "metadata": {"component": observer}, "components": components,
@@ -124,7 +124,7 @@ def main() -> int:
         dependencies.append({"name": name, "version": version, "sha256": sha(root / relative), "license": license_name})
 
     manifest = {
-        "contract": "fs-observer/release-manifest/1", "system_version": "0.1.0-alpha", "release_commit": args.release_commit,
+        "contract": "fs-observer/release-manifest/1", "system_version": "0.3.0-beta.2", "release_commit": args.release_commit,
         "build": {"dotnet_target": "net10.0", "runtime_identifier": "win-x64", "configuration": "Release", "built_at_utc": "2026-07-13T00:00:00Z"},
         "engine": {"id": "full-spectrum-engine", "version": "v1.5.0", "sha256": tree_sha(root / "engine/vendor/full-spectrum-engine"), "source_commit": "88493007d4e00344c70a70ed0e5a5d652dec86f5"},
         "case_pack": {"id": "fsp.foundation.case005", "version": "1.0.0-alpha.1", "sha256": tree_sha(root / "packs/foundation-case005")},
