@@ -147,7 +147,7 @@
       "file": "examples/release-manifest.example.json",
       "schema_id": null,
       "title": "release-manifest.example",
-      "sha256": "a76fbafa76e42389db03df9998391eb0fcc4acc7dba9bb74bad2022dde595b3a"
+      "sha256": "c276f7d7f9150bbd0843c38a98c161114ea484f62f49955168289f44856071ed"
     },
     {
       "file": "examples/runtime-configuration-snapshot.example.json",
