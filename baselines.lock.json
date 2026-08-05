@@ -1,7 +1,7 @@
 {
   "lock_id": "FS-OBS-V010-IG0-LOCK-1",
   "generated_at_utc": "2026-07-12T00:00:00Z",
-  "system_version": "0.2.0-alpha.2",
+  "system_version": "0.3.0-beta.2",
   "scope_baseline": "FS-OBS-V010-SCOPE-BL-1.0",
   "design_baseline": "FS-OBS-V010-DES-BL-1.0",
   "schema_baseline": "FS-OBS-V010-SCHEMA-BL-1.0",
@@ -266,8 +266,8 @@
     },
     {
       "path": "engine/locks/python-runtime.lock.json",
-      "size_bytes": 226,
-      "sha256": "f2e786519582c67a0711f47769703f94baa98bee3d883c82bcb797a8215e1bd7"
+      "size_bytes": 1126,
+      "sha256": "c4c98364ba5da6a6f7cf3fb290335acdc4b2278658acc3610799af951ddfc94c"
     },
     {
       "path": "global.json",
