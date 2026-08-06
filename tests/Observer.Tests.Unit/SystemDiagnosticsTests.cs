@@ -120,7 +120,7 @@ public sealed class SystemDiagnosticsTests
         {
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(extDir);
-            var extPath = Path.Combine(extDir, "V030-BETA1_RELEASE_IDENTITY.json");
+            var extPath = Path.Combine(extDir, "V030-BETA2_RELEASE_IDENTITY.json");
             File.WriteAllText(extPath,
                 "{\"product_version\":\"v0.3.0-beta.2\"," +
                 "\"source_commit\":\"76c1eefc1311b6a3725c8f042384fc69848bd9f9\"," +

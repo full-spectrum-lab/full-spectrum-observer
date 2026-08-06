@@ -20,10 +20,10 @@ import build_v030_rc5 as assembler
 
 assembler.ZIP_NAME = "observer-v0.3.0-beta.2-win-x64.zip"
 assembler.RC_TAG = "V030-BETA2"
-assembler.OUTPUT_LABEL = "V030-BETA2_RELEASE"
+assembler.OUTPUT_LABEL = "V030-BETA2_RELEASE_CANDIDATE"
 assembler.PRODUCT_VERSION = "v0.3.0-beta.2"
 assembler.BUILD_CHANNEL = "BETA"
-assembler.RELEASE_STATUS = "RELEASED"
+assembler.RELEASE_STATUS = "NOT_RELEASED"
 assembler.DOTNET_SRC = (
     os.environ.get("FSP_DOTNET_ROOT")
     or os.environ.get("DOTNET_ROOT")
