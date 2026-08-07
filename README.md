@@ -6,7 +6,7 @@
 
 **Identity boundary:** Observer connects authorized reality input to Observation, Evidence, Audit, Replay and bounded human review. It is independently usable and is **not** APM, generic logging/token tracing, an agent planner or a production controller.
 
-[![Full Spectrum three entries and three core components](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/architecture/three-entry-three-core-components-zh-v10.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/three-entry-three-core-components.md)
+[![Full Spectrum system map](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/full-spectrum-system-master-map-en-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.md)
 
 **Where Observer fits:** Protocol defines subjects and governance contracts; Engine provides deterministic analysis; Observer connects authorized local facts to evidence, replay and a human decision point. The public Observer line remains observation-only and does not execute final enterprise or production actions.
 
@@ -89,7 +89,8 @@ pwsh ./scripts/test.ps1 -Gate IG4
 - [Source package manifest](SOURCE_PACKAGE_MANIFEST.json)
 - [Security policy](SECURITY.md)
 - [Contributing](CONTRIBUTING.md)
-- [Three entry paths and three core components](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/three-entry-three-core-components.md)
+- [Start from Your Question](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.md)
+- [Four independent engineering tracks](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/four-independent-engineering-tracks.md)
 - [Synthetic industrial evidence-gap case](https://github.com/full-spectrum-lab/full-spectrum-enterprise-governance/tree/main/cases/industrial-tightening-evidence-gap)
 
 ## Ecosystem

@@ -1,6 +1,8 @@
 # Full Spectrum Observer
 
-[![全频谱三层入口与三大核心组件](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/architecture/three-entry-three-core-components-zh-v10.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/three-entry-three-core-components.md)
+[![全频谱体系总图](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/full-spectrum-system-master-map-zh-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
+
+[从你的问题开始](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md) · [四条可独立使用的工程轨道](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/four-independent-engineering-tracks.md)
 
 **Observer 在体系中的位置：** Protocol 定义主体和治理契约，Engine 提供确定性分析，Observer 将获得授权的本地事实连接到 Evidence、Replay 与人工决策点。当前公开版本只做观察，不执行企业或生产系统的最终动作。
 
@@ -63,6 +65,7 @@ IG3/IG4 等门禁需显式提供固定的私有 Python 3.11 和原生 SQLite 路
 - [源码包 Manifest](SOURCE_PACKAGE_MANIFEST.json)
 - [安全策略](SECURITY.md)
 - [贡献说明](CONTRIBUTING.md)
+- [按人的问题组织的公共入口](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
 
 ## 许可证
 
