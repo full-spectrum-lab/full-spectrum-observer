@@ -27,8 +27,11 @@
         <label for="ks-app">适用场景（Applicability）</label>
         <input id="ks-app" @bind="_newApp" placeholder="CROSS_BORDER_PAYMENT" />
 
-        <label for="ks-content">内容 JSON（payload）</label>
-        <textarea id="ks-content" rows="6" @bind="_newContent"></textarea>
+        <label for="ks-title">标题（title）</label>
+        <input id="ks-title" @bind="_newTitle" placeholder="跨境支付合规" />
+
+        <label for="ks-body">正文（body）</label>
+        <input id="ks-body" @bind="_newBody" placeholder="合规规则正文…" />
     </div>
     <button type="button" class="btn" disabled="@_busy" @onclick="ImportAsync">导入知识源</button>
     <p class="shortcut-hint">键盘：<span class="kbd">Tab</span> 在字段间移动；摘要由系统自动计算，无需填写。</p>
@@ -89,7 +92,8 @@ else
     private string _newLib = string.Empty;
     private string _newName = string.Empty;
     private string _newApp = string.Empty;
-    private string _newContent = "{\n  \"title\": \"\",\n  \"body\": \"\"\n}";
+    private string _newTitle = string.Empty;
+    private string _newBody = string.Empty;
 
     protected override async Task OnInitializedAsync() => await LoadAsync();
 
@@ -126,10 +130,10 @@ else
         _busy = true;
         try
         {
-            await Knowledge.ImportAsync(_newId, _newLib, _newName, _newApp, _newContent);
+            await Knowledge.ImportAsync(_newId, _newLib, _newName, _newApp, ConfigurationPayloadBuilder.BuildKnowledgeContent(_newTitle, _newBody));
             _live = $"已导入知识源 {_newId}，摘要由系统计算并写入。";
             _newId = _newLib = _newName = _newApp = string.Empty;
-            _newContent = "{\n  \"title\": \"\",\n  \"body\": \"\"\n}";
+            _newTitle = _newBody = string.Empty;
             await LoadAsync();
         }
         catch (Exception ex)

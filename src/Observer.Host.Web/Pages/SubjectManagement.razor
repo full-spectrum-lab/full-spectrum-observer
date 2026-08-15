@@ -27,8 +27,14 @@
         <label for="sub-tier">集中度层级（ConcentrationTier，可选）</label>
         <input id="sub-tier" @bind="_newTier" placeholder="TIER_1 / TIER_2 / TIER_3" />
 
-        <label for="sub-decl">声明 JSON（display_name / boundary / owner_operator）</label>
-        <textarea id="sub-decl" rows="5" @bind="_newDeclaration"></textarea>
+        <label for="sub-display">显示名称（display_name）</label>
+        <input id="sub-display" @bind="_newDisplayName" placeholder="Acme Agent" />
+
+        <label for="sub-boundary">边界（boundary）</label>
+        <input id="sub-boundary" @bind="_newBoundary" placeholder="CN" />
+
+        <label for="sub-owner">运营方（owner_operator）</label>
+        <input id="sub-owner" @bind="_newOwnerOperator" placeholder="ops" />
     </div>
     <button type="button" class="btn" disabled="@_busy" @onclick="CreateAsync">创建主体</button>
     <p class="shortcut-hint">键盘：<span class="kbd">Tab</span> 在各字段间移动，<span class="kbd">Enter</span> 在输入框外不可提交，请使用“创建主体”按钮。</p>
@@ -92,7 +98,9 @@ else
     private string _newType = string.Empty;
     private string _newMode = string.Empty;
     private string _newTier = string.Empty;
-    private string _newDeclaration = "{\n  \"display_name\": \"\",\n  \"boundary\": \"\",\n  \"owner_operator\": \"\"\n}";
+    private string _newDisplayName = string.Empty;
+    private string _newBoundary = string.Empty;
+    private string _newOwnerOperator = string.Empty;
 
     protected override async Task OnInitializedAsync() => await LoadAsync();
 
@@ -134,10 +142,10 @@ else
                 _newType,
                 _newMode,
                 string.IsNullOrWhiteSpace(_newTier) ? null : _newTier,
-                _newDeclaration);
+                ConfigurationPayloadBuilder.BuildSubjectDeclaration(_newDisplayName, _newBoundary, _newOwnerOperator));
             _live = $"已创建主体 {_newId} 及首版草稿。";
             _newId = _newType = _newMode = _newTier = string.Empty;
-            _newDeclaration = "{\n  \"display_name\": \"\",\n  \"boundary\": \"\",\n  \"owner_operator\": \"\"\n}";
+            _newDisplayName = _newBoundary = _newOwnerOperator = string.Empty;
             await LoadAsync();
         }
         catch (Exception ex)
