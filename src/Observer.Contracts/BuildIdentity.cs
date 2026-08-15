@@ -6,7 +6,7 @@ namespace FullSpectrum.Observer.Contracts;
 /// </summary>
 public static class BuildIdentity
 {
-    public const string SystemVersion = "v0.3.0-beta.1";
+    public const string SystemVersion = "v0.3.0-beta.2";
     public const string ScopeBaseline = "FS-OBS-V010-SCOPE-BL-1.0";
     public const string DesignBaseline = "FS-OBS-V010-DES-BL-1.0";
     public const string ImplementationBaseline = "FS-OBS-V010-IMP-BL-1.0";
