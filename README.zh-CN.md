@@ -17,17 +17,18 @@
 | 版本线 | 状态 | 范围 |
 |---|---|---|
 | [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **公开预发布** | Foundation Kernel 上的 Engine v1.0/v1.5 兼容适配层 |
-| [`v0.3.0-beta.1`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.1) | **公开 Beta 预发布** | 发布身份闭合的 Windows x64 包：本地 Operator Console、证据存储、审计/回放与受约束人工复核；生产就绪：**否** |
+| [`v0.3.0-beta.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.2) | **公开 Beta 预发布** | Gate 1 产品化更新：主体和知识使用结构化输入；Windows x64 发布身份闭合；生产就绪：**否** |
+| [`v0.3.0-beta.1`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.1) | **已被替代** | 上一版发布身份闭合的 Beta，保留作发布历史 |
 | [`v0.3.0-beta`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta) | **已被替代** | 保留历史 RC5；其包内候选状态由 beta.1 补正 |
 | `v0.4`～`v1.0` | **已设计，尚未实现** | Scenario Pack、企业节点、多主体 Service 与真实组织验证 |
 
-当前公开版本为 `v0.3.0-beta.1`。权威 Windows x64 包和独立复测证据附在 Release 中；它是 Beta 工程预发布，不构成生产就绪或合规声明。
+当前公开版本为 `v0.3.0-beta.2`。权威 Windows x64 包和验证证据附在 Release 中；它是 Beta 工程预发布，不构成生产就绪或合规声明。
 
 ## 当前已实现能力
 
 - 固定 `.NET 10`、`win-x64` 构建基线；
 - 不可变 Runtime Snapshot 与原生 SQLite Evidence Core；
-- 通过 `Observer.EngineFacade` 隔离调用私有 Python 3.11 Engine Worker；
+- 通过 `Observer.EngineFacade` 隔离调用私有 Python 3.12 Engine Worker；
 - 在 Engine v1.0/v1.5 兼容层中保留版本、Profile、UNKNOWN、reason code、Replay 和 Audit 语义；
 - CASE005 确定性 fixture、Evidence manifest 与离线 Gate；
 - `MulanPSL-2.0 OR Apache-2.0` 双许可证。
@@ -54,7 +55,7 @@ pwsh ./scripts/build.ps1 -Configuration Release -Locked
 pwsh ./scripts/test.ps1 -Gate IG1
 ```
 
-IG3/IG4 等门禁需显式提供固定的私有 Python 3.11 和原生 SQLite 路径，脚本不会自动联网下载依赖。
+IG3/IG4 等门禁需显式提供固定的私有 Python 3.12 和原生 SQLite 路径，脚本不会自动联网下载依赖。
 
 ## 入口
 

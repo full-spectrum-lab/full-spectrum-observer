@@ -11,7 +11,7 @@
 **Where Observer fits:** Protocol defines subjects and governance contracts; Engine provides deterministic analysis; Observer connects authorized local facts to evidence, replay and a human decision point. The public Observer line remains observation-only and does not execute final enterprise or production actions.
 
 [![Foundation gates](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml/badge.svg)](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml)
-[![Release](https://img.shields.io/badge/release-v0.3.0--beta.1-orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.1)
+[![Release](https://img.shields.io/badge/release-v0.3.0--beta.2-orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.2)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MulanPSL--2.0%20OR%20Apache--2.0-blue)](LICENSE)
 
@@ -20,11 +20,12 @@
 | Line | Status | Scope |
 | --- | --- | --- |
 | [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **Public pre-release** | Engine v1.0/v1.5 compatibility adapter over the Foundation Kernel. |
-| [`v0.3.0-beta.1`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.1) | **Public beta pre-release** | Identity-closed Windows x64 package: local Operator Console, evidence storage, audit/replay and bounded human review. Production ready: **NO**. |
+| [`v0.3.0-beta.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.2) | **Public beta pre-release** | Gate 1 productization update with structured subject and knowledge inputs; identity-closed Windows x64 package. Production ready: **NO**. |
+| [`v0.3.0-beta.1`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.1) | **Superseded** | Previous identity-closed beta retained for release history. |
 | [`v0.3.0-beta`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta) | **Superseded** | Functional RC5 release retained for history; its package-internal candidate status was corrected by beta.1. |
 | `v0.4`–`v1.0` | **Designed — not implemented** | Scenario Packs, enterprise node, multi-principal service and real-organization validation. |
 
-The current public release is `v0.3.0-beta.1`. Its authoritative Windows x64 package and independent verification evidence are attached to the release. It is a beta engineering release, not a production-readiness or compliance claim.
+The current public release is `v0.3.0-beta.2`. Its authoritative Windows x64 package and verification evidence are attached to the release. It is a beta engineering release, not a production-readiness or compliance claim.
 
 ## What is implemented
 
@@ -32,7 +33,7 @@ The released Foundation/compatibility line provides:
 
 - a pinned .NET 10 `win-x64` build baseline;
 - immutable runtime snapshots and a native SQLite evidence core;
-- a process-isolated Engine Facade with a private Python 3.11 runtime;
+- a process-isolated Engine Facade with a private Python 3.12 runtime;
 - preservation of version, Profile, UNKNOWN, reason-code, Replay and Audit semantics across the Engine v1.0/v1.5 compatibility layer;
 - deterministic CASE005 fixtures, evidence manifests and offline verification gates;
 - dual licensing under `MulanPSL-2.0 OR Apache-2.0`.
@@ -43,7 +44,7 @@ The latest `main` Foundation-gate workflow is the public CI source of truth. His
 
 [![Governance event and evidence loop](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/governance-event-evidence-loop-en-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/visual-index.md)
 
-This diagram is a public architecture orientation. The current public release is `v0.3.0-beta.1`; production readiness remains `NO`.
+This diagram is a public architecture orientation. The current public release is `v0.3.0-beta.2`; production readiness remains `NO`.
 
 ```text
 Observer application (.NET 10)
@@ -61,7 +62,7 @@ Prerequisites are intentionally pinned and are not downloaded by the scripts:
 
 - .NET SDK `10.0.301`;
 - target `net10.0`, RID `win-x64`;
-- private Python 3.11 and pinned native SQLite where required;
+- private Python 3.12 and pinned native SQLite where required;
 - Engine and schema identities recorded in repository lock files.
 
 ```powershell
