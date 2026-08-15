@@ -174,7 +174,8 @@
         "type": "Project",
         "dependencies": {
           "FullSpectrum.Observer.Application": "[1.0.0, )",
-          "FullSpectrum.Observer.Contracts": "[1.0.0, )"
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "FullSpectrum.Observer.EngineFacade": "[1.0.0, )"
         }
       },
       "FullSpectrum.Observer.Recovery": {
