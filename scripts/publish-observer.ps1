@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     M2-RUN-01 formal, deterministic publish entry for the Observer `serve` product.
 
@@ -296,6 +296,18 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
         Write-Host "  carried observer.cmd (official entry launcher) into staging package"
     }
 
+    # F1: carry the discoverable one-click entry launcher (启动Observer.cmd) and README.txt into
+    # the package root, and GATE the build if either is missing from the repo root. This makes the
+    # Web console discoverable from the package top level (double-click -> serve -> browser opens).
+    foreach ($entryFile in @("启动Observer.cmd", "README.txt")) {
+        $entrySrc = Join-Path $RepoRoot $entryFile
+        if (-not (Test-Path -LiteralPath $entrySrc -PathType Leaf)) {
+            throw "F1 ENTRY GATE FAILED: required discoverable entry file '$entryFile' is missing from the repo root ($RepoRoot). The published package would not be discoverable. Add it before publishing."
+        }
+        Copy-Item -LiteralPath $entrySrc -Destination (Join-Path $StagingRoot $entryFile) -Force
+        Write-Host "  carried $entryFile (discoverable entry) into staging package"
+    }
+
     # V030-RC-ENTRY-FIX-01 (DEFECT_3): bundle the .NET runtime into <StagingRoot>/runtime/dotnet.
     # The package is framework-dependent; observer.cmd and the CLI Launcher both launch the
     # Web host via <PKG>/runtime/dotnet/dotnet.exe. A prior publish step silently dropped this
@@ -369,6 +381,46 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
         }
     }
 
+    # F6 (release mode): author the package-root release-identity.json (NO self SHA) and the
+    # in-package web/release-manifest.json (placeholder SHA) BEFORE the ZIP so they are included in
+    # the candidate package. This is the authoritative pipeline contract:
+    #   ZIP_ROOT_RELEASE_IDENTITY = YES   (release-identity.json at package root, no package SHA)
+    #   ZIP_WEB_RELEASE_MANIFEST  = YES   (release-manifest.json under web/)
+    #   ZIP_ROOT_RELEASE_MANIFEST = NO    (release-manifest.json NOT at package root)
+    #   ZIP_SELF_SHA              = FORBIDDEN (in-package manifest SHA = placeholder)
+    #   EXTERNAL_IDENTITY_WITH_FULL_ZIP_SHA = YES (external <candidate>_IDENTITY.json carries it)
+    if ($Release.IsPresent) {
+        $observerVersion = "v0.3.0-maintenance-candidate"
+        $observerCommit = ""
+        try { $observerCommit = (git -C $RepoRoot rev-parse HEAD 2>$null).Trim() } catch { }
+        if ([string]::IsNullOrWhiteSpace($observerCommit)) { $observerCommit = "UNPUBLISHED" }
+
+        $releaseIdentity = [ordered]@{
+            version = $observerVersion
+            commit = $observerCommit
+            channel = $resolvedChannel
+            status = "NOT_RELEASED"
+            engine_version = if ($baselineVersion -ne "") { $baselineVersion } else { "v1.5.0" }
+            engine_commit = $baselineCommit
+        }
+        Set-Content -LiteralPath (Join-Path $StagingRoot "release-identity.json") -Value ($releaseIdentity | ConvertTo-Json -Compress) -Encoding utf8
+        Write-Host "  release-identity.json (root, no self SHA) -> $(Join-Path $StagingRoot 'release-identity.json')"
+
+        $inPkgManifest = [ordered]@{
+            engine_source_artifact_sha256 = $engineSourceDigest
+            engine_runtime_payload_manifest_sha256 = $runtimePayloadDigest
+            observer_release_package_sha256 = "SEE_EXTERNAL_IDENTITY_FILE"
+            artifact_digest = "SEE_EXTERNAL_IDENTITY_FILE"
+            build_channel = $resolvedChannel
+            engine_tag = if ($Baseline -and $Baseline.PSObject.Properties.Name -contains 'engine_tag') { $Baseline.engine_tag } else { "v1.5.0" }
+            engine_version = if ($baselineVersion -ne "") { $baselineVersion } else { "v1.5.0" }
+            engine_commit = $baselineCommit
+            generated_at = ([System.DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))
+        }
+        Set-Content -LiteralPath (Join-Path $StagingWeb "release-manifest.json") -Value ($inPkgManifest | ConvertTo-Json -Compress) -Encoding utf8
+        Write-Host "  web/release-manifest.json (placeholder SHA) -> $(Join-Path $StagingWeb 'release-manifest.json')"
+    }
+
     # B-02 #5 + #8: build the release manifest.
     #   engine_source_artifact_sha256      = constant Engine source ZIP digest (baseline)
     #   engine_runtime_payload_manifest_sha256 = runtime-payload manifest digest (baseline)
@@ -386,9 +438,10 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
         try {
             $base = $StagingRoot.TrimEnd([char[]]@('\', '/'))
             Get-ChildItem -LiteralPath $StagingRoot -Recurse -File | ForEach-Object {
-                # M2-FIX-04: never ship the release manifest inside the ZIP
-                # (ZIP_CONTAINS_RELEASE_MANIFEST=NO); it is written as an EXTERNAL file instead.
-                if ($_.Name -eq "release-manifest.json") { return }
+                # F6: the in-package web/release-manifest.json (placeholder SHA) IS shipped inside the
+                # ZIP (ZIP_WEB_RELEASE_MANIFEST=YES); the package-root release-identity.json (no self
+                # SHA) is also shipped. The external <candidate>_IDENTITY.json (full ZIP SHA) is written
+                # OUTSIDE the ZIP after hashing, so it is naturally excluded here.
                 $rel = $_.FullName.Substring($base.Length + 1).Replace('\', '/')
                 [void][System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($za, $_.FullName, $rel, [System.IO.Compression.CompressionLevel]::Optimal)
             }
@@ -409,7 +462,10 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
         throw "RELEASE GATE FAILED: release-manifest engine_runtime_payload_manifest_sha256 '$($runtimePayloadDigest)' does not match baseline.engine_runtime_payload_manifest_sha256 '$($Baseline.engine_runtime_payload_manifest_sha256)'."
     }
 
-    # B-02 #5: generate a REAL release-manifest.json from computed values (no hardcoded placeholders).
+    # B-02 #5: generate a REAL release-manifest.json from computed values (no hardcoded placeholders)
+    # for the EXTERNAL distribution signature (written outside the ZIP). In release mode the
+    # in-package web/release-manifest.json already carries the placeholder SHA (written pre-ZIP),
+    # so we must NOT overwrite it with the real-SHA manifest here (ZIP_SELF_SHA=FORBIDDEN).
     $manifest = [ordered]@{
         engine_source_artifact_sha256       = $engineSourceDigest
         engine_runtime_payload_manifest_sha256 = $runtimePayloadDigest
@@ -423,14 +479,16 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     }
     $manifestJson = $manifest | ConvertTo-Json -Compress
 
-    # The Console (Web Host) reads release-manifest.json from its own base directory (web/);
-    # the CLI base directory also receives a copy for completeness.
-    $manifestWeb = Join-Path $StagingWeb "release-manifest.json"
-    $manifestCli = Join-Path $StagingCli "release-manifest.json"
-    Set-Content -LiteralPath $manifestWeb -Value $manifestJson -Encoding utf8
-    Set-Content -LiteralPath $manifestCli -Value $manifestJson -Encoding utf8
-    Write-Host "  release-manifest.json -> $manifestWeb"
-    Write-Host "  release-manifest.json -> $manifestCli"
+    # In release mode the in-package web/release-manifest.json (placeholder SHA) is already in
+    # staging; do NOT overwrite it. Only dev mode writes the manifest into the staging package.
+    if (-not $Release.IsPresent) {
+        $manifestWeb = Join-Path $StagingWeb "release-manifest.json"
+        $manifestCli = Join-Path $StagingCli "release-manifest.json"
+        Set-Content -LiteralPath $manifestWeb -Value $manifestJson -Encoding utf8
+        Set-Content -LiteralPath $manifestCli -Value $manifestJson -Encoding utf8
+        Write-Host "  release-manifest.json -> $manifestWeb"
+        Write-Host "  release-manifest.json -> $manifestCli"
+    }
 
     # Release Gate: no shipped artifact may contain the placeholder sentinel string.
     $placeholderHits = @(Get-ChildItem -LiteralPath $StagingRoot -Recurse -Include *.json,*.xml,*.config,*.txt,*.cs,*.razor,*.html,*.md |
@@ -444,15 +502,77 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     # rename (no partial/half-populated state is ever exposed to the final output location).
     Move-Item -LiteralPath $StagingRoot -Destination $OutputRoot -Force
 
-    # M2-FIX-04: For a formal Release, write release-manifest.json as an EXTERNAL file alongside
-    # observer.zip. The ZIP itself must NOT contain the manifest (ZIP_CONTAINS_RELEASE_MANIFEST=NO);
-    # the external file is the distribution's digest signature (EXTERNAL_RELEASE_MANIFEST=YES). It is
-    # kept on success and removed on failure so a partial/zero digest is never shipped. Dev (non
-    # -Release) builds skip this because no release ZIP is produced.
+    # F1 GATE: the published package root must contain the discoverable entry files.
+    foreach ($entryFile in @("启动Observer.cmd", "README.txt")) {
+        if (-not (Test-Path -LiteralPath (Join-Path $OutputRoot $entryFile) -PathType Leaf)) {
+            throw "F1 ENTRY GATE FAILED: published package root missing required entry file '$entryFile'."
+        }
+    }
+
+    # M2-FIX-04 + F6: For a formal Release, write the EXTERNAL distribution files alongside
+    # observer.zip. The in-package web/release-manifest.json (placeholder SHA) and package-root
+    # release-identity.json (no self SHA) are already inside the ZIP. Here we write, OUTSIDE the ZIP:
+    #   * release-manifest.json        (EXTERNAL_RELEASE_MANIFEST=YES; carries real package SHA)
+    #   * <candidate>_IDENTITY.json    (EXTERNAL_IDENTITY_WITH_FULL_ZIP_SHA=YES; package_sha256 = full ZIP SHA)
+    # Then run the F6 release-gate assertions. Dev (non -Release) builds skip this.
     if ($Release.IsPresent) {
         $externalManifestPath = Join-Path $OutputParent "release-manifest.json"
         Set-Content -LiteralPath $externalManifestPath -Value $manifestJson -Encoding utf8
         Write-Host "  release-manifest.json (external) -> $externalManifestPath"
+
+        # F6: package-EXTERNAL identity file carrying the FULL ZIP SHA-256 (pairwise with the ZIP).
+        $externalIdentityPath = Join-Path $OutputParent ($OutputName + "_IDENTITY.json")
+        $extIdentity = [ordered]@{
+            version = if ($observerVersion) { $observerVersion } else { "v0.3.0-maintenance-candidate" }
+            commit = if ($observerCommit) { $observerCommit } else { "UNPUBLISHED" }
+            channel = $resolvedChannel
+            status = "NOT_RELEASED"
+            engine_version = if ($baselineVersion -ne "") { $baselineVersion } else { "v1.5.0" }
+            engine_commit = $baselineCommit
+            package_sha256 = $packageSha
+        }
+        Set-Content -LiteralPath $externalIdentityPath -Value ($extIdentity | ConvertTo-Json -Compress) -Encoding utf8
+        Write-Host "  external identity (full ZIP SHA) -> $externalIdentityPath"
+
+        # --- F6 RELEASE GATE (authoritative pipeline contract assertions) ---
+        # G1: package root has release-identity.json with NO package self SHA.
+        $rootIdentity = Join-Path $OutputRoot "release-identity.json"
+        if (-not (Test-Path -LiteralPath $rootIdentity -PathType Leaf)) {
+            throw "F6 REJECT: package root missing release-identity.json (ZIP_ROOT_RELEASE_IDENTITY=YES violated)."
+        }
+        $rootIdentityJson = Get-Content -LiteralPath $rootIdentity -Raw | ConvertFrom-Json
+        if ($rootIdentityJson.PSObject.Properties.Name -contains 'package_sha256' -or $rootIdentityJson.PSObject.Properties.Name -contains 'observer_package_sha256') {
+            throw "F6 REJECT: package-root release-identity.json must NOT contain a package SHA (ZIP_SELF_SHA=FORBIDDEN)."
+        }
+
+        # G2: web/release-manifest.json exists and uses the placeholder SHA (not self SHA).
+        $webManifest = Join-Path $OutputRoot "web/release-manifest.json"
+        if (-not (Test-Path -LiteralPath $webManifest -PathType Leaf)) {
+            throw "F6 REJECT: web/release-manifest.json missing (ZIP_WEB_RELEASE_MANIFEST=YES violated)."
+        }
+        $webManifestJson = Get-Content -LiteralPath $webManifest -Raw | ConvertFrom-Json
+        $webSha = if ($webManifestJson.PSObject.Properties.Name -contains 'observer_release_package_sha256') { [string]$webManifestJson.observer_release_package_sha256 } else { "" }
+        if ($webSha -ne "SEE_EXTERNAL_IDENTITY_FILE") {
+            throw "F6 REJECT: web/release-manifest.json observer_release_package_sha256 must be 'SEE_EXTERNAL_IDENTITY_FILE', got '$webSha' (ZIP_SELF_SHA=FORBIDDEN)."
+        }
+
+        # G3: external identity package_sha256 == sha256 of the ZIP.
+        if (-not (Test-Path -LiteralPath $externalIdentityPath -PathType Leaf)) {
+            throw "F6 REJECT: external identity file missing (EXTERNAL_IDENTITY_WITH_FULL_ZIP_SHA=YES violated)."
+        }
+        $extIdJson = Get-Content -LiteralPath $externalIdentityPath -Raw | ConvertFrom-Json
+        $extSha = if ($extIdJson.PSObject.Properties.Name -contains 'package_sha256') { [string]$extIdJson.package_sha256 } else { "" }
+        $zipSha = (Get-FileHash -Algorithm SHA256 -LiteralPath $ReleaseZip).Hash.ToLowerInvariant()
+        if ($extSha.ToLowerInvariant() -ne $zipSha) {
+            throw "F6 REJECT: external identity package_sha256 '$extSha' != sha256($ReleaseZip) '$zipSha'."
+        }
+
+        # G4: release-manifest.json must NOT be at the package root (ZIP_ROOT_RELEASE_MANIFEST=NO).
+        if (Test-Path -LiteralPath (Join-Path $OutputRoot "release-manifest.json") -PathType Leaf) {
+            throw "F6 REJECT: release-manifest.json present at package root (ZIP_ROOT_RELEASE_MANIFEST=NO violated)."
+        }
+
+        Write-Host "  F6 RELEASE GATE PASSED."
     }
 
     Write-Host "=== Publish package complete ==="
