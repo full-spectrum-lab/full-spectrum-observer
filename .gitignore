@@ -38,3 +38,5 @@ __pycache__/
 .env
 .env.*
 !*.example
+# Test runner output is evidence/workspace state, not a source artifact.
+tests/**/TestResults/
