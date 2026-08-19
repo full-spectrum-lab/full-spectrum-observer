@@ -73,3 +73,19 @@ code { background: #0c1117; border: 1px solid #2b3744; border-radius: 4px; paddi
 pre { background: #0c1117; border: 1px solid #2b3744; border-radius: 6px; padding: 12px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
 
 .shortcut-hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+/* F2: execution-state badges (neutral; NEVER reuse the governance `known` green). */
+.badge.exec-completed { background: #1f2a36; color: var(--fg); }
+.badge.exec-draft { background: #1f2a36; color: var(--muted); }
+.badge.exec-failed { background: #2a0e0e; color: var(--danger); }
+
+/* F2: governance-state badges (separate `gov-*` namespace). UNKNOWN/PARTIAL use neutral/warning
+   color and never reuse `known` green; KNOWN may use green because it IS a favorable conclusion. */
+.badge.gov-known { background: #07261a; color: var(--ok); }
+.badge.gov-unknown { background: #2a2300; color: var(--warn); }
+.badge.gov-partial { background: #2a2300; color: var(--warn); }
+.badge.gov-hardgate { background: #2a0e0e; color: var(--danger); }
+.badge.gov-soft { background: #1f2a36; color: var(--muted); }
+
+/* F4: readable conclusion helper key/value cell. */
+pre.kv { white-space: pre-wrap; word-break: break-word; margin: 0; padding: 6px; }
