@@ -1,23 +1,45 @@
 {
   "runtime": "CPython",
   "version": "3.12.8",
-  "exact_patch": "3.12.8",
   "architecture": "x64",
-  "distribution": "Python Software Foundation embeddable package for Windows x64 (python-3.12.8-embed-amd64.zip)",
   "status": "FROZEN",
   "frozen_at_utc": "2026-07-23T05:49:04Z",
+
   "python_executable_sha256": "1a078825122b059f04b6c1545909f1d3ed0838dd24ab80d1c7fa60ca68ff9af5",
-  "runtime_tree_manifest_sha256": "687a1461b60a2669ce7006e6f0a7d7bce7d9d7f45ff85d5d7e3c569a7ee0cd97",
-  "numpy_version": "1.26.4",
-  "numpy_digest": "08beddf13648eb95f8d867350f6a018a4be2e5ad54c8d8caed89ebca558b2818",
-  "jsonschema_version": "4.26.0",
-  "jsonschema_digest": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce",
-  "transitive_dependencies": {
-    "attrs": "26.1.0",
-    "jsonschema_specifications": "2025.9.1",
-    "referencing": "0.37.0",
-    "rpds_py": "2026.6.3",
-    "typing_extensions": "4.16.0"
+
+  "distribution": {
+    "name": "PSF embeddable package for Windows x64",
+    "archive": "python-3.12.8-embed-amd64.zip",
+    "source_url": "https://www.python.org/ftp/python/3.12.8/python-3.12.8-embed-amd64.zip",
+    "archive_sha256": "8d3f33be9eb810f23c102f08475af2854e50484b8e4e06275e937be61ce3d2fb"
   },
-  "note": "Frozen baseline per M3-FIX-02. CPython 3.12.8 + numpy 1.26.4 + jsonschema 4.26.0, offline-installed from py312-verify-cache/wheels. Package runtime/python ships source-only (no __pycache__/*.pyc)."
+
+  "pip": {
+    "version": "24.3.1",
+    "wheel": "pip-24.3.1-py3-none-any.whl",
+    "source_url": "https://files.pythonhosted.org/packages/ef/7d/500c9ad20238fcfcb4cb9243eede163594d7020ce87bd9610c9e02771876/pip-24.3.1-py3-none-any.whl",
+    "sha256": "3790624780082365f47549d032f3770eeb2b1e8bd1f7b2e02dace1afa361b4ed",
+    "size": 1822182
+  },
+
+  "dependencies": [
+    { "name": "attrs",                     "version": "26.1.0",  "wheel": "attrs-26.1.0-py3-none-any.whl",                     "source": "py312-verify-cache/wheels", "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309", "size": 67548 },
+    { "name": "jsonschema",                "version": "4.26.0",  "wheel": "jsonschema-4.26.0-py3-none-any.whl",                "source": "py312-verify-cache/wheels", "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce", "size": 90630 },
+    { "name": "jsonschema_specifications", "version": "2025.9.1","wheel": "jsonschema_specifications-2025.9.1-py3-none-any.whl", "source": "py312-verify-cache/wheels", "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe", "size": 18437 },
+    { "name": "numpy",                     "version": "1.26.4",  "wheel": "numpy-1.26.4-cp312-cp312-win_amd64.whl",             "source": "py312-verify-cache/wheels", "sha256": "08beddf13648eb95f8d867350f6a018a4be2e5ad54c8d8caed89ebca558b2818", "size": 15517754 },
+    { "name": "referencing",               "version": "0.37.0",  "wheel": "referencing-0.37.0-py3-none-any.whl",                "source": "py312-verify-cache/wheels", "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231", "size": 26766 },
+    { "name": "rpds_py",                   "version": "2026.6.3", "wheel": "rpds_py-2026.6.3-cp312-cp312-win_amd64.whl",         "source": "py312-verify-cache/wheels", "sha256": "2c958bf94822e9290a40aaf2a822d4bc5c88099093e3948ad6c571eca9272e5f", "size": 220394 },
+    { "name": "typing_extensions",         "version": "4.16.0",  "wheel": "typing_extensions-4.16.0-py3-none-any.whl",          "source": "py312-verify-cache/wheels", "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8", "size": 45571 }
+  ],
+
+  "manifest": {
+    "algorithm": "sha256",
+    "generator": "scripts/build-runtime-manifest.ps1",
+    "scope_root": "runtime/python",
+    "excludes": ["__pycache__", "*.pyc", ".git", ".gitignore", "**/*.dist-info/direct_url.json"]
+  },
+
+  "runtime_tree_manifest_sha256": "38fc45d218c0b27ff949b06084bfacf4222053616c0096d1c6b967434d41e5cd",
+
+  "provenance_ref": "engine/locks/python-runtime.provenance.json"
 }
