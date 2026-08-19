@@ -1,5 +1,8 @@
 # Runtime Provisioning (FSO v0.3 — Runtime Provisioning Closure, Option B)
 
+AUTHOR_DECLARED_CREATED_AT: 2026-08-19 15:29 UTC+8 (北京时间)
+AUTHOR_DECLARED_UPDATED_AT: 2026-08-20 08:00 UTC+8 (北京时间)
+
 This document describes the offline, staged, deterministic provisioning of the
 self-contained Python runtime shipped at `runtime/python` inside the Observer
 release package.
