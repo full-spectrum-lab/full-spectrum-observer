@@ -141,6 +141,38 @@ public sealed class SystemDiagnosticsTests
         }
     }
 
+    [Fact]
+    public void Maintenance_candidate_identity_accepts_published_asset_field_names()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fso-sd-" + Path.GetRandomFileName());
+        var extDir = Path.Combine(Path.GetTempPath(), "fso-ext-" + Path.GetRandomFileName());
+        try
+        {
+            Directory.CreateDirectory(dir);
+            Directory.CreateDirectory(extDir);
+            var extPath = Path.Combine(extDir, "release-identity.json");
+            File.WriteAllText(extPath,
+                "{\"version\":\"v0.3.0-maintenance-candidate\"," +
+                "\"commit\":\"1c18e8d84bfca4c17aaf0e015825132ee03d9281\"," +
+                "\"channel\":\"RELEASE\"," +
+                "\"status\":\"NOT_RELEASED\"," +
+                "\"package_sha256\":\"" + ValidSha + "\"}");
+
+            var ver = NewDiagnostics(dir, extPath).GetVersionInfo();
+            ver.ObserverVersion.Should().Be("v0.3.0-maintenance-candidate");
+            ver.ObserverCommit.Should().Be("1c18e8d84bfca4c17aaf0e015825132ee03d9281");
+            ver.ObserverPackageSha256.Should().Be(ValidSha);
+            ver.BuildChannel.Should().Be("RELEASE");
+            ver.IdentitySource.Should().Be("EXTERNAL_RELEASE_IDENTITY");
+            ver.ReleaseStatus.Should().Be("NOT_RELEASED");
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+            Directory.Delete(extDir, true);
+        }
+    }
+
     // 5) Manifest 缺失时显示 NOT_AVAILABLE
     [Fact]
     public void Missing_manifest_reports_NOT_AVAILABLE_and_dev_worktree()
