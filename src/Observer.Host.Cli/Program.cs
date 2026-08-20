@@ -110,7 +110,8 @@ static int Help()
         "  observer analyze --case CASE005_KNOWLEDGE_CONFLICT --data-dir PATH --json\n" +
         "  observer analyze --input FILE --input-root ROOT --data-dir PATH --json\n" +
         "  observer show --observation-id UUID --data-dir PATH --json\n" +
-        "  observer verify-audit --from 1 --data-dir PATH --json");
+        "  observer verify-audit --from 1 --data-dir PATH --json\n" +
+        "  observer serve    启动 Web 控制台（默认仅监听 127.0.0.1）");
     return 0;
 }
 

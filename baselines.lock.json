@@ -266,8 +266,8 @@
     },
     {
       "path": "engine/locks/python-runtime.lock.json",
-      "size_bytes": 1126,
-      "sha256": "c4c98364ba5da6a6f7cf3fb290335acdc4b2278658acc3610799af951ddfc94c"
+      "size_bytes": 3163,
+      "sha256": "fb13fad28fda1aea64b0ad4ec80c9eb257749f1b2956e2b208b4585de99929e6"
     },
     {
       "path": "global.json",

@@ -93,17 +93,62 @@ else
             var snap = _outcome.Output.Snapshot;
             var evid = _outcome.Output.Evidence;
 
-            <div class="region engine">
-                <p>未知状态：
-                    @if (result.UnknownState == "UNKNOWN") { <span class="badge unknown">UNKNOWN</span> }
-                    else if (result.UnknownState == "KNOWN") { <span class="badge known">KNOWN</span> }
-                    else if (result.UnknownState == "PARTIAL") { <span class="badge partial">PARTIAL</span> }
-                    else { <span class="badge unknown">@result.UnknownState</span> }
-                </p>
-                <p>硬门禁：@if (result.HardGate) { <span class="badge hardgate">HARD_GATE</span> } else { <span class="badge known">无</span> }</p>
+            // F2/F3/F4: derive separated, pass-through view models from the shared pure Presenter.
+            var execVm = GovernanceResultPresenter.PresentExecutionState(_outcome.Task?.Status ?? "");
+            var govVm = GovernanceResultPresenter.PresentGovernanceState(result.UnknownState, result.HardGate);
+            var unknownLines = GovernanceResultPresenter.BuildUnknownStateExplanation(result.UnknownState, _outcome.Output.Conflicts);
+            var conclusionVm = GovernanceResultPresenter.PresentConclusion(result.ConclusionPayload);
+
+            <h2>任务执行（与治理结论相互独立）</h2>
+            <div class="region observer">
+                <p>状态：<span class="badge @execVm.CssClass">@execVm.StatusText</span></p>
+                <p class="muted">任务执行态仅表示分析任务是否跑完，不等于治理结论有利。</p>
             </div>
 
+            <h2>治理结论（按原样，不重算）</h2>
+            <div class="region engine">
+                <p>未知状态：
+                    <span class="badge @govVm.CssClass">@govVm.UnknownState</span>
+                </p>
+                <p>硬门禁：
+                    <span class="badge @govVm.HardGateCssClass">@govVm.HardGateText</span>
+                </p>
+                <p class="muted">UNKNOWN 不等于任务执行失败；硬门禁「未触发」不代表「通过」。</p>
+            </div>
+
+            @if (unknownLines.Count > 0)
+            {
+                <h2>说明（@govVm.UnknownState）</h2>
+                <div class="region human">
+                    <ul>
+                        @foreach (var line in unknownLines)
+                        {
+                            <li>@line</li>
+                        }
+                    </ul>
+                </div>
+            }
+
             <h2>结论（Engine 原文，不重算）</h2>
+            <details>
+                <summary>技术明细（可读视图，仅编排展示，不改写 Engine 原文）</summary>
+                @if (conclusionVm.IsValidJson && conclusionVm.KeyValues is { })
+                {
+                    <table>
+                        <thead><tr><th>字段</th><th>值（按原样）</th></tr></thead>
+                        <tbody>
+                            @foreach (var kv in conclusionVm.KeyValues)
+                            {
+                                <tr><td><code>@kv.Key</code></td><td><pre class="kv">@kv.Value</pre></td></tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="muted">结论非 JSON 或无法结构化，以下为原文。</p>
+                }
+            </details>
             <pre>@result.ConclusionPayload</pre>
 
             @if (_outcome.Output.Conflicts.Count > 0)
