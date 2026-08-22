@@ -108,26 +108,27 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
 
     private async Task ListenLoopAsync(CancellationToken token)
     {
-        try
-        {
-            _pipe = new NamedPipeServerStream(
-                _pipeName,
-                PipeDirection.InOut,
-                maxNumberOfServerInstances: 1,
-                PipeTransmissionMode.Byte,
-                PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly,
-                inBufferSize: 1024,
-                outBufferSize: 1024);
-        }
-        catch (Exception ex)
-        {
-            // Cannot create the control pipe (e.g. name clash) — degrade gracefully: no stop channel.
-            Console.WriteLine($"[StopChannel] 无法创建 Named Pipe 停止通道（{_pipeName}）：{ex.Message}");
-            return;
-        }
-
         while (!token.IsCancellationRequested)
         {
+            try
+            {
+                _pipe = new NamedPipeServerStream(
+                    _pipeName,
+                    PipeDirection.InOut,
+                    maxNumberOfServerInstances: 1,
+                    PipeTransmissionMode.Byte,
+                    PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly,
+                    inBufferSize: 1024,
+                    outBufferSize: 1024);
+            }
+            catch (Exception ex)
+            {
+                // A persistent creation failure cannot be repaired by a tight retry loop. The
+                // launcher still has its process-lifetime fallback for cleanup.
+                Console.WriteLine($"[StopChannel] 无法创建 Named Pipe 停止通道（{_pipeName}）：{ex.Message}");
+                return;
+            }
+
             try
             {
                 await _pipe.WaitForConnectionAsync(token).ConfigureAwait(false);
@@ -149,7 +150,6 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
                     return;
                 }
 
-                _pipe.Disconnect();
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested)
             {
@@ -157,10 +157,14 @@ public sealed class NamedPipeStopChannel : IHostedService, IDisposable
             }
             catch (Exception)
             {
-                // Pipe closed, client disconnected, host shutting down, or a rejected connection
-                // (different user/elevation refused by CurrentUserOnly). Stop serving.
-                try { _pipe.Disconnect(); } catch { /* no-op */ }
-                break;
+                // A rejected or prematurely disconnected client must not permanently disable the
+                // only graceful-stop channel. Dispose this instance and listen again unless the
+                // host itself is stopping.
+            }
+            finally
+            {
+                try { _pipe?.Dispose(); } catch { /* no-op */ }
+                _pipe = null;
             }
         }
     }

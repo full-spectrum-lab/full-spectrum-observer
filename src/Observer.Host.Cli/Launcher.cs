@@ -232,6 +232,8 @@ public sealed class Launcher : IDisposable
                 "Observer.Host.Web");
         }
 
+        using var launcherProcess = Process.GetCurrentProcess();
+        long launcherStartUtcTicks = launcherProcess.StartTime.ToUniversalTime().Ticks;
         var startInfo = new ProcessStartInfo
         {
             FileName = dotnetExe,
@@ -240,7 +242,7 @@ public sealed class Launcher : IDisposable
             // The Web Host's content root is pinned to <PackageRoot>/web via WorkingDirectory, so
             // static assets (web/wwwroot) resolve correctly regardless of the caller's cwd
             // (V030-RC-ENTRY-FIX-01 / DEFECT_3).
-            Arguments = $"\"{webDll}\" --urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value} --stop-pipe {StopPipeName!} --stop-token {StopToken!}",
+            Arguments = $"\"{webDll}\" --urls http://127.0.0.1:{Port} --bootstrap-token {BootstrapToken!.Value} --stop-pipe {StopPipeName!} --stop-token {StopToken!} --launcher-pid {Environment.ProcessId} --launcher-start-utc-ticks {launcherStartUtcTicks}",
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = false,
