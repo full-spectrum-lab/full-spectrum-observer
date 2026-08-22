@@ -82,6 +82,24 @@ public sealed class LauncherShutdownTests
     }
 
     [Fact]
+    public void Launcher_propagates_resolved_data_directory_to_web_child()
+    {
+        string dataDirectory = Path.Combine(
+            Path.GetTempPath(),
+            $"observer-isolated-{Guid.NewGuid():N}");
+        var startInfo = new ProcessStartInfo();
+
+        Launcher.ApplyChildEnvironment(
+            startInfo,
+            "C:\\package",
+            configuredIdentityPath: null,
+            dataDirectory);
+
+        startInfo.Environment["Observer__DataDirectory"]
+            .Should().Be(Path.GetFullPath(dataDirectory));
+    }
+
+    [Fact]
     public void External_identity_discovery_prefers_explicit_configuration()
     {
         string root = Path.Combine(Path.GetTempPath(), $"observer-package-{Guid.NewGuid():N}");

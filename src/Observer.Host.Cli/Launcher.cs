@@ -256,9 +256,29 @@ public sealed class Launcher : IDisposable
         // release-identity.json through the EXTERNAL environment variable: doing so mislabels the
         // source and cannot provide the ZIP SHA-256 by design. With no external identity, the Web
         // host honestly falls back to its package manifest.
-        string? externalIdentityPath = ResolveExternalIdentityPath(
+        ApplyChildEnvironment(
+            startInfo,
             AppContext.BaseDirectory,
-            Environment.GetEnvironmentVariable("OBSERVER_RELEASE_IDENTITY_PATH"));
+            Environment.GetEnvironmentVariable("OBSERVER_RELEASE_IDENTITY_PATH"),
+            _dataDirectory);
+        _hostProcess = Process.Start(startInfo)
+            ?? throw new InvalidOperationException("无法启动 Host 进程（Observer.Host.Web）。");
+    }
+
+    internal static void ApplyChildEnvironment(
+        ProcessStartInfo startInfo,
+        string packageRoot,
+        string? configuredIdentityPath,
+        string dataDirectory)
+    {
+        // Serve resolves command line / environment / sidecar precedence once. The Web child must
+        // consume that exact result; letting it resolve configuration independently can silently
+        // reconnect to the default user database while the Launcher lock is held elsewhere.
+        startInfo.Environment["Observer__DataDirectory"] = Path.GetFullPath(dataDirectory);
+
+        string? externalIdentityPath = ResolveExternalIdentityPath(
+            packageRoot,
+            configuredIdentityPath);
         if (externalIdentityPath is not null)
         {
             startInfo.Environment["OBSERVER_RELEASE_IDENTITY_PATH"] = externalIdentityPath;
@@ -267,8 +287,6 @@ public sealed class Launcher : IDisposable
         {
             startInfo.Environment.Remove("OBSERVER_RELEASE_IDENTITY_PATH");
         }
-        _hostProcess = Process.Start(startInfo)
-            ?? throw new InvalidOperationException("无法启动 Host 进程（Observer.Host.Web）。");
     }
 
     internal static string? ResolveExternalIdentityPath(string packageRoot, string? configuredPath)
