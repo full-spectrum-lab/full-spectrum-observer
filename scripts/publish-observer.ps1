@@ -68,12 +68,110 @@ param(
 $ErrorActionPreference = "Stop"
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 
+function Get-DirectoryTreeSha256([string]$Path) {
+    $base = (Resolve-Path -LiteralPath $Path).Path.TrimEnd([char[]]@('\', '/'))
+    $lines = @(Get-ChildItem -LiteralPath $base -Recurse -File | Sort-Object FullName | ForEach-Object {
+        $relative = $_.FullName.Substring($base.Length + 1).Replace('\', '/')
+        $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $_.FullName).Hash.ToLowerInvariant()
+        "$relative`t$($_.Length)`t$hash"
+    })
+    $payload = [Text.UTF8Encoding]::new($false).GetBytes(($lines -join "`n"))
+    return [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($payload)).ToLowerInvariant()
+}
+
+function Get-RequiredDotnetRuntimeSelection(
+    [string]$RuntimeRoot,
+    [string[]]$RuntimeConfigPaths,
+    [string]$LockedVersion) {
+    $requirements = @()
+    foreach ($runtimeConfigPath in $RuntimeConfigPaths) {
+        if (-not (Test-Path -LiteralPath $runtimeConfigPath -PathType Leaf)) {
+            throw "DOTNET RUNTIME SELECTION FAILED: runtimeconfig missing: $runtimeConfigPath"
+        }
+        $runtimeOptions = (Get-Content -LiteralPath $runtimeConfigPath -Raw | ConvertFrom-Json).runtimeOptions
+        $declared = @()
+        if ($runtimeOptions.PSObject.Properties.Name -contains 'framework') { $declared += $runtimeOptions.framework }
+        if ($runtimeOptions.PSObject.Properties.Name -contains 'frameworks') { $declared += @($runtimeOptions.frameworks) }
+        foreach ($framework in $declared) {
+            if ([string]$framework.name -in @('Microsoft.NETCore.App', 'Microsoft.AspNetCore.App')) {
+                $requirements += [pscustomobject]@{
+                    Name = [string]$framework.name
+                    MinimumVersion = [Version]([string]$framework.version)
+                }
+            }
+        }
+    }
+
+    $requirements = @($requirements | Sort-Object Name -Unique)
+    if ($requirements.Count -eq 0) {
+        throw "DOTNET RUNTIME SELECTION FAILED: no supported shared-framework requirement found."
+    }
+
+    $commonVersions = $null
+    foreach ($requirement in $requirements) {
+        $frameworkRoot = Join-Path (Join-Path $RuntimeRoot 'shared') $requirement.Name
+        if (-not (Test-Path -LiteralPath $frameworkRoot -PathType Container)) {
+            throw "DOTNET RUNTIME SELECTION FAILED: required framework missing: $frameworkRoot"
+        }
+        $compatible = @(Get-ChildItem -LiteralPath $frameworkRoot -Directory | Where-Object {
+            $parsed = $null
+            [Version]::TryParse($_.Name, [ref]$parsed) -and
+                $parsed.Major -eq $requirement.MinimumVersion.Major -and
+                $parsed.Minor -eq $requirement.MinimumVersion.Minor -and
+                $parsed -ge $requirement.MinimumVersion
+        } | ForEach-Object Name)
+        if ($compatible.Count -eq 0) {
+            throw "DOTNET RUNTIME SELECTION FAILED: no compatible $($requirement.Name) >= $($requirement.MinimumVersion)."
+        }
+        $commonVersions = if ($null -eq $commonVersions) {
+            $compatible
+        } else {
+            @($commonVersions | Where-Object { $compatible -contains $_ })
+        }
+    }
+
+    if (@($commonVersions).Count -eq 0) {
+        throw "DOTNET RUNTIME SELECTION FAILED: required frameworks have no common patch version."
+    }
+    if ($LockedVersion -notin @($commonVersions)) {
+        throw "DOTNET RUNTIME SELECTION FAILED: locked version $LockedVersion is not a common compatible patch; available '$($commonVersions -join ', ')'."
+    }
+    $selectedVersion = $LockedVersion
+    $fxrPath = Join-Path (Join-Path (Join-Path $RuntimeRoot 'host') 'fxr') $selectedVersion
+    if (-not (Test-Path -LiteralPath $fxrPath -PathType Container)) {
+        throw "DOTNET RUNTIME SELECTION FAILED: host/fxr $selectedVersion is missing."
+    }
+
+    return [pscustomobject]@{
+        Version = $selectedVersion
+        Frameworks = @($requirements | ForEach-Object Name)
+    }
+}
+
 # --- Engine baseline: single source of truth (M2-ENG-01 Part IV / Part VI) ---
 # All Engine identity (version / commit / digest) MUST derive from this file.
 $BaselinePath = Join-Path $RepoRoot "engine/engine-baseline.json"
 $Baseline = $null
 if (Test-Path -LiteralPath $BaselinePath) {
     $Baseline = Get-Content -LiteralPath $BaselinePath -Raw | ConvertFrom-Json
+}
+$DotnetRuntimeLockPath = Join-Path $RepoRoot 'engine/locks/dotnet-runtime.lock.json'
+if (-not (Test-Path -LiteralPath $DotnetRuntimeLockPath -PathType Leaf)) {
+    throw "dotnet runtime lock not found: $DotnetRuntimeLockPath"
+}
+$DotnetRuntimeLock = Get-Content -LiteralPath $DotnetRuntimeLockPath -Raw | ConvertFrom-Json
+if ([string]$DotnetRuntimeLock.protocol -ne 'fs-observer-dotnet-runtime-lock/1' -or
+    [string]$DotnetRuntimeLock.status -ne 'FROZEN') {
+    throw "dotnet runtime lock protocol/status is invalid: $DotnetRuntimeLockPath"
+}
+if ([string]$DotnetRuntimeLock.architecture -ne $Runtime) {
+    throw "dotnet runtime lock architecture '$($DotnetRuntimeLock.architecture)' does not match publish runtime '$Runtime'."
+}
+$lockedFrameworks = @($DotnetRuntimeLock.frameworks | ForEach-Object { [string]$_ } | Sort-Object -Unique)
+if ($lockedFrameworks.Count -ne 2 -or
+    'Microsoft.NETCore.App' -notin $lockedFrameworks -or
+    'Microsoft.AspNetCore.App' -notin $lockedFrameworks) {
+    throw "dotnet runtime lock frameworks must be exactly Microsoft.NETCore.App and Microsoft.AspNetCore.App."
 }
 function Normalize-Commit([string]$c) {
     if ([string]::IsNullOrWhiteSpace($c)) { return "" }
@@ -311,21 +409,44 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     # V030-RC-ENTRY-FIX-01 (DEFECT_3): bundle the .NET runtime into <StagingRoot>/runtime/dotnet.
     # The package is framework-dependent; observer.cmd and the CLI Launcher both launch the
     # Web host via <PKG>/runtime/dotnet/dotnet.exe. A prior publish step silently dropped this
-    # copy, producing a non-startable package. Restore it so the package is self-starting and the
-    # build is reproducible from this script alone (no manual staging edits).
+    # copy, producing a non-startable package. Copy only the newest common compatible patch used
+    # by the published runtimeconfig files. Copying the entire build-machine shared/ tree makes the
+    # artifact depend on unrelated installed patches and previously duplicated 10.0.9 + 10.0.10.
     if (-not [string]::IsNullOrWhiteSpace($DotnetRoot) -and (Test-Path -LiteralPath (Join-Path $DotnetRoot "dotnet.exe"))) {
         $dotnetDst = Join-Path (Join-Path $StagingRoot "runtime") "dotnet"
         if (-not (Test-Path -LiteralPath (Join-Path $dotnetDst "dotnet.exe"))) {
+            $dotnetSelection = Get-RequiredDotnetRuntimeSelection -RuntimeRoot $DotnetRoot -RuntimeConfigPaths @(
+                (Join-Path $StagingRoot 'FullSpectrum.Observer.Host.Cli.runtimeconfig.json'),
+                (Join-Path $StagingWeb 'Observer.Host.Web.runtimeconfig.json')
+            ) -LockedVersion ([string]$DotnetRuntimeLock.version)
+            $selectedFrameworks = @($dotnetSelection.Frameworks | Sort-Object -Unique)
+            if ($selectedFrameworks.Count -ne $lockedFrameworks.Count -or
+                @($selectedFrameworks | Where-Object { $_ -notin $lockedFrameworks }).Count -ne 0) {
+                throw "DOTNET RUNTIME LOCK MISMATCH: runtimeconfig frameworks '$($selectedFrameworks -join ', ')' do not match lock '$($lockedFrameworks -join ', ')'."
+            }
             New-Item -ItemType Directory -Force -Path $dotnetDst | Out-Null
             Copy-Item -LiteralPath (Join-Path $DotnetRoot "dotnet.exe") -Destination $dotnetDst -Force
             Copy-Item -LiteralPath (Join-Path $DotnetRoot "LICENSE.txt") -Destination $dotnetDst -Force -ErrorAction SilentlyContinue
             Copy-Item -LiteralPath (Join-Path $DotnetRoot "ThirdPartyNotices.txt") -Destination $dotnetDst -Force -ErrorAction SilentlyContinue
-            Copy-Item -LiteralPath (Join-Path $DotnetRoot "host") -Destination $dotnetDst -Recurse -Force
-            Copy-Item -LiteralPath (Join-Path $DotnetRoot "shared") -Destination $dotnetDst -Recurse -Force
-            # Headless CLI/Blazor host does not need the Windows Desktop shared framework (~250 MB).
-            $wdApp = Join-Path (Join-Path $dotnetDst "shared") "Microsoft.WindowsDesktop.App"
-            if (Test-Path -LiteralPath $wdApp) { [System.IO.Directory]::Delete($wdApp, $true) }
-            Write-Host "  bundled .NET runtime into staging runtime/dotnet (from $DotnetRoot)"
+            $fxrDst = Join-Path (Join-Path $dotnetDst 'host') 'fxr'
+            New-Item -ItemType Directory -Force -Path $fxrDst | Out-Null
+            Copy-Item -LiteralPath (Join-Path (Join-Path (Join-Path $DotnetRoot 'host') 'fxr') $dotnetSelection.Version) -Destination $fxrDst -Recurse -Force
+            foreach ($frameworkName in $dotnetSelection.Frameworks) {
+                $frameworkDst = Join-Path (Join-Path $dotnetDst 'shared') $frameworkName
+                New-Item -ItemType Directory -Force -Path $frameworkDst | Out-Null
+                $frameworkSrc = Join-Path (Join-Path (Join-Path $DotnetRoot 'shared') $frameworkName) $dotnetSelection.Version
+                Copy-Item -LiteralPath $frameworkSrc -Destination $frameworkDst -Recurse -Force
+            }
+            $dotnetFiles = @(Get-ChildItem -LiteralPath $dotnetDst -Recurse -File)
+            $dotnetBytes = [long](($dotnetFiles | Measure-Object Length -Sum).Sum)
+            $dotnetTreeSha = Get-DirectoryTreeSha256 $dotnetDst
+            if ($dotnetFiles.Count -ne [int]$DotnetRuntimeLock.file_count -or
+                $dotnetBytes -ne [long]$DotnetRuntimeLock.total_bytes -or
+                $dotnetTreeSha -ne [string]$DotnetRuntimeLock.tree_sha256) {
+                throw "DOTNET RUNTIME LOCK MISMATCH: files=$($dotnetFiles.Count), bytes=$dotnetBytes, tree=$dotnetTreeSha."
+            }
+            Write-Host "  bundled .NET runtime $($dotnetSelection.Version) ($($dotnetSelection.Frameworks -join ', '))"
+            Write-Host "  .NET runtime lock verified: $dotnetTreeSha"
         } else {
             Write-Host "  runtime/dotnet already present, skipped bundling"
         }
@@ -364,6 +485,58 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
     } else {
         Write-Warning "DEV PUBLISH: -PythonSource/-WheelCache not supplied; runtime/python NOT provisioned (formal release requires it)."
     }
+
+    # Runtime inventory: explain why the portable package is large and make the exact runtime set
+    # independently auditable. Directory digests hash sorted relative-path/size/file-SHA rows.
+    $runtimeRoot = Join-Path $StagingRoot 'runtime'
+    $inventoryPath = Join-Path $runtimeRoot 'RUNTIME-INVENTORY.md'
+    $dotnetRuntimeRoot = Join-Path $runtimeRoot 'dotnet'
+    $pythonRuntimeRoot = Join-Path $runtimeRoot 'python'
+    $sqliteRuntimePath = Join-Path $runtimeRoot 'sqlite/sqlite3.dll'
+    $pythonLock = Get-Content -LiteralPath (Join-Path $RepoRoot 'engine/locks/python-runtime.lock.json') -Raw | ConvertFrom-Json
+    $dotnetFiles = if (Test-Path -LiteralPath $dotnetRuntimeRoot) { @(Get-ChildItem -LiteralPath $dotnetRuntimeRoot -Recurse -File) } else { @() }
+    $pythonFiles = if (Test-Path -LiteralPath $pythonRuntimeRoot) { @(Get-ChildItem -LiteralPath $pythonRuntimeRoot -Recurse -File) } else { @() }
+    $sqliteSha = if (Test-Path -LiteralPath $sqliteRuntimePath) { (Get-FileHash -Algorithm SHA256 -LiteralPath $sqliteRuntimePath).Hash.ToLowerInvariant() } else { 'NOT_AVAILABLE' }
+    $numpyLock = @($pythonLock.dependencies | Where-Object name -eq 'numpy')[0]
+    $openBlas = @($pythonFiles | Where-Object Name -Like 'libopenblas*.dll' | Select-Object -First 1)
+    $openBlasLine = if ($openBlas.Count -eq 1) {
+        "| OpenBLAS | NumPy $($numpyLock.version) 随附原生库 | $($openBlas[0].Name) | $((Get-FileHash -Algorithm SHA256 -LiteralPath $openBlas[0].FullName).Hash.ToLowerInvariant()) | NumPy wheel 内置；许可证随 NumPy 元数据提供 |"
+    } else {
+        '| OpenBLAS | NumPy 随附原生库 | NOT_AVAILABLE | NOT_AVAILABLE | 未在运行时中发现 |'
+    }
+    $dotnetVersion = if ($null -ne $dotnetSelection) { [string]$dotnetSelection.Version } else { 'NOT_BUNDLED' }
+    $dotnetDigest = if ($dotnetFiles.Count -gt 0) { Get-DirectoryTreeSha256 $dotnetRuntimeRoot } else { 'NOT_AVAILABLE' }
+    $inventory = @(
+        '# Observer Runtime Inventory',
+        '',
+        '> 本文件由正式制包脚本生成，用于解释便携式发布包的运行时构成。它是审计清单，不是生产就绪声明。',
+        '',
+        "生成时间（UTC）：$([DateTime]::UtcNow.ToString('O'))",
+        '',
+        '| 组件 | 版本/范围 | 用途 | SHA-256 / 树摘要 | 来源与许可证 |',
+        '|---|---|---|---|---|',
+        "| .NET Host + Microsoft.NETCore.App + Microsoft.AspNetCore.App | $dotnetVersion | 启动 CLI 与本地 Web 控制台 | $dotnetDigest | 制包输入 -DotnetRoot；runtime/dotnet/LICENSE.txt 与 ThirdPartyNotices.txt |",
+        "| CPython | $($pythonLock.version) x64 | 运行固定 Engine worker | $($pythonLock.runtime_tree_manifest_sha256) | $($pythonLock.distribution.source_url)；runtime/python/LICENSE.txt（若上游分发包含） |",
+        "| pip | $($pythonLock.pip.version) | 离线依赖元数据与运行支持 | $($pythonLock.pip.sha256) | $($pythonLock.pip.source_url)；wheel 元数据 |",
+        "| NumPy | $($numpyLock.version) | Engine 数值运行依赖 | $($numpyLock.sha256) | 固定 wheel；runtime/python/Lib/site-packages/numpy-*.dist-info |",
+        $openBlasLine,
+        "| SQLite native | 随 Microsoft.Data.Sqlite 运行负载 | 本地证据存储 | $sqliteSha | e_sqlite3.dll 的发布负载；需结合依赖许可证清单审查 |",
+        '',
+        '## 体积',
+        '',
+        "- .NET runtime：$([long](($dotnetFiles | Measure-Object Length -Sum).Sum)) 字节，$($dotnetFiles.Count) 个文件。",
+        "- Python runtime：$([long](($pythonFiles | Measure-Object Length -Sum).Sum)) 字节，$($pythonFiles.Count) 个文件。",
+        '',
+        '## .NET 选择规则',
+        '',
+        "CLI 与 Web 的 runtimeconfig 共同解析到补丁版本 $dotnetVersion。发布包只携带这一共同兼容版本及同版本 host/fxr，不得复制构建机上的其它已安装补丁。",
+        '',
+        '## Python 锁定来源',
+        '',
+        '`engine/locks/python-runtime.lock.json` 与 `engine/locks/runtime-manifest.json` 是 Python 版本、wheel SHA 和最终文件树的权威锁定来源。'
+    )
+    Set-Content -LiteralPath $inventoryPath -Value ($inventory -join "`n") -Encoding utf8
+    Write-Host "  runtime inventory -> $inventoryPath"
 
     # M2-FIX-03 (T7c): ensure CLI + Web appsettings.json ship with an empty EngineV15.PythonExecutablePath
     # (resolved at runtime by RuntimeConfigurationResolver; the value here is a placeholder only).
@@ -570,6 +743,25 @@ $runtimePayloadDigest = $baselineRuntimePayloadDigest
         # G4: release-manifest.json must NOT be at the package root (ZIP_ROOT_RELEASE_MANIFEST=NO).
         if (Test-Path -LiteralPath (Join-Path $OutputRoot "release-manifest.json") -PathType Leaf) {
             throw "F6 REJECT: release-manifest.json present at package root (ZIP_ROOT_RELEASE_MANIFEST=NO violated)."
+        }
+
+        # G5: portable runtime inventory is present and the .NET payload contains exactly the
+        # selected common patch for hostfxr + both required shared frameworks. This prevents the
+        # build machine's unrelated installed patches from leaking into the release artifact.
+        $publishedInventory = Join-Path $OutputRoot 'runtime/RUNTIME-INVENTORY.md'
+        if (-not (Test-Path -LiteralPath $publishedInventory -PathType Leaf)) {
+            throw "F6 REJECT: runtime/RUNTIME-INVENTORY.md missing."
+        }
+        $publishedVersionSets = @(
+            (Join-Path $OutputRoot 'runtime/dotnet/host/fxr'),
+            (Join-Path $OutputRoot 'runtime/dotnet/shared/Microsoft.NETCore.App'),
+            (Join-Path $OutputRoot 'runtime/dotnet/shared/Microsoft.AspNetCore.App')
+        )
+        foreach ($versionRoot in $publishedVersionSets) {
+            $versions = @(Get-ChildItem -LiteralPath $versionRoot -Directory | ForEach-Object Name)
+            if ($versions.Count -ne 1 -or $versions[0] -ne $dotnetSelection.Version) {
+                throw "F6 REJECT: $versionRoot must contain only .NET $($dotnetSelection.Version); found '$($versions -join ', ')'."
+            }
         }
 
         Write-Host "  F6 RELEASE GATE PASSED."

@@ -11,6 +11,121 @@ namespace FullSpectrum.Observer.Tests.Unit;
 
 public sealed class LauncherShutdownTests
 {
+    [Fact]
+    public void Launch_settings_prioritize_command_line_then_environment()
+    {
+        LaunchSettings.ResolveDataDirectoryOverride("C:\\package", "C:\\cli", "C:\\environment")
+            .Should().Be("C:\\cli");
+        LaunchSettings.ResolveDataDirectoryOverride("C:\\package", null, "C:\\environment")
+            .Should().Be("C:\\environment");
+    }
+
+    [Fact]
+    public void Launch_settings_find_strict_parent_sidecar_for_literal_double_click()
+    {
+        string parent = Path.Combine(Path.GetTempPath(), $"observer-launch-{Guid.NewGuid():N}");
+        string root = Path.Combine(parent, "观察者 候选包");
+        string dataDirectory = Path.Combine(parent, "隔离 数据");
+        try
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllText(
+                Path.Combine(parent, LaunchSettings.FileName),
+                $$"""{"data_directory":"{{dataDirectory.Replace("\\", "\\\\")}}"}""");
+
+            LaunchSettings.ResolveDataDirectoryOverride(root, null, null).Should().Be(dataDirectory);
+        }
+        finally
+        {
+            Directory.Delete(parent, true);
+        }
+    }
+
+    [Fact]
+    public void Launch_settings_reject_unknown_fields()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"observer-launch-{Guid.NewGuid():N}");
+        try
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllText(
+                Path.Combine(root, LaunchSettings.FileName),
+                "{\"data_directory\":\"C:\\\\isolated\",\"unknown\":true}");
+
+            Action act = () => LaunchSettings.ResolveDataDirectoryOverride(root, null, null);
+            act.Should().Throw<InvalidDataException>().WithMessage("*只允许 data_directory*");
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void Launch_settings_reject_relative_data_directory()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"observer-launch-{Guid.NewGuid():N}");
+        try
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllText(
+                Path.Combine(root, LaunchSettings.FileName),
+                "{\"data_directory\":\"relative-data\"}");
+
+            Action act = () => LaunchSettings.ResolveDataDirectoryOverride(root, null, null);
+            act.Should().Throw<InvalidDataException>().WithMessage("*必须是非空绝对路径*");
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void External_identity_discovery_prefers_explicit_configuration()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"observer-package-{Guid.NewGuid():N}");
+        string explicitPath = Path.Combine(Path.GetTempPath(), $"observer-identity-{Guid.NewGuid():N}.json");
+
+        Launcher.ResolveExternalIdentityPath(root, explicitPath).Should().Be(Path.GetFullPath(explicitPath));
+    }
+
+    [Fact]
+    public void External_identity_discovery_finds_public_asset_beside_extracted_directory()
+    {
+        string parent = Path.Combine(Path.GetTempPath(), $"observer-download-{Guid.NewGuid():N}");
+        string root = Path.Combine(parent, "观察者 候选包");
+        string identity = Path.Combine(parent, "observer_IDENTITY.json");
+        try
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllText(identity, "{}");
+
+            Launcher.ResolveExternalIdentityPath(root, null).Should().Be(identity);
+        }
+        finally
+        {
+            Directory.Delete(parent, true);
+        }
+    }
+
+    [Fact]
+    public void External_identity_discovery_does_not_mislabel_internal_release_identity()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"observer-package-{Guid.NewGuid():N}");
+        try
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllText(Path.Combine(root, "release-identity.json"), "{}");
+
+            Launcher.ResolveExternalIdentityPath(root, null).Should().BeNull();
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
     [Theory]
     [InlineData(2)]
     [InlineData(5)]

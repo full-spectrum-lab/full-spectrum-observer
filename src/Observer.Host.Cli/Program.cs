@@ -283,7 +283,11 @@ static async Task<int> VerifyAuditAsync(
 static async Task<int> ServeAsync(CliOptions options, CancellationToken cancellationToken)
 {
     SqliteRuntimeBootstrap.Initialize();
-    string dataDir = ObserverDataDirectory.Resolve(options.Get("--data-dir"));
+    string? dataDirectoryOverride = LaunchSettings.ResolveDataDirectoryOverride(
+        AppContext.BaseDirectory,
+        options.Get("--data-dir"),
+        Environment.GetEnvironmentVariable("Observer__DataDirectory"));
+    string dataDir = ObserverDataDirectory.Resolve(dataDirectoryOverride);
     Console.WriteLine($"[Observer] Resolved data directory: {dataDir}");
     string dbPath = Path.Combine(dataDir, "observer_console.db");
 

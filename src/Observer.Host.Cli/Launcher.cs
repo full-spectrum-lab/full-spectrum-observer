@@ -249,17 +249,50 @@ public sealed class Launcher : IDisposable
             RedirectStandardError = false,
             WorkingDirectory = webDir,
         };
-        // A caller may supply the separately downloaded release identity, which carries the full
-        // ZIP SHA-256 without creating an impossible self-reference inside the ZIP. Preserve that
-        // explicit path for the Web child. A standalone extracted ZIP falls back to its package-root
-        // identity, which intentionally omits package_sha256 and reports that field as unavailable.
-        var externalIdentityPath = Environment.GetEnvironmentVariable("OBSERVER_RELEASE_IDENTITY_PATH");
-        startInfo.Environment["OBSERVER_RELEASE_IDENTITY_PATH"] =
-            !string.IsNullOrWhiteSpace(externalIdentityPath)
-                ? Path.GetFullPath(externalIdentityPath)
-                : Path.Combine(AppContext.BaseDirectory, "release-identity.json");
+        // Prefer an explicitly configured package-external identity. For the normal GitHub
+        // download flow, Windows extracts observer.zip into a child directory while the separately
+        // downloaded observer_IDENTITY.json remains beside that directory, so discover that exact
+        // public-asset name at the package root or its parent. Never pass the package-internal
+        // release-identity.json through the EXTERNAL environment variable: doing so mislabels the
+        // source and cannot provide the ZIP SHA-256 by design. With no external identity, the Web
+        // host honestly falls back to its package manifest.
+        string? externalIdentityPath = ResolveExternalIdentityPath(
+            AppContext.BaseDirectory,
+            Environment.GetEnvironmentVariable("OBSERVER_RELEASE_IDENTITY_PATH"));
+        if (externalIdentityPath is not null)
+        {
+            startInfo.Environment["OBSERVER_RELEASE_IDENTITY_PATH"] = externalIdentityPath;
+        }
+        else
+        {
+            startInfo.Environment.Remove("OBSERVER_RELEASE_IDENTITY_PATH");
+        }
         _hostProcess = Process.Start(startInfo)
             ?? throw new InvalidOperationException("无法启动 Host 进程（Observer.Host.Web）。");
+    }
+
+    internal static string? ResolveExternalIdentityPath(string packageRoot, string? configuredPath)
+    {
+        if (!string.IsNullOrWhiteSpace(configuredPath))
+        {
+            // Preserve an explicit-but-missing path so the Web host reports NOT_AVAILABLE instead
+            // of silently substituting a different identity source.
+            return Path.GetFullPath(configuredPath);
+        }
+
+        string absoluteRoot = Path.GetFullPath(packageRoot);
+        string? parent = Directory.GetParent(absoluteRoot.TrimEnd(
+            Path.DirectorySeparatorChar,
+            Path.AltDirectorySeparatorChar))?.FullName;
+        string[] candidates = parent is null
+            ? [Path.Combine(absoluteRoot, "observer_IDENTITY.json")]
+            :
+            [
+                Path.Combine(absoluteRoot, "observer_IDENTITY.json"),
+                Path.Combine(parent, "observer_IDENTITY.json"),
+            ];
+
+        return candidates.FirstOrDefault(File.Exists);
     }
 
     private static void OpenBrowser(string url)
