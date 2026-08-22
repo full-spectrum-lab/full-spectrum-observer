@@ -158,12 +158,32 @@
           "FullSpectrum.Observer.Store": "[1.0.0, )"
         }
       },
+      "FullSpectrum.Observer.Evidence": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Application": "[1.0.0, )",
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "SourceGear.sqlite3": "[3.53.3, )"
+        }
+      },
       "FullSpectrum.Observer.Execution": {
         "type": "Project",
         "dependencies": {
           "FullSpectrum.Observer.Application": "[1.0.0, )",
           "FullSpectrum.Observer.Contracts": "[1.0.0, )",
           "FullSpectrum.Observer.EngineFacade": "[1.0.0, )"
+        }
+      },
+      "FullSpectrum.Observer.Host.Cli": {
+        "type": "Project",
+        "dependencies": {
+          "FullSpectrum.Observer.Application": "[1.0.0, )",
+          "FullSpectrum.Observer.Contracts": "[1.0.0, )",
+          "FullSpectrum.Observer.EngineFacade": "[1.0.0, )",
+          "FullSpectrum.Observer.Evidence": "[1.0.0, )",
+          "FullSpectrum.Observer.Execution": "[1.0.0, )",
+          "FullSpectrum.Observer.Recovery": "[1.0.0, )",
+          "FullSpectrum.Observer.Store": "[1.0.0, )"
         }
       },
       "FullSpectrum.Observer.Recovery": {

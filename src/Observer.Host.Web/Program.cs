@@ -25,6 +25,8 @@ builder.WebHost.UseKestrel(options => options.ListenLocalhost(port));
 string? bootstrapToken = GetOption(args, "--bootstrap-token");
 string? stopToken = GetOption(args, "--stop-token");
 string? stopPipe = GetOption(args, "--stop-pipe");
+int launcherPid = ParsePositiveInt(GetOption(args, "--launcher-pid"));
+long launcherStartUtcTicks = ParsePositiveLong(GetOption(args, "--launcher-start-utc-ticks"));
 string requestedUrls = GetOption(args, "--urls");
 builder.Services.AddSingleton(new BootstrapTokenContext(bootstrapToken, TimeSpan.FromSeconds(30)));
 
@@ -66,6 +68,14 @@ if (!string.IsNullOrEmpty(stopPipe))
             sp.GetRequiredService<IHostApplicationLifetime>(),
             stopPipe!,
             stopToken ?? string.Empty));
+}
+if (launcherPid > 0 && launcherStartUtcTicks > 0)
+{
+    builder.Services.AddHostedService(sp =>
+        new LauncherLifetimeMonitor(
+            sp.GetRequiredService<IHostApplicationLifetime>(),
+            launcherPid,
+            launcherStartUtcTicks));
 }
 builder.Services.AddSingleton<IEngineFacade>(sp =>
 {
@@ -141,6 +151,12 @@ static int ResolveLoopbackPort(string[] args)
     }
     return uri.Port;
 }
+
+static int ParsePositiveInt(string? value) =>
+    int.TryParse(value, out int parsed) && parsed > 0 ? parsed : 0;
+
+static long ParsePositiveLong(string? value) =>
+    long.TryParse(value, out long parsed) && parsed > 0 ? parsed : 0;
 
 static bool IsLoopbackHost(string host) =>
     host is "127.0.0.1" or "::1" or "localhost" or "[::1]";

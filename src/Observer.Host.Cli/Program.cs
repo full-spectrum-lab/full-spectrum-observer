@@ -47,7 +47,16 @@ static async Task<int> MainAsync(string[] args)
         // repository root to be discoverable from the working directory.
         if (command == "serve")
         {
-            return await ServeAsync(options, cts.Token);
+            using var cleanupComplete = new ManualResetEventSlim(false);
+            using var consoleShutdown = WindowsConsoleShutdown.Register(cts, cleanupComplete);
+            try
+            {
+                return await ServeAsync(options, cts.Token);
+            }
+            finally
+            {
+                cleanupComplete.Set();
+            }
         }
 
         string dataDir = ObserverDataDirectory.Resolve(options.Get("--data-dir"));
