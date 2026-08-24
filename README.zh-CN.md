@@ -1,5 +1,9 @@
 # Full Spectrum Observer
 
+- 创建时间：2026-07-16 17:35
+- 最后更新时间：2026-08-24 11:07
+- 时区：北京时间（UTC+8）
+
 [![全频谱体系总图](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/full-spectrum-system-master-map-zh-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
 
 [从你的问题开始](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md) · [四条可独立使用的工程轨道](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/four-independent-engineering-tracks.md)
@@ -46,6 +50,14 @@ Observer 应用（.NET 10）
 ```
 
 只有 `Observer.EngineFacade` 可以启动 Engine Worker。Observer 不重新实现 FSHI、Risk、ESS、Gate、UNKNOWN、Explanation 或 Runestone 计算，也不认证、授权或执行企业最终业务动作。
+
+## 来源与证据边界
+
+Observer 的证据纪律，部分来自对 AI 相互认同、叙事放大和现实校准缺失风险的早期观察。这段历史可以解释项目为什么强调来源、显式状态、回放、独立复核和有边界的人工决定。
+
+来源只提供背景，不证明 Observer 的运行行为。文学材料、个人经历、AI 自述和历史理论都不能替代本仓库的代码、测试、Release 资产、校验和与可复现执行证据。
+
+- [全频谱来源与证据边界](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/public-writing-and-origins.zh-CN.md) · [English](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/public-writing-and-origins.md)
 
 ## 源码复验
 
