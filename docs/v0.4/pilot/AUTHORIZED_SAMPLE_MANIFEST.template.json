@@ -1,0 +1,26 @@
+{
+  "contract": "fs-observer/v04-authorized-sample-manifest/1",
+  "pilot_id": "<REQUIRED>",
+  "data_owner": "<REQUIRED>",
+  "authorization_basis_ref": "<REQUIRED_EXTERNAL_REFERENCE>",
+  "approved_purpose": "knowledge-conflict narrow pilot",
+  "approved_at_utc": "<REQUIRED>",
+  "expires_at_utc": "<REQUIRED>",
+  "sample_boundary": {
+    "sample_boundary_id": "<REQUIRED>",
+    "item_count": 0,
+    "inclusion_rule": "<REQUIRED>",
+    "exclusion_rule": "<REQUIRED>",
+    "label_provenance_ref": "<REQUIRED>"
+  },
+  "scenario_pack": {
+    "pack_id": "observer.case.knowledge-conflict",
+    "version": "1.0.0",
+    "digest": "0cbfa79965f756d8105afe283e843b91dfc1c428e5e29df803c9518015a55633",
+    "signature_key_id": "<REQUIRED_TRUSTED_DEPLOYMENT_KEY>"
+  },
+  "redaction_report_ref": "<REQUIRED>",
+  "deletion_exit_plan_ref": "<REQUIRED>",
+  "retention_mode": "SANITIZED_PERSISTENT",
+  "status": "DRAFT_NOT_AUTHORIZED"
+}

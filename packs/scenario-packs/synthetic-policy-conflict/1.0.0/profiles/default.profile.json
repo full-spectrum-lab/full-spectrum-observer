@@ -1,0 +1,7 @@
+{
+  "profile_id": "spc.default",
+  "version": "1.0.0",
+  "candidate_only": true,
+  "preserve_unknown": true,
+  "human_review_required": true
+}

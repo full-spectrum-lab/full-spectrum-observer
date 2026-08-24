@@ -16,7 +16,7 @@ namespace FullSpectrum.Observer.Store;
 ///   <item><description>Digests (input/evidence/runtime) are stored verbatim; never fabricated or recomputed.</description></item>
 /// </list>
 /// </summary>
-public sealed class ObserverStore : IAsyncDisposable
+public sealed partial class ObserverStore : IAsyncDisposable
 {
     // Install the patched SourceGear native SQLite provider before any connection is opened.
     // Runs once, at first use of this type, guaranteeing the e_sqlite3 provider is active
@@ -49,6 +49,8 @@ public sealed class ObserverStore : IAsyncDisposable
         // rebuild, transactional, idempotent — runs on every open so both fresh and pre-fix
         // databases converge to the canonical CHECK.
         await EngineVersionCanonicalizationMigration.ApplyAsync(connection);
+        await ApplySqlMigrationAsync(connection, "FullSpectrum.Observer.Store.Data.Migrations.002_v04_scenario_packs.sql");
+        await ApplySqlMigrationAsync(connection, "FullSpectrum.Observer.Store.Data.Migrations.003_v04_pilot_loop.sql");
     }
 
     /// <summary>
@@ -99,6 +101,182 @@ public sealed class ObserverStore : IAsyncDisposable
             ?? throw new StoreException("STORE_MIGRATION_MISSING", $"Embedded resource {resourceName} was not found.");
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
+    }
+
+    private static async Task ApplySqlMigrationAsync(SqliteConnection connection, string resourceName)
+    {
+        var assembly = typeof(ObserverStore).Assembly;
+        using var stream = assembly.GetManifestResourceStream(resourceName)
+            ?? throw new StoreException("STORE_MIGRATION_MISSING", $"Embedded resource {resourceName} was not found.");
+        using var reader = new StreamReader(stream);
+        await using var command = connection.CreateCommand();
+        command.CommandText = await reader.ReadToEndAsync();
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // ---------------------------------------------------------------------
+    // v0.4 Scenario Pack frozen versions + task bindings
+    // ---------------------------------------------------------------------
+
+    public async Task<ScenarioPackRegistration> InstallScenarioPackAsync(ScenarioPackRegistration registration)
+    {
+        ArgumentNullException.ThrowIfNull(registration);
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
+        try
+        {
+            ScenarioPackRegistration? existing = await GetScenarioPackAsync(
+                connection, transaction, registration.PackId, registration.Version);
+            if (existing is not null)
+            {
+                if (!string.Equals(existing.Digest, registration.Digest, StringComparison.Ordinal) ||
+                    !string.Equals(existing.ManifestJson, registration.ManifestJson, StringComparison.Ordinal))
+                {
+                    throw new StoreException(
+                        "SCENARIO_PACK_IDENTITY_CONFLICT",
+                        $"{registration.PackId}@{registration.Version} is already frozen with different content.");
+                }
+                await transaction.CommitAsync();
+                return existing;
+            }
+
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = @"
+                INSERT INTO scenario_pack_versions
+                    (pack_id, version, digest, manifest_json, installed_at_utc)
+                VALUES (@pack, @version, @digest, @manifest, @installed)";
+            command.Parameters.AddWithValue("@pack", registration.PackId);
+            command.Parameters.AddWithValue("@version", registration.Version);
+            command.Parameters.AddWithValue("@digest", registration.Digest);
+            command.Parameters.AddWithValue("@manifest", registration.ManifestJson);
+            command.Parameters.AddWithValue("@installed", registration.InstalledAtUtc);
+            await command.ExecuteNonQueryAsync();
+            await transaction.CommitAsync();
+            return registration;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<ScenarioPackRegistration?> GetScenarioPackAsync(string packId, string version)
+    {
+        await using var connection = Open();
+        await connection.OpenAsync();
+        return await GetScenarioPackAsync(connection, null, packId, version);
+    }
+
+    public async Task<ScenarioPackTaskBinding> BindScenarioPackToTaskAsync(ScenarioPackTaskBinding binding)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
+        try
+        {
+            ScenarioPackTaskBinding? existing = await GetScenarioPackTaskBindingAsync(connection, transaction, binding.TaskId);
+            if (existing is not null)
+            {
+                bool sameFrozenBinding =
+                    string.Equals(existing.PackId, binding.PackId, StringComparison.Ordinal) &&
+                    string.Equals(existing.PackVersion, binding.PackVersion, StringComparison.Ordinal) &&
+                    string.Equals(existing.PackDigest, binding.PackDigest, StringComparison.Ordinal) &&
+                    string.Equals(existing.ProfileRefsJson, binding.ProfileRefsJson, StringComparison.Ordinal);
+                if (!sameFrozenBinding)
+                {
+                    throw new StoreException(
+                        "SCENARIO_PACK_TASK_BINDING_CONFLICT",
+                        $"Task {binding.TaskId} is already bound to {existing.PackId}@{existing.PackVersion}@{existing.PackDigest}.");
+                }
+                await transaction.CommitAsync();
+                return existing;
+            }
+
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = @"
+                INSERT INTO scenario_pack_task_bindings
+                    (task_id, pack_id, pack_version, pack_digest, profile_refs_json, bound_at_utc)
+                VALUES (@task, @pack, @version, @digest, @profiles, @bound)";
+            command.Parameters.AddWithValue("@task", binding.TaskId);
+            command.Parameters.AddWithValue("@pack", binding.PackId);
+            command.Parameters.AddWithValue("@version", binding.PackVersion);
+            command.Parameters.AddWithValue("@digest", binding.PackDigest);
+            command.Parameters.AddWithValue("@profiles", binding.ProfileRefsJson);
+            command.Parameters.AddWithValue("@bound", binding.BoundAtUtc);
+            await command.ExecuteNonQueryAsync();
+            await transaction.CommitAsync();
+            return binding;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<ScenarioPackTaskBinding?> GetScenarioPackTaskBindingAsync(string taskId)
+    {
+        await using var connection = Open();
+        await connection.OpenAsync();
+        return await GetScenarioPackTaskBindingAsync(connection, null, taskId);
+    }
+
+    private static async Task<ScenarioPackRegistration?> GetScenarioPackAsync(
+        SqliteConnection connection,
+        SqliteTransaction? transaction,
+        string packId,
+        string version)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = @"
+            SELECT pack_id, version, digest, manifest_json, installed_at_utc
+            FROM scenario_pack_versions
+            WHERE pack_id = @pack AND version = @version";
+        command.Parameters.AddWithValue("@pack", packId);
+        command.Parameters.AddWithValue("@version", version);
+        await using var reader = await command.ExecuteReaderAsync();
+        return await reader.ReadAsync()
+            ? new ScenarioPackRegistration
+            {
+                PackId = reader.GetString(0),
+                Version = reader.GetString(1),
+                Digest = reader.GetString(2),
+                ManifestJson = reader.GetString(3),
+                InstalledAtUtc = reader.GetString(4),
+            }
+            : null;
+    }
+
+    private static async Task<ScenarioPackTaskBinding?> GetScenarioPackTaskBindingAsync(
+        SqliteConnection connection,
+        SqliteTransaction? transaction,
+        string taskId)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = @"
+            SELECT task_id, pack_id, pack_version, pack_digest, profile_refs_json, bound_at_utc
+            FROM scenario_pack_task_bindings
+            WHERE task_id = @task";
+        command.Parameters.AddWithValue("@task", taskId);
+        await using var reader = await command.ExecuteReaderAsync();
+        return await reader.ReadAsync()
+            ? new ScenarioPackTaskBinding
+            {
+                TaskId = reader.GetString(0),
+                PackId = reader.GetString(1),
+                PackVersion = reader.GetString(2),
+                PackDigest = reader.GetString(3),
+                ProfileRefsJson = reader.GetString(4),
+                BoundAtUtc = reader.GetString(5),
+            }
+            : null;
     }
 
     // ---------------------------------------------------------------------

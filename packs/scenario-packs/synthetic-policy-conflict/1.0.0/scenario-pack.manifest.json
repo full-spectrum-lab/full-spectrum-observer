@@ -1,0 +1,47 @@
+{
+  "contract": "fs-observer/scenario-pack-manifest/1",
+  "pack_id": "observer.case.synthetic-policy-conflict",
+  "version": "1.0.0",
+  "digest": "8621b5e6af22b48f79c722136a96389691f33f66aa603c641783bd0786e95109",
+  "compatible_observer_versions": [
+    "v0.4.0-beta"
+  ],
+  "compatible_engine_versions": [
+    "v1.5.0"
+  ],
+  "input_schema_ref": "schemas/input.schema.json",
+  "subject_types": [
+    "SyntheticPolicyClause"
+  ],
+  "knowledge_requirements": [
+    "two-versioned-synthetic-policy-clauses"
+  ],
+  "policy_profile_refs": [
+    "profiles/default.profile.json"
+  ],
+  "expected_observation": "Candidate policy-clause inconsistency with explicit evidence and UNKNOWN; no enforcement action.",
+  "reason_code_namespace": "SPC",
+  "evidence_requirements": "Retain synthetic clause identifiers, versions, comparison boundary and digest.",
+  "human_review_template": "reviews/human-review-template.md",
+  "golden_cases": [
+    {
+      "case_id": "SPC_GOLDEN_001",
+      "input_ref": "golden/golden-001.input.json",
+      "expected_conclusion": "REVIEW_REQUIRED",
+      "expected_reason_code": "SPC_INCONSISTENCY_CANDIDATE"
+    }
+  ],
+  "value_metrics": [
+    {
+      "metric_id": "repeat_result_consistency_rate",
+      "definition": "Identical digest-bound inputs with identical frozen dependencies producing the same candidate result divided by all replay pairs.",
+      "collection_point": "replay verification"
+    },
+    {
+      "metric_id": "human_review_duration_milliseconds",
+      "definition": "Elapsed milliseconds from review start to a persisted reviewer disposition.",
+      "collection_point": "review record"
+    }
+  ],
+  "known_limitations": "Synthetic replaceability fixture only. It adds no policy engine and proves no real-world effectiveness."
+}

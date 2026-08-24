@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fullspectrumprotocol.com/packs/knowledge-conflict/1.0.0/input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sample_id", "sources"],
+  "properties": {
+    "sample_id": { "type": "string", "minLength": 1 },
+    "sources": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "version", "claim"],
+        "properties": {
+          "source_id": { "type": "string" },
+          "version": { "type": "string" },
+          "claim": { "type": "string" }
+        }
+      }
+    }
+  }
+}

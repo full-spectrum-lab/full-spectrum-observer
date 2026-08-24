@@ -1,0 +1,9 @@
+{
+  "contract": "fs-observer/scenario-pack-signature/1",
+  "key_id": "observer-v04-synthetic-root-2026",
+  "algorithm": "RS256",
+  "pack_id": "observer.case.synthetic-policy-conflict",
+  "version": "1.0.0",
+  "digest": "8621b5e6af22b48f79c722136a96389691f33f66aa603c641783bd0786e95109",
+  "signature_base64": "L5/l+ivhkD4fVzNdsoqeoII9j078WjLwx7fN+l67mjKBaEbxpgLfs0FTdjCKKu5QwceLwRnDB2gaPzKFOEbw41jAv4fe1AaxdSITXuDtRgjttXk8m9JspVVq0r7lkupqyOEzGzyXzOR5YFxFmE5jFReBcI5istAohTanGkq51ek0KaY7Ob4ait7NkKFpiPF7jpVhCk9fgwvTpN7wyfhIzubt/0CRU+iIPPrUgaRlrE3jMpcb2gGv4VdYEihaNhVk2PLzlby0WAMOdNGQqTzR50gWkKlSZqIg6FnGzubIB369TOMn1v9oPwMl1hJn4GmuzZZUhu+bdd+wGuGi1nb07A=="
+}

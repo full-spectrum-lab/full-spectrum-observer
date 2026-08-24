@@ -1,0 +1,12 @@
+{
+  "contract": "fs-observer/scenario-pack-trust-store/1",
+  "keys": [
+    {
+      "key_id": "observer-v04-synthetic-root-2026",
+      "algorithm": "RS256",
+      "modulus_base64url": "1i_kfIaKmuwyO6Rz_UjA8ZICzUQy9DjvQSiz1ruNAeM6dos0FEnlnicmaaXjnsUriEhu2ZytVDNZa1H9SBKnqG49W5sQi8pdI04kVgIFCxMK_mbAxF_iVbMZPim0oq6wvwLoREoq7F4ARuT-GEvB6h6y8_kahZdadLBtRFaww4s6pxJggK2ia4F23ZktQ6GLjIBZ9e38e-nplLsUfbykxsVo4pOtqD-lG-Y-M3kkVZhG4GeWyfYi0MCKOrAJv7rGyh4NfFcKbiZbmUNuqaWdARYgzHZqTtpFrIR4D33dxqIAo0TyD5_OmzBm0hRn_oBsMRKmzDdHuh6fHwDHHmuOkQ",
+      "exponent_base64url": "AQAB",
+      "purpose": "SYNTHETIC_V04_FIXTURES_ONLY"
+    }
+  ]
+}

@@ -38,6 +38,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Data/Migrations/Init.sql" />
+    <EmbeddedResource Include="Data/Migrations/002_v04_scenario_packs.sql" />
+    <EmbeddedResource Include="Data/Migrations/003_v04_pilot_loop.sql" />
   </ItemGroup>
 
 </Project>

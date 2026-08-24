@@ -1,0 +1,74 @@
+{
+  "contract": "fs-observer/scenario-pack-manifest/1",
+  "pack_id": "observer.case.knowledge-conflict",
+  "version": "1.0.0",
+  "digest": "0cbfa79965f756d8105afe283e843b91dfc1c428e5e29df803c9518015a55633",
+  "compatible_observer_versions": [
+    "v0.4.0-beta"
+  ],
+  "compatible_engine_versions": [
+    "v1.5.0"
+  ],
+  "input_schema_ref": "schemas/input.schema.json",
+  "subject_types": [
+    "KnowledgeSource"
+  ],
+  "knowledge_requirements": [
+    "two-or-more-versioned-redacted-knowledge-sources"
+  ],
+  "policy_profile_refs": [
+    "profiles/default.profile.json"
+  ],
+  "expected_observation": "Candidate knowledge conflict with evidence references and UNKNOWN preservation; no automatic business decision.",
+  "reason_code_namespace": "KC",
+  "evidence_requirements": "Retain source identifiers, versions, conflict excerpts, boundary and digest without personal or confidential data.",
+  "human_review_template": "reviews/human-review-template.md",
+  "golden_cases": [
+    {
+      "case_id": "KC_GOLDEN_001",
+      "input_ref": "golden/golden-001.input.json",
+      "expected_conclusion": "REVIEW_REQUIRED",
+      "expected_reason_code": "KC_CONFLICT_CANDIDATE"
+    },
+    {
+      "case_id": "KC_BOUNDARY_001",
+      "input_ref": "golden/boundary-001.input.json",
+      "expected_conclusion": "NO_CONFLICT_CANDIDATE",
+      "expected_reason_code": "KC_BOUNDARY_NO_CONFLICT"
+    },
+    {
+      "case_id": "KC_ADVERSARIAL_001",
+      "input_ref": "golden/adversarial-001.input.json",
+      "expected_conclusion": "REVIEW_REQUIRED",
+      "expected_reason_code": "KC_UNTRUSTED_INSTRUCTION"
+    }
+  ],
+  "value_metrics": [
+    {
+      "metric_id": "discovery_rate",
+      "definition": "Confirmed conflicts found divided by labelled conflicts in the approved sample.",
+      "collection_point": "post-review metric ledger"
+    },
+    {
+      "metric_id": "false_positive_rate",
+      "definition": "Rejected candidate conflicts divided by all reviewed candidate conflicts.",
+      "collection_point": "post-review metric ledger"
+    },
+    {
+      "metric_id": "evidence_completeness_rate",
+      "definition": "Results satisfying all Pack evidence requirements divided by all results.",
+      "collection_point": "pre-export evidence gate"
+    },
+    {
+      "metric_id": "human_review_duration_milliseconds",
+      "definition": "Sum of measured human-review milliseconds divided by reviewed samples in the approved boundary.",
+      "collection_point": "immutable review records"
+    },
+    {
+      "metric_id": "repeat_result_consistency_rate",
+      "definition": "Frozen replay pairs with identical candidate results divided by all eligible replay pairs.",
+      "collection_point": "replay verification"
+    }
+  ],
+  "known_limitations": "Synthetic contract fixture only. It does not establish production validity or conclusions outside the labelled sample."
+}

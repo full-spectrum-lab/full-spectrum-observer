@@ -1,0 +1,15 @@
+{
+  "sample_id": "KC-GOLDEN-001",
+  "sources": [
+    {
+      "source_id": "synthetic-policy-a",
+      "version": "1.0.0",
+      "claim": "Approval is required before export."
+    },
+    {
+      "source_id": "synthetic-policy-b",
+      "version": "2.0.0",
+      "claim": "Approval is not required before export."
+    }
+  ]
+}
