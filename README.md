@@ -1,5 +1,9 @@
 # Full Spectrum Observer
 
+- Created at: 2026-07-13 09:48
+- Last updated at: 2026-08-24 11:07
+- Time zone: Beijing time (UTC+8)
+
 [English](README.md) · [简体中文](README.zh-CN.md)
 
 > Local-first Observer application for reproducible evidence, audit traces and bounded human review.
@@ -55,6 +59,14 @@ Observer application (.NET 10)
 ```
 
 Only `Observer.EngineFacade` may start the Engine worker. Observer does not reimplement FSHI, Risk, ESS, Gate, UNKNOWN, Explanation or Runestone calculations. It records and presents results; it does not certify, authorize or execute final enterprise actions.
+
+## Origins and evidence boundary
+
+Observer's evidence discipline was partly shaped by earlier experience with AI agreement, narrative amplification, and missing reality checks. That history explains the emphasis on provenance, explicit status, replay, independent review, and bounded human decisions.
+
+The origin is context, not proof of Observer behavior. Literary material, personal experience, AI self-description, and historical theory cannot replace this repository's code, tests, Release assets, checksums, or reproducible execution evidence.
+
+- [Full Spectrum Origins and Evidence Boundaries](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/public-writing-and-origins.md) · [中文](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/public-writing-and-origins.zh-CN.md)
 
 ## Reproduce the source gates
 
