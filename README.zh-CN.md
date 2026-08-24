@@ -1,7 +1,7 @@
 # Full Spectrum Observer
 
 - 创建时间：2026-07-16 17:35
-- 最后更新时间：2026-08-24 11:07
+- 最后更新时间：2026-08-24 18:23
 - 时区：北京时间（UTC+8）
 
 [![全频谱体系总图](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/full-spectrum-system-master-map-zh-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
@@ -20,13 +20,13 @@
 
 | 版本线 | 状态 | 范围 |
 |---|---|---|
-| [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **公开预发布** | Foundation Kernel 上的 Engine v1.0/v1.5 兼容适配层 |
-| [`v0.3.0-beta.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.2) | **公开 Beta 预发布** | Gate 1 产品化更新：主体和知识使用结构化输入；Windows x64 发布身份闭合；生产就绪：**否** |
-| [`v0.3.0-beta.1`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.1) | **已被替代** | 上一版发布身份闭合的 Beta，保留作发布历史 |
-| [`v0.3.0-beta`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta) | **已被替代** | 保留历史 RC5；其包内候选状态由 beta.1 补正 |
+| [`v0.3.0-maintenance.6`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-maintenance.6) | **当前公开维护预发布** | 已验证候选：数据目录隔离传播、便携 Runtime 清单、真实 Chrome Owner UAT 与证据链均已闭环；状态为 `NOT_RELEASED`，生产就绪：**否** |
+| [`v0.3.0-maintenance.5`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-maintenance.5) | **已被替代的失败候选** | 连同 `DATA_DIRECTORY_ISOLATION = FAIL` 证据保留，由 maintenance.6 替代 |
+| [`v0.3.0-beta.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.2) | **已被替代的 Beta 基线** | Gate 1 产品化更新，保留作发布历史 |
+| [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **历史预发布** | Foundation Kernel 上的 Engine v1.0/v1.5 兼容适配层 |
 | `v0.4`～`v1.0` | **已设计，尚未实现** | Scenario Pack、企业节点、多主体 Service 与真实组织验证 |
 
-当前公开版本为 `v0.3.0-beta.2`。权威 Windows x64 包和验证证据附在 Release 中；它是 Beta 工程预发布，不构成生产就绪或合规声明。
+当前公开版本为 `v0.3.0-maintenance.6`。权威 Windows x64 包、身份文件和 Manifest 附在 GitHub Pre-release 中。`CANDIDATE_VALIDATED` 仅表示既定工程验证与 Owner UAT 证据链已经闭环，不改变 `NOT_RELEASED` 与 `PRODUCTION_READY=NO`，也不构成合规声明。
 
 ## 当前已实现能力
 
