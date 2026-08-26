@@ -1,5 +1,8 @@
 # Observer v0.4 Scenario Pack contract and loading boundary
 
+Created at: 2026-08-25 20:00 Beijing time (UTC+8)
+Last updated at: 2026-08-26 22:40 Beijing time (UTC+8)
+
 Status: repository implementation complete for the v0.4 synthetic gate; external target-user pilot evidence remains required.
 
 ## Version boundary

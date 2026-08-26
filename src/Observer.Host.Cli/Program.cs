@@ -130,17 +130,24 @@ static int Help()
 static int Version(string[] args)
 {
     bool json = args.Any(static value => value.Equals("--json", StringComparison.OrdinalIgnoreCase));
+    if (!PackageIdentityResolver.TryResolve(out PackageIdentity? packageIdentity, out string? identityError))
+    {
+        Console.Error.WriteLine(identityError);
+        return 70;
+    }
     var value = new
     {
-        system_version = BuildIdentity.SystemVersion,
-        implementation_gate = BuildIdentity.ImplementationGate,
+        system_version = packageIdentity?.SystemVersion ?? BuildIdentity.SystemVersion,
+        implementation_gate = packageIdentity?.ImplementationGate ?? BuildIdentity.ImplementationGate,
         scope_baseline = BuildIdentity.ScopeBaseline,
         design_baseline = BuildIdentity.DesignBaseline,
         implementation_baseline = BuildIdentity.ImplementationBaseline,
         schema_baseline = BuildIdentity.SchemaBaseline,
         engine_version = BuildIdentity.EngineVersion,
         engine_commit = BuildIdentity.EngineCommit,
-        maturity = BuildIdentity.ImplementationGate,
+        maturity = packageIdentity?.Maturity ?? BuildIdentity.ImplementationGate,
+        release_authorized = packageIdentity?.ReleaseAuthorized ?? true,
+        package_source_commit = packageIdentity?.SourceCommit,
     };
     Console.WriteLine(json
         ? JsonSerializer.Serialize(value, FoundationJson.CreateOptions())
