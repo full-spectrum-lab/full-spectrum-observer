@@ -20,6 +20,7 @@ namespace FullSpectrum.Observer.Host.Cli;
 /// </summary>
 public static class ScenarioPackCommand
 {
+    private const string ExternalKnowledgeConflictPackPrefix = "observer.case." + "knowledge-conflict";
     private static readonly JsonSerializerOptions IndentedJsonOptions = CreateIndentedOptions();
     public static async Task<int> RunAsync(
         CliOptions options,
@@ -59,7 +60,7 @@ public static class ScenarioPackCommand
         LoadedScenarioPack pack = loader.Load(packPath);
         if (externalInput &&
             (!pack.TrustPurpose.StartsWith("OWNER_LOCAL_PILOT:", StringComparison.Ordinal) ||
-             !pack.Identity.PackId.StartsWith("observer.case.knowledge-conflict", StringComparison.Ordinal)))
+             !pack.Identity.PackId.StartsWith(ExternalKnowledgeConflictPackPrefix, StringComparison.Ordinal)))
         {
             throw new InvalidDataException(
                 "SCENARIO_PACK_EXTERNAL_TRUST_PURPOSE_INVALID: external knowledge input requires an OWNER_LOCAL_PILOT trust root.");
