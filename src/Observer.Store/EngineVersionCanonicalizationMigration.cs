@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using FullSpectrum.Observer.Contracts.Models;
@@ -96,7 +97,7 @@ internal static class EngineVersionCanonicalizationMigration
         command.CommandText = "SELECT COUNT(*) FROM schema_migrations WHERE migration_id = @mid";
         command.Parameters.AddWithValue("@mid", MigrationId);
         var result = await command.ExecuteScalarAsync();
-        return Convert.ToInt64(result) > 0;
+        return Convert.ToInt64(result, CultureInfo.InvariantCulture) > 0;
     }
 
     private static async Task<bool> IsRuntimeSnapshotsCanonicalAsync(SqliteConnection connection, SqliteTransaction transaction)
@@ -269,6 +270,6 @@ internal static class EngineVersionCanonicalizationMigration
         command.Transaction = transaction;
         command.CommandText = sql;
         var result = await command.ExecuteScalarAsync();
-        return Convert.ToInt64(result);
+        return Convert.ToInt64(result, CultureInfo.InvariantCulture);
     }
 }

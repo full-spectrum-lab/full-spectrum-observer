@@ -72,3 +72,56 @@ jobs:
         with:
           name: foundation-gate-evidence
           path: evidence/
+
+  v04-scenario-pack:
+    name: Observer v0.4 Scenario Pack gate
+    runs-on: windows-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+      PYTHONHASHSEED: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.301
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.8
+
+      - name: Install pinned Engine runtime dependency
+        shell: pwsh
+        run: python -m pip install numpy==1.26.4
+
+      - name: Acquire pinned SQLite native runtime
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP "sqlite-v04.zip"
+          $runtime = Join-Path $env:RUNNER_TEMP "sqlite-v04"
+          Invoke-WebRequest https://www.sqlite.org/2025/sqlite-dll-win-x64-3500400.zip -OutFile $archive
+          $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne "56b8751cdbf6dcd8ac9a35508039e456692a402bc5ddf576c2b0eddb0fed8536") {
+            throw "SQLite archive digest mismatch: $actual"
+          }
+          Expand-Archive $archive $runtime
+          "FSP_SQLITE_NATIVE_DIR=$runtime" | Out-File $env:GITHUB_ENV -Append
+          "FSP_PRIVATE_PYTHON=$((Get-Command python).Source)" | Out-File $env:GITHUB_ENV -Append
+
+      - name: Run v0.4 Scenario Pack aggregate gate
+        shell: pwsh
+        run: ./scripts/test-v04.ps1 -PrivatePython $env:FSP_PRIVATE_PYTHON -SqliteNativeDirectory $env:FSP_SQLITE_NATIVE_DIR
+
+      - name: Run complete .NET test suite
+        shell: pwsh
+        run: dotnet test FullSpectrum.Observer.sln --configuration Release --no-restore
+
+      - name: Upload v0.4 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: observer-v04-scenario-pack-evidence
+          path: evidence/

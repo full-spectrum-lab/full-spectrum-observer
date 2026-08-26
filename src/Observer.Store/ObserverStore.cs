@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using FullSpectrum.Observer.Contracts.Models;
@@ -383,7 +384,7 @@ public sealed partial class ObserverStore : IAsyncDisposable
         command.CommandText = "SELECT COALESCE(MAX(seq), 0) + 1 FROM subject_versions WHERE subject_id = @sid";
         command.Parameters.AddWithValue("@sid", subjectId);
         var value = await command.ExecuteScalarAsync();
-        return Convert.ToInt32(value);
+        return Convert.ToInt32(value, CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -589,7 +590,7 @@ public sealed partial class ObserverStore : IAsyncDisposable
         command.CommandText = "SELECT COALESCE(MAX(seq), 0) + 1 FROM knowledge_source_versions WHERE source_id = @sid";
         command.Parameters.AddWithValue("@sid", sourceId);
         var value = await command.ExecuteScalarAsync();
-        return Convert.ToInt32(value);
+        return Convert.ToInt32(value, CultureInfo.InvariantCulture);
     }
 
     public async Task ActivateKnowledgeSourceVersionAsync(string versionId, string effectiveTimeUtc, AuditRecord audit)
@@ -1191,7 +1192,7 @@ public sealed partial class ObserverStore : IAsyncDisposable
         await using var command = connection.CreateCommand();
         command.CommandText = sql;
         var value = await command.ExecuteScalarAsync();
-        return Convert.ToInt32(value);
+        return Convert.ToInt32(value, CultureInfo.InvariantCulture);
     }
 
     private static string SerializeArray(ImmutableArray<string> values) =>

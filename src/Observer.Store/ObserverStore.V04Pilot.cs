@@ -132,14 +132,23 @@ public sealed partial class ObserverStore
                 update.CommandText = @"
                     UPDATE scenario_pack_batch_items
                     SET status='PROCESSING', attempts=attempts+1
-                    WHERE batch_id=@batch AND item_id=@item AND status='PENDING';
+                    WHERE batch_id=@batch AND item_id=@item AND status='PENDING';";
+                update.Parameters.AddWithValue("@batch", batchId);
+                update.Parameters.AddWithValue("@item", item.ItemId);
+                if (await update.ExecuteNonQueryAsync() != 1)
+                    throw new StoreException("SCENARIO_PACK_BATCH_STATE_CONFLICT", "Only a PENDING item may be claimed.");
+            }
+            await using (var batchUpdate = connection.CreateCommand())
+            {
+                batchUpdate.Transaction = transaction;
+                batchUpdate.CommandText = @"
                     UPDATE scenario_pack_batches
                     SET status='PROCESSING', updated_at_utc=@updated
                     WHERE batch_id=@batch AND status IN ('PENDING','INTERRUPTED','PROCESSING');";
-                update.Parameters.AddWithValue("@batch", batchId);
-                update.Parameters.AddWithValue("@item", item.ItemId);
-                update.Parameters.AddWithValue("@updated", updatedAtUtc);
-                await update.ExecuteNonQueryAsync();
+                batchUpdate.Parameters.AddWithValue("@batch", batchId);
+                batchUpdate.Parameters.AddWithValue("@updated", updatedAtUtc);
+                if (await batchUpdate.ExecuteNonQueryAsync() != 1)
+                    throw new StoreException("SCENARIO_PACK_BATCH_STATE_CONFLICT", "The batch is unavailable for item claim.");
             }
             await transaction.CommitAsync();
             return item with { Status = ScenarioPackBatchItemStatus.Processing, Attempts = item.Attempts + 1 };

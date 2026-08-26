@@ -8,12 +8,9 @@
     <Nullable>enable</Nullable>
     <AssemblyName>FullSpectrum.Observer.Store</AssemblyName>
     <RootNamespace>FullSpectrum.Observer.Store</RootNamespace>
-    <!-- Relaxed for this newly-added project: the local SDK is unavailable in the authoring
-         environment, so build/warning verification is delegated to the integrator. Re-enable
-         TreatWarningsAsErrors / analyzers after the local build is green. -->
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 

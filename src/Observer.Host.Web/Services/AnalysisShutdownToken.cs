@@ -9,7 +9,7 @@ namespace FullSpectrum.Observer.Host.Web.Services;
 /// EngineFacade cancel path (M2-FIX-03, T12). No forced <c>Kill</c> is required for a controlled
 /// shutdown.
 /// </summary>
-public sealed class AnalysisShutdownToken
+public sealed class AnalysisShutdownToken : IDisposable
 {
     private readonly CancellationTokenSource _source = new();
 
@@ -18,4 +18,6 @@ public sealed class AnalysisShutdownToken
 
     /// <summary>Signal cancellation (idempotent).</summary>
     public void Signal() => _source.Cancel();
+
+    public void Dispose() => _source.Dispose();
 }

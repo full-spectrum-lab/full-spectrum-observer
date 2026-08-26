@@ -14,6 +14,7 @@ namespace FullSpectrum.Observer.Host.Web.Services;
 /// </summary>
 public sealed class AuditViewer
 {
+    private static readonly JsonSerializerOptions ExportJsonOptions = new() { WriteIndented = true };
     private readonly ObserverStore _store;
     private readonly AuditContext _audit;
 
@@ -66,6 +67,6 @@ public sealed class AuditViewer
             evidence_digest = evidence?.EvidenceDigest ?? string.Empty,
             references = evidence?.References.ToArray() ?? Array.Empty<string>(),
         };
-        return JsonSerializer.Serialize(export, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize(export, ExportJsonOptions);
     }
 }

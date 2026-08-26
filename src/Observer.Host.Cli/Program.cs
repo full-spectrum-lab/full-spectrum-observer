@@ -62,6 +62,8 @@ static async Task<int> MainAsync(string[] args)
         string dataDir = ObserverDataDirectory.Resolve(options.Get("--data-dir"));
         string inputRoot = Path.GetFullPath(
             options.Get("--input-root") ?? Directory.GetCurrentDirectory());
+        if (command == "scenario-pack-run")
+            return await ScenarioPackCommand.RunAsync(options, dataDir, cts.Token);
         await using HostComponents host = ObserverHostFactory.Create(dataDir, inputRoot);
 
         return command switch
@@ -111,7 +113,7 @@ static async Task<int> MainAsync(string[] args)
 
 static int Help()
 {
-    Console.WriteLine(
+        Console.WriteLine(
         "Full Spectrum Observer Foundation Kernel source candidate\n" +
         "Commands:\n" +
         "  observer version --json\n" +
@@ -119,8 +121,9 @@ static int Help()
         "  observer analyze --case CASE005_KNOWLEDGE_CONFLICT --data-dir PATH --json\n" +
         "  observer analyze --input FILE --input-root ROOT --data-dir PATH --json\n" +
         "  observer show --observation-id UUID --data-dir PATH --json\n" +
-        "  observer verify-audit --from 1 --data-dir PATH --json\n" +
-        "  observer serve    启动 Web 控制台（默认仅监听 127.0.0.1）");
+            "  observer verify-audit --from 1 --data-dir PATH --json\n" +
+            "  observer scenario-pack-run --pack PATH --case CASE_ID --data-dir PATH --authorization-ref REF --redaction-ref REF --deletion-ref REF --json\n" +
+            "  observer serve    启动 Web 控制台（默认仅监听 127.0.0.1）");
     return 0;
 }
 

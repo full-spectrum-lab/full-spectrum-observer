@@ -168,6 +168,32 @@ public sealed class AnalysisWorkspace
             }
         }
 
+        // Active-only is a Draft-task preflight boundary. Once a task has passed preflight,
+        // replay/recovery must not silently change its historical binding if a catalog version
+        // is retired while the Engine is running. Missing knowledge IDs remain a separately
+        // tracked product defect; they are not treated as Active-only violations here.
+        if (task.Status == AnalysisTaskStatus.Draft)
+        {
+            string? inactiveSubject = !string.Equals(subjectVersion.Status, "Active", StringComparison.Ordinal)
+                ? subjectVersion.VersionId
+                : null;
+            string? inactiveKnowledge = knowledgeVersions
+                .FirstOrDefault(version => !string.Equals(version.Status, "Active", StringComparison.Ordinal))
+                ?.VersionId;
+            if (inactiveSubject is not null || inactiveKnowledge is not null)
+            {
+                string offendingVersion = inactiveSubject ?? inactiveKnowledge!;
+                await _audit.AppendAsync(
+                    "PREFLIGHT_FAILED",
+                    taskId,
+                    $"ACTIVE_ONLY_VIOLATION: version '{offendingVersion}' is not Active.");
+                await TransitionAsync(taskId, AnalysisTaskStatus.PreflightFailed, "PREFLIGHT_FAILED");
+                return await FailedReloaded(
+                    taskId,
+                    $"仅 Active 版本可用于新分析：版本 '{offendingVersion}' 当前不是 Active，已拒绝调用 Engine。");
+            }
+        }
+
         var rawInput = new RawAnalysisInput
         {
             Mode = task.InputMode,

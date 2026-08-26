@@ -3,15 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <RootNamespace>FullSpectrum.Observer.Host.Web</RootNamespace>
     <AssemblyName>Observer.Host.Web</AssemblyName>
-    <!-- Relaxed for this newly-added console project: the local SDK is unavailable in the
-         authoring environment, so build/warning verification is delegated to the integrator.
-         Re-enable TreatWarningsAsErrors / analyzers after the local build is green. -->
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 

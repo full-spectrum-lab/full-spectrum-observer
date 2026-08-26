@@ -27,7 +27,7 @@ string? stopToken = GetOption(args, "--stop-token");
 string? stopPipe = GetOption(args, "--stop-pipe");
 int launcherPid = ParsePositiveInt(GetOption(args, "--launcher-pid"));
 long launcherStartUtcTicks = ParsePositiveLong(GetOption(args, "--launcher-start-utc-ticks"));
-string requestedUrls = GetOption(args, "--urls");
+string requestedUrls = GetOption(args, "--urls") ?? string.Empty;
 builder.Services.AddSingleton(new BootstrapTokenContext(bootstrapToken, TimeSpan.FromSeconds(30)));
 
 builder.Services.AddRazorComponents()
@@ -169,7 +169,7 @@ static string? GetOption(string[] args, string name)
         {
             return args[index + 1];
         }
-        if (args[index].StartsWith(name + "="))
+        if (args[index].StartsWith(name + "=", StringComparison.Ordinal))
         {
             return args[index].Substring(name.Length + 1);
         }

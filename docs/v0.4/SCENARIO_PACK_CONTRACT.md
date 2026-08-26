@@ -49,6 +49,9 @@ All regular files below the Pack root except `scenario-pack.manifest.json` and d
 
 ## Implemented execution and pilot boundary
 - Batch import is idempotent, restartable and bound to frozen Pack identity.
+- The local CLI command `observer scenario-pack-run` is the v0.4 minimum controlled entry. It runs
+  one declared Golden Case through the real Engine v1.5 path and persists candidate-only output;
+  it is not a remote service, enterprise controller or target-user pilot completion.
 - Pack Profile `ref/id/version/digest` values are explicit replay anchors; they do not replace the Engine v1.5 Profile identity.
 - Batch input runs through the real Engine v1.5 path and is projected only as a candidate result. A hard gate is rejected.
 - Human-review records, five-metric ledger entries, exports and v0.4 audit events are append-only.
