@@ -123,6 +123,7 @@ static int Help()
         "  observer show --observation-id UUID --data-dir PATH --json\n" +
             "  observer verify-audit --from 1 --data-dir PATH --json\n" +
             "  observer scenario-pack-run --pack PATH --case CASE_ID --data-dir PATH --authorization-ref REF --redaction-ref REF --deletion-ref REF --json\n" +
+            "  observer scenario-pack-run --pack PATH --input FILE --input-root PATH --trust-store FILE --trust-store-sha256 SHA256 --data-dir PATH --authorization-ref sha256:DIGEST --redaction-ref sha256:DIGEST --deletion-ref sha256:DIGEST --json\n" +
             "  observer serve    启动 Web 控制台（默认仅监听 127.0.0.1）");
     return 0;
 }

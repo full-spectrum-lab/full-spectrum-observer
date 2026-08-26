@@ -5,6 +5,97 @@ namespace FullSpectrum.Observer.Store;
 
 public sealed partial class ObserverStore
 {
+    public async Task InsertScenarioPackCandidateObservationsAsync(
+        IReadOnlyList<ScenarioPackCandidateObservation> candidates)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
+        try
+        {
+            foreach (ScenarioPackCandidateObservation candidate in candidates)
+            {
+                await using var command = connection.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText = @"
+                    INSERT INTO scenario_pack_candidate_observations
+                      (candidate_id, result_id, sample_id, assertion_key, source_refs_json,
+                       claim_digests_json, minority_evidence_refs_json, missing_context_json,
+                       reason_code, adapter_version, signature_key_id, trust_store_digest,
+                       human_review_required, authorized_action,
+                       candidate_digest, created_at_utc)
+                    VALUES
+                      (@candidate, @result, @sample, @assertion, @sources,
+                       @claims, @minority, @missing, @reason, @adapter, @key, @trust,
+                       1, 0, @digest, @created)";
+                command.Parameters.AddWithValue("@candidate", candidate.CandidateId);
+                command.Parameters.AddWithValue("@result", candidate.ResultId);
+                command.Parameters.AddWithValue("@sample", candidate.SampleId);
+                command.Parameters.AddWithValue("@assertion", candidate.AssertionKey);
+                command.Parameters.AddWithValue("@sources", SerializeArray(candidate.SourceRefs));
+                command.Parameters.AddWithValue("@claims", SerializeArray(candidate.ClaimDigests));
+                command.Parameters.AddWithValue("@minority", SerializeArray(candidate.MinorityEvidenceRefs));
+                command.Parameters.AddWithValue("@missing", SerializeArray(candidate.MissingContext));
+                command.Parameters.AddWithValue("@reason", candidate.ReasonCode);
+                command.Parameters.AddWithValue("@adapter", candidate.AdapterVersion);
+                command.Parameters.AddWithValue("@key", candidate.SignatureKeyId);
+                command.Parameters.AddWithValue("@trust", candidate.TrustStoreDigest);
+                command.Parameters.AddWithValue("@digest", candidate.CandidateDigest);
+                command.Parameters.AddWithValue("@created", candidate.CreatedAtUtc);
+                await command.ExecuteNonQueryAsync();
+            }
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<List<ScenarioPackCandidateObservation>> GetScenarioPackCandidateObservationsAsync(
+        string resultId)
+    {
+        await using var connection = Open();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = @"
+            SELECT candidate_id, result_id, sample_id, assertion_key, source_refs_json,
+                   claim_digests_json, minority_evidence_refs_json, missing_context_json,
+                   reason_code, adapter_version, signature_key_id, trust_store_digest,
+                   human_review_required, authorized_action,
+                   candidate_digest, created_at_utc
+            FROM scenario_pack_candidate_observations
+            WHERE result_id=@result ORDER BY candidate_id";
+        command.Parameters.AddWithValue("@result", resultId);
+        await using var reader = await command.ExecuteReaderAsync();
+        var result = new List<ScenarioPackCandidateObservation>();
+        while (await reader.ReadAsync())
+        {
+            result.Add(new ScenarioPackCandidateObservation
+            {
+                CandidateId = reader.GetString(0),
+                ResultId = reader.GetString(1),
+                SampleId = reader.GetString(2),
+                AssertionKey = reader.GetString(3),
+                SourceRefs = DeserializeArray(reader.GetString(4)),
+                ClaimDigests = DeserializeArray(reader.GetString(5)),
+                MinorityEvidenceRefs = DeserializeArray(reader.GetString(6)),
+                MissingContext = DeserializeArray(reader.GetString(7)),
+                ReasonCode = reader.GetString(8),
+                AdapterVersion = reader.GetString(9),
+                SignatureKeyId = reader.GetString(10),
+                TrustStoreDigest = reader.GetString(11),
+                HumanReviewRequired = reader.GetInt64(12) == 1,
+                AuthorizedAction = reader.GetInt64(13) == 1,
+                CandidateDigest = reader.GetString(14),
+                CreatedAtUtc = reader.GetString(15),
+            });
+        }
+        return result;
+    }
+
     public async Task<ScenarioPackBatch> CreateScenarioPackBatchAsync(
         ScenarioPackBatch batch,
         IReadOnlyList<ScenarioPackBatchItem> items)

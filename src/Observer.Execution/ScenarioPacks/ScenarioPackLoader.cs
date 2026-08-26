@@ -59,10 +59,10 @@ public sealed class ScenarioPackLoader
 
             RequireExactCompatibility(manifest.CompatibleObserverVersions, _observerVersion, ScenarioPackReasonCodes.ObserverIncompatible, "Observer");
             RequireExactCompatibility(manifest.CompatibleEngineVersions, _engineVersion, ScenarioPackReasonCodes.EngineIncompatible, "Engine");
-            VerifySignature(root, manifest);
+            (string signatureKeyId, string trustPurpose) = VerifySignature(root, manifest);
 
             var identity = new ScenarioPackIdentity(manifest.PackId, manifest.Version, manifest.Digest);
-            return new LoadedScenarioPack(identity, manifest, root);
+            return new LoadedScenarioPack(identity, manifest, root, signatureKeyId, trustPurpose);
         }
         catch (ScenarioPackLoadException)
         {
@@ -74,7 +74,7 @@ public sealed class ScenarioPackLoader
         }
     }
 
-    private void VerifySignature(string root, ScenarioPackManifest manifest)
+    private (string KeyId, string Purpose) VerifySignature(string root, ScenarioPackManifest manifest)
     {
         string path = Path.Combine(root, ScenarioPackSignatureContract.SignatureFileName);
         if (!File.Exists(path))
@@ -113,6 +113,7 @@ public sealed class ScenarioPackLoader
             if (!rsa.VerifyData(material, Convert.FromBase64String(envelope.SignatureBase64),
                     HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                 throw new ScenarioPackLoadException(ScenarioPackReasonCodes.SignatureInvalid, "Detached Scenario Pack signature verification failed.");
+            return (envelope.KeyId, trustRoot.Purpose);
         }
         catch (ScenarioPackLoadException)
         {

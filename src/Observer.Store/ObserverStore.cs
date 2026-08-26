@@ -52,6 +52,7 @@ public sealed partial class ObserverStore : IAsyncDisposable
         await EngineVersionCanonicalizationMigration.ApplyAsync(connection);
         await ApplySqlMigrationAsync(connection, "FullSpectrum.Observer.Store.Data.Migrations.002_v04_scenario_packs.sql");
         await ApplySqlMigrationAsync(connection, "FullSpectrum.Observer.Store.Data.Migrations.003_v04_pilot_loop.sql");
+        await ApplySqlMigrationAsync(connection, "FullSpectrum.Observer.Store.Data.Migrations.004_v04_candidate_observations.sql");
     }
 
     /// <summary>

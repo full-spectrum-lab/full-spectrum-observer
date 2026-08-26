@@ -1,7 +1,7 @@
 # v0.4 Internal Candidate Package Contract
 
 Created at: 2026-08-26 16:00 Beijing time (UTC+8)
-Last updated at: 2026-08-26 16:00 Beijing time (UTC+8)
+Last updated at: 2026-08-27 03:05 Beijing time (UTC+8)
 
 ## Status
 
@@ -47,3 +47,8 @@ or reports a released v0.3 identity.
 These tests establish package integrity and local executable behavior only.
 They do not replace target-user acceptance, authorization, redaction,
 deletion/exit evidence, or production signing authority.
+
+The candidate package also contains the structured external-input adapter and its immutable
+candidate-observation migration. A package smoke may exercise RP-001 only from the separately
+held local evidence root; the raw sample, private key and trust-store preparation material are
+not package contents and must never be copied into a repository or release artifact.
