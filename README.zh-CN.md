@@ -1,7 +1,7 @@
 # Full Spectrum Observer
 
 - 创建时间：2026-07-16 17:35
-- 最后更新时间：2026-08-24 18:23
+- 最后更新时间：2026-08-27 09:15
 - 时区：北京时间（UTC+8）
 
 [![全频谱体系总图](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/full-spectrum-system-master-map-zh-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
@@ -78,6 +78,7 @@ IG3/IG4 等门禁需显式提供固定的私有 Python 3.12 和原生 SQLite 路
 - [源码包 Manifest](SOURCE_PACKAGE_MANIFEST.json)
 - [安全策略](SECURITY.md)
 - [贡献说明](CONTRIBUTING.md)
+- [Observer v0.4 社区持续证据任务——尚未开放执行](docs/community/observer-v04/COMMUNITY_EVIDENCE_TASK.zh-CN.md)
 - [按人的问题组织的公共入口](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
 
 ## 许可证

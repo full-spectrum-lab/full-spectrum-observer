@@ -1,7 +1,7 @@
 # Full Spectrum Observer
 
 - Created at: 2026-07-13 09:48
-- Last updated at: 2026-08-24 18:23
+- Last updated at: 2026-08-27 09:15
 - Time zone: Beijing time (UTC+8)
 
 [English](README.md) · [简体中文](README.zh-CN.md)
@@ -102,6 +102,7 @@ pwsh ./scripts/test.ps1 -Gate IG4
 - [Source package manifest](SOURCE_PACKAGE_MANIFEST.json)
 - [Security policy](SECURITY.md)
 - [Contributing](CONTRIBUTING.md)
+- [Observer v0.4 community evidence task — execution not open](docs/community/observer-v04/COMMUNITY_EVIDENCE_TASK.md)
 - [Start from Your Question](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.md)
 - [Four independent engineering tracks](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/four-independent-engineering-tracks.md)
 - [Synthetic industrial evidence-gap case](https://github.com/full-spectrum-lab/full-spectrum-enterprise-governance/tree/main/cases/industrial-tightening-evidence-gap)
