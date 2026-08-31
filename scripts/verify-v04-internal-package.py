@@ -32,7 +32,8 @@ def main() -> int:
     root = pathlib.Path(args.package_root).resolve()
     errors: list[str] = []
     required = [
-        "observer.cmd", "app/FullSpectrum.Observer.Host.Cli.dll", "runtime/dotnet/dotnet.exe",
+        "observer.cmd", "app/FullSpectrum.Observer.Host.Cli.dll", "web/Observer.Host.Web.dll",
+        "runtime/dotnet/dotnet.exe",
         "runtime/python/python.exe", "runtime/sqlite/sqlite3.dll", "engine/worker/worker.py",
         "engine/worker.lock.json", "engine/engine-baseline.json", "engine/locks/runtime-manifest.json",
         "config/scenario-pack-trust-roots.json", "schemas/scenario-pack/v1/scenario-pack-manifest.schema.json",

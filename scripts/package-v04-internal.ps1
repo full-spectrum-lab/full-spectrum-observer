@@ -25,13 +25,18 @@ $Staging = Join-Path $OutputRoot "observer-v0.4.0-beta-internal-candidate-$Short
 $Zip = "$Staging.zip"
 if (Test-Path $Staging) { Remove-Item $Staging -Recurse -Force }
 if (Test-Path $Zip) { Remove-Item $Zip -Force }
-New-Item -ItemType Directory -Force -Path $Staging, (Join-Path $Staging "app"), (Join-Path $Staging "runtime"), (Join-Path $Staging "runtime/dotnet"), (Join-Path $Staging "tools") | Out-Null
+New-Item -ItemType Directory -Force -Path $Staging, (Join-Path $Staging "app"), (Join-Path $Staging "web"), (Join-Path $Staging "runtime"), (Join-Path $Staging "runtime/dotnet"), (Join-Path $Staging "tools") | Out-Null
 
 $env:DOTNET_CLI_TELEMETRY_OPTOUT = "1"
 $env:DOTNET_NOLOGO = "1"
 $env:NUGET_PACKAGES = Join-Path $RepoRoot ".packages"
 & dotnet publish (Join-Path $RepoRoot "src/Observer.Host.Cli/Observer.Host.Cli.csproj") --configuration $Configuration --no-restore --self-contained false --output (Join-Path $Staging "app")
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& dotnet publish (Join-Path $RepoRoot "src/Observer.Host.Web/Observer.Host.Web.csproj") --configuration $Configuration --no-restore --self-contained false --output (Join-Path $Staging "web")
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if (-not (Test-Path (Join-Path $Staging "web/Observer.Host.Web.dll") -PathType Leaf)) {
+    throw "Web Host publish did not produce web/Observer.Host.Web.dll."
+}
 
 Copy-Item (Join-Path $DotnetRoot "dotnet.exe") (Join-Path $Staging "runtime/dotnet") -Force
 Copy-Item (Join-Path $DotnetRoot "host") (Join-Path $Staging "runtime/dotnet/host") -Recurse

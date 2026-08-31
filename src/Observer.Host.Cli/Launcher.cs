@@ -219,8 +219,15 @@ public sealed class Launcher : IDisposable
 
     private void StartHostProcess()
     {
-        string dotnetExe = Path.Combine(AppContext.BaseDirectory, "runtime", "dotnet", "dotnet.exe");
-        string webDir = Path.Combine(AppContext.BaseDirectory, "web");
+        // The CLI assembly is published under <package>/app while the portable runtime and
+        // Web Host are assembled at <package>/runtime and <package>/web. Resolve the explicit
+        // package-root marker from observer.cmd so the product remains movable.
+        string packageRoot = Environment.GetEnvironmentVariable("FS_OBSERVER_PACKAGE_ROOT")
+            ?? Directory.GetParent(AppContext.BaseDirectory)?.FullName
+            ?? AppContext.BaseDirectory;
+        packageRoot = Path.GetFullPath(packageRoot);
+        string dotnetExe = Path.Combine(packageRoot, "runtime", "dotnet", "dotnet.exe");
+        string webDir = Path.Combine(packageRoot, "web");
         string webDll = Path.Combine(webDir, "Observer.Host.Web.dll");
 
         if (!File.Exists(dotnetExe) || !File.Exists(webDll))
@@ -258,7 +265,7 @@ public sealed class Launcher : IDisposable
         // host honestly falls back to its package manifest.
         ApplyChildEnvironment(
             startInfo,
-            AppContext.BaseDirectory,
+            packageRoot,
             Environment.GetEnvironmentVariable("OBSERVER_RELEASE_IDENTITY_PATH"),
             _dataDirectory);
         _hostProcess = Process.Start(startInfo)
