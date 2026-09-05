@@ -21,8 +21,8 @@ target_commit: "2492715d"
 latest_verified_commit: "2492715d"
 evidence:
   level: INDEPENDENTLY_REPRODUCED
-  bundle: null
-  bundle_sha256: null
+  bundle: "observer-ig5-evidence-20260905.zip"
+  bundle_sha256: "00D26D2B488AACC29C114B7DD29400A8E160F416D31CB68068324D526755A5A4"
   release_artifact_sha256: "A53C08B227A6B6320BB7B79B33A3D7CD253BB5D94AA49731F3CAED86B5B94FD2"
   verified_at: "2026-09-05T00:00:00+08:00"
   verifier: "project-owner-confirmed; named individual verifier not specified"
