@@ -1,0 +1,62 @@
+schema_version: "0.1"
+project: observer
+as_of: "2026-09-05T00:00:00+08:00"
+release:
+  current: "v0.4.0-beta"
+  channel: prerelease
+  canonical_host: github
+  source_release: "https://github.com/full-spectrum-lab/full-spectrum-observer/releases"
+  mirror_hosts:
+    - gitee
+  binary_assets_host: "github-or-gitee"
+implementation_status: IMPLEMENTED
+verification_status: INDEPENDENTLY_REPRODUCED
+maturity_level: INDEPENDENTLY_REPRODUCED
+production_readiness:
+  status: NOT_READY
+  boolean: false
+  context: "离线独立部署与复验范围；不代表真实网络或生产就绪"
+  verified_environment: "offline-independent-reproduction"
+target_commit: "2492715d"
+latest_verified_commit: "2492715d"
+evidence:
+  level: INDEPENDENTLY_REPRODUCED
+  bundle: null
+  bundle_sha256: null
+  release_artifact_sha256: "A53C08B227A6B6320BB7B79B33A3D7CD253BB5D94AA49731F3CAED86B5B94FD2"
+  verified_at: "2026-09-05T00:00:00+08:00"
+  verifier: "project-owner-confirmed; named individual verifier not specified"
+  scope: OFFLINE
+  limitations:
+    - REAL_NETWORK_REQUESTS_NONE
+    - REAL_CREDENTIALS_NOT_READ
+    - PRODUCTION_DEPLOYMENT_NOT_CONFIRMED
+    - EVIDENCE_ARCHIVE_NOT_PRESENT_IN_THIS_WORKTREE
+dependencies:
+  - project: protocol
+    version: "unreleased-or-draft"
+  - project: engine
+    version: "v1.5.0"
+owner: "full-spectrum-lab"
+next_milestone: "Confirm compatibility matrix and publish evidence hash"
+blockers: []
+unknowns:
+  - item: "Canonical compatibility declaration for Observer v0.4.0-beta"
+    owner: "full-spectrum-protocol"
+    review_by: "2026-09-12"
+    disposition_on_expiry: blocker
+out_of_scope: []
+reported:
+  - field: verification_status
+    value: INDEPENDENTLY_REPRODUCED
+    source: task-report
+    reported_at: "2026-09-05T00:00:00+08:00"
+confirmed:
+  - field: release.current
+    value: v0.4.0-beta
+    source: project-owner-confirmation
+    confirmed_at: "2026-09-05T00:00:00+08:00"
+  - field: production_readiness.status
+    value: NOT_READY
+    source: project-owner-confirmation
+    confirmed_at: "2026-09-05T00:00:00+08:00"
