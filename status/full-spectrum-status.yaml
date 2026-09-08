@@ -1,8 +1,8 @@
 schema_version: "0.1"
 project: observer
-as_of: "2026-09-05T00:00:00+08:00"
+as_of: "2026-09-08T10:39:00+08:00"
 release:
-  current: "v0.4.0-beta"
+  current: "v0.3.0-maintenance.6"
   channel: prerelease
   canonical_host: github
   source_release: "https://github.com/full-spectrum-lab/full-spectrum-observer/releases"
@@ -10,28 +10,71 @@ release:
     - gitee
   binary_assets_host: "github-or-gitee"
 implementation_status: IMPLEMENTED
-verification_status: INDEPENDENTLY_REPRODUCED
-maturity_level: INDEPENDENTLY_REPRODUCED
+verification_status: UNKNOWN
+maturity_level: IMPLEMENTED
 production_readiness:
   status: NOT_READY
   boolean: false
   context: "离线独立部署与复验范围；不代表真实网络或生产就绪"
   verified_environment: "offline-independent-reproduction"
-target_commit: "2492715d"
-latest_verified_commit: "2492715d"
+target_commit: "df0b64c064f6debd33b3a1a60f97f96287cd5dc8"
+latest_verified_commit: "df0b64c064f6debd33b3a1a60f97f96287cd5dc8"
+authority:
+  source: release
+  canonical_repository: full-spectrum-lab/full-spectrum-observer
+  canonical_commit: "df0b64c064f6debd33b3a1a60f97f96287cd5dc8"
+publication:
+  state: PUBLISHED_REMOTE
+  github: PASS
+  gitee: UNKNOWN
+  last_checked_at: "2026-09-08T10:39:00+08:00"
+runtime_path:
+  value: SIMULATE_PY
+  as_of_commit: "df0b64c064f6debd33b3a1a60f97f96287cd5dc8"
+  reverify: REQUIRED_FOR_NEWER_RELEASES
+  engine_facade: NOT_CONFIRMED
+  governance_chain: NOT_CONFIRMED
+  content_audit: NOT_CONFIRMED
+compatibility:
+  protocol: NOT_CONFIRMED
+  engine: NOT_CONFIRMED
+  knowledge_governance: NOT_CONFIRMED
 evidence:
-  level: INDEPENDENTLY_REPRODUCED
-  bundle: "observer-ig5-evidence-20260905.zip"
-  bundle_sha256: "00D26D2B488AACC29C114B7DD29400A8E160F416D31CB68068324D526755A5A4"
-  release_artifact_sha256: "A53C08B227A6B6320BB7B79B33A3D7CD253BB5D94AA49731F3CAED86B5B94FD2"
-  verified_at: "2026-09-05T00:00:00+08:00"
-  verifier: "project-owner-confirmed; named individual verifier not specified"
+  level: UNKNOWN
+  bundle: null
+  bundle_sha256: null
+  release_artifact_sha256: null
+  verified_at: null
+  verifier: null
   scope: OFFLINE
   limitations:
     - REAL_NETWORK_REQUESTS_NONE
     - REAL_CREDENTIALS_NOT_READ
     - PRODUCTION_DEPLOYMENT_NOT_CONFIRMED
-    - EVIDENCE_ARCHIVE_NOT_PRESENT_IN_THIS_WORKTREE
+    - CURRENT_MAINTENANCE_RELEASE_EVIDENCE_BUNDLE_NOT_LINKED
+inspected_prerelease:
+  version: "v0.4.0-beta"
+  target_commit: "2492715d54c504dc58d0a682f4559d731c56fc74"
+  tag_object: "89b83496071d52c04432c0de9c12ffd67b022ee2"
+  release_visible:
+    github: PASS
+    gitee: PASS
+  runtime_path:
+    value: SIMULATE_PY
+    as_of_commit: "2492715d54c504dc58d0a682f4559d731c56fc74"
+    engine_facade: NOT_CONFIRMED
+    governance_chain: NOT_CONFIRMED
+    content_audit: NOT_CONFIRMED
+  evidence:
+    level: INDEPENDENTLY_REPRODUCED
+    bundle: "observer-ig5-evidence-20260905.zip"
+    bundle_sha256: "00D26D2B488AACC29C114B7DD29400A8E160F416D31CB68068324D526755A5A4"
+    release_artifact_sha256: "A53C08B227A6B6320BB7B79B33A3D7CD253BB5D94AA49731F3CAED86B5B94FD2"
+    scope: OFFLINE
+    limitations:
+      - NOT_CURRENT_PUBLIC_RELEASE_TRUTH
+      - REAL_NETWORK_REQUESTS_NONE
+      - PRODUCTION_DEPLOYMENT_NOT_CONFIRMED
 dependencies:
   - project: protocol
     version: "unreleased-or-draft"
@@ -41,19 +84,19 @@ owner: "full-spectrum-lab"
 next_milestone: "Confirm compatibility matrix and publish evidence hash"
 blockers: []
 unknowns:
-  - item: "Canonical compatibility declaration for Observer v0.4.0-beta"
+  - item: "Canonical compatibility declaration for the current Observer maintenance release and inspected v0.4 prerelease"
     owner: "full-spectrum-protocol"
     review_by: "2026-09-12"
     disposition_on_expiry: blocker
 out_of_scope: []
 reported:
-  - field: verification_status
+  - field: inspected_prerelease.verification_status
     value: INDEPENDENTLY_REPRODUCED
     source: task-report
     reported_at: "2026-09-05T00:00:00+08:00"
 confirmed:
   - field: release.current
-    value: v0.4.0-beta
+    value: v0.3.0-maintenance.6
     source: project-owner-confirmation
     confirmed_at: "2026-09-05T00:00:00+08:00"
   - field: production_readiness.status
