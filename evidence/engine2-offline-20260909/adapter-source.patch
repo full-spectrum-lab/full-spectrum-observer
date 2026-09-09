@@ -1,0 +1,10 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 53d01af..21cdbb1 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -2,4 +2,4 @@
+ # Standalone Python Compatibility Adapter test configuration.
+ # The repo is otherwise a .NET solution; this only affects `pytest` runs.
+ pythonpath = ["src"]
+-testpaths = ["tests/compat"]
++testpaths = ["tests/compat", "tests/engine2"]

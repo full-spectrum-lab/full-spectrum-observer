@@ -1,0 +1,6 @@
+python_compile=PASS
+dotnet_sdk=10.0.301
+dotnet_build=PASS
+dotnet_build_warnings=0
+dotnet_build_errors=0
+observer_foundation_gates=IG1-IG5 PASS

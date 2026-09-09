@@ -1,0 +1,5 @@
+legacy_worker_path=engine/worker/worker.py -> engine/vendor/full-spectrum-engine/simulate.py::run_simulation
+engine2_runtime_path=observer_engine2.Engine2ObserverAdapter -> PinnedEngineRuntimePort -> external engine2.OfflineEngine.retrieve
+legacy_simulation_path=RETAINED_SEPARATELY
+engine2_runtime_path=DISTINCT
+governance_chain_in_observer_worker=NOT_USED_BY_THIS_ADAPTER

@@ -1,0 +1,4 @@
+command=python -m pytest -q tests/engine2/test_contract_adapter.py
+result=15 passed
+scope=contract field exactness, canonical safe subset, projection mutation guard, error preservation, audit fail-closed
+fixture_parse=PASS (Protocol verify_engine2_fixture.py)

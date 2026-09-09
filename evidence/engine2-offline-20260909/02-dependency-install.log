@@ -1,0 +1,2 @@
+status=NOT_REQUIRED
+note=Adapter uses Python standard library only; fixed Engine is loaded from an external exact-commit checkout.

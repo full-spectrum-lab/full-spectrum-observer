@@ -1,0 +1,3 @@
+command=python -m pytest -q tests/engine2/test_fake_engine.py
+result=3 passed
+scope=fake engine only; no fixed Engine runtime claim

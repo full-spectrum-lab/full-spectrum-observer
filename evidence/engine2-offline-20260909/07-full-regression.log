@@ -1,0 +1,7 @@
+command=FSP_ENGINE2_PINNED_CHECKOUT=... python -m pytest -q
+result=100 passed
+dotnet_regression=PASS (SDK 10.0.301 isolated environment)
+observer_foundation_gates=IG1-IG5 PASS
+build_warnings=0
+build_errors=0
+preexisting_failures=NONE_OBSERVED_IN_EXECUTED_PYTHON_SCOPE

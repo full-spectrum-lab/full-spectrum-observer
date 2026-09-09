@@ -1,0 +1,10 @@
+as_of=2026-09-09 Asia/Shanghai
+observer_worktree=C:\Users\wangjian0926\Desktop\codex专属仓库\worktrees\instance5-observer-engine2
+observer_base_commit=5f5206d56d8ebf85720fcae031249b25b3ec2551
+pinned_engine_checkout=C:\Users\wangjian0926\Desktop\codex专属仓库\worktrees\instance5-engine-pinned-11c6f835
+pinned_engine_commit=11c6f83593a327457940c6b5832aa03aa50713ee
+python=available
+dotnet_sdk_required=10.0.301
+dotnet_sdk_available=10.0.301 (isolated SDK)
+observer_private_python=available
+observer_sqlite_native=available

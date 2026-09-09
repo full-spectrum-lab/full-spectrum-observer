@@ -1,0 +1,9 @@
+observer_remote_origin=https://gitee.com/full-spectrum/full-spectrum-observer.git
+observer_remote_github=https://github.com/full-spectrum-lab/full-spectrum-observer.git
+observer_base_branch=github/compat/engine-v1.5-observer-v0.4
+observer_public_release=v0.3.0-maintenance.6 (QPP current baseline)
+observer_prerelease=v0.4.0-beta / 2492715d54c504dc58d0a682f4559d731c56fc74
+worktree_clean_before_change=PASS
+qpp_baseline=e04eeb25f5d8befad71237762d694461307c4d3f
+protocol_commit=725e080cee8a61c94f8c0581b19ce05791013625
+kg_commit=869f61bd7bb970a2743058a52fe1e23570667028

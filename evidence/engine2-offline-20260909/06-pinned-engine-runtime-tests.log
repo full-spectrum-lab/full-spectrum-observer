@@ -1,0 +1,5 @@
+command=FSP_ENGINE2_PINNED_CHECKOUT=... python -m pytest -q tests/engine2/test_pinned_runtime.py
+result=3 passed
+engine_runtime_actually_invoked=YES
+engine_runtime_commit=11c6f83593a327457940c6b5832aa03aa50713ee
+scope=external exact-commit Engine2 OfflineEngine load; injected test handler is fixture logic, not Observer decision logic
