@@ -15,8 +15,9 @@ check: PASS. Baseline check: PASS (51/51). The isolated Observer environment
 completed .NET build and IG1-IG5 foundation gates with SDK 10.0.301, 0
 warnings, and 0 errors.
 
-The implementation remains local and uncommitted;
-`OBSERVER_IMPLEMENTATION_COMMIT=UNAVAILABLE_LOCAL_UNCOMMITTED`.
+Observer implementation commit: `10b7f76f4bde0dd4dc88731dcd57c98936a72c1e`.
+The manifest content digest excludes the manifest file itself; the manifest
+file's own SHA-256 is `BA166B4EA108ED6F910D05B3BA667F3E9498A02863881642D37949AA394DE9AA`.
 
 This is single-repository offline evidence only. It does not establish
 Observer-Engine or Observer-KG compatibility, cross-repository E2E, network
