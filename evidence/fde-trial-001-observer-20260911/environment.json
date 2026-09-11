@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-09-11T03:36:59+08:00",
+  "instance": 5,
+  "domain": "OBSERVER_ENGINE2_OFFLINE_ADAPTER",
+  "observer_base_commit": "98da9559b8076770d9b5471ba0fde2cac4a6fe3c",
+  "implementation_commit": "LOCAL_COMMIT_SHA_REPORTED_BY_GIT",
+  "qpp_task_commit": "580a9e08e2c9fd524972b0b07bee149932f91fd0",
+  "protocol_contract_baseline_commit": "e08822cce605f14958c30f736dd0b0be3719de32",
+  "engine_runtime_commit": "11c6f83593a327457940c6b5832aa03aa50713ee",
+  "fixture_version": "0.1.0-rc",
+  "dotnet_sdk": "10.0.301",
+  "network_scope": "NO_REAL_NETWORK_OR_REAL_ACTION",
+  "implementation_authorization": "GRANTED_LOCAL_UNCOMMITTED_ONLY"
+}

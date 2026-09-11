@@ -1,0 +1,36 @@
+{
+  "fde_and_engine2_targeted": {
+    "command_scope": "tests/engine2/test_fde_trial_001_adapter.py plus existing contract and fake-engine tests",
+    "result": "PASS",
+    "passed": 31,
+    "failed": 0
+  },
+  "python_full_regression_without_external_checkouts": {
+    "result": "PASS_WITH_EXPECTED_SKIPS",
+    "passed": 98,
+    "skipped": 14,
+    "reason": "FDE and pinned Engine integration tests require explicit external checkout variables"
+  },
+  "python_full_regression_with_pinned_external_checkouts": {
+    "result": "PASS",
+    "passed": 112,
+    "failed": 0,
+    "skipped": 0,
+    "pinned_engine_runtime_actually_invoked": true
+  },
+  "dotnet_restore": {
+    "sdk": "10.0.301",
+    "mode": "LOCKED_OFFLINE_NUGET_CONFIG",
+    "result": "PASS"
+  },
+  "dotnet_release_build": {
+    "result": "PASS",
+    "warnings": 0,
+    "errors": 0
+  },
+  "full_fde_exercise": "NOT_EXECUTED",
+  "four_repository_composite_ci": "NOT_EXECUTED",
+  "general_compatibility": "NOT_CONFIRMED",
+  "real_network": "NOT_AUTHORIZED",
+  "production_ready": false
+}
