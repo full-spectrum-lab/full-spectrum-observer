@@ -26,7 +26,7 @@
 **Where Observer fits:** Protocol defines subjects and governance contracts; Engine provides deterministic analysis; Observer connects authorized local facts to evidence, replay and a human decision point. The public Observer line remains observation-only and does not execute final enterprise or production actions.
 
 [![Foundation gates](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml/badge.svg)](https://github.com/full-spectrum-lab/full-spectrum-observer/actions/workflows/foundation-gates.yml)
-[![Release](https://img.shields.io/badge/preview-v0.4.0--beta-orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.4.0-beta)
+[![Release](https://img.shields.io/static/v1?label=preview&message=v0.4.0-beta&color=orange)](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.4.0-beta)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MulanPSL--2.0%20OR%20Apache--2.0-blue)](LICENSE)
 
