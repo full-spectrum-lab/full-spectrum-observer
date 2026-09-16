@@ -1,7 +1,7 @@
 # Full Spectrum Observer
 
 - 创建时间：2026-07-16 17:35
-- 最后更新时间：2026-08-24 18:23
+- 最后更新时间：2026-09-16 21:20
 - 时区：北京时间（UTC+8）
 
 [![全频谱体系总图](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/full-spectrum-system-master-map-zh-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
@@ -20,13 +20,14 @@
 
 | 版本线 | 状态 | 范围 |
 |---|---|---|
-| [`v0.3.0-maintenance.6`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-maintenance.6) | **当前公开维护预发布** | 已验证候选：数据目录隔离传播、便携 Runtime 清单、真实 Chrome Owner UAT 与证据链均已闭环；状态为 `NOT_RELEASED`，生产就绪：**否** |
+| [`v0.4.0-beta`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.4.0-beta) | **最新公开预发布** | Windows x64 Scenario Pack 与冲突治理候选；仅限 Observer；不是稳定版；生产就绪：**否**。二进制分片和 SHA-256 文件入口见 Release 说明。 |
+| [`v0.3.0-maintenance.6`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-maintenance.6) | **当前维护线候选** | 已验证候选：数据目录隔离传播、便携 Runtime 清单、真实 Chrome Owner UAT 与证据链均已闭环；状态为 `NOT_RELEASED`，生产就绪：**否** |
 | [`v0.3.0-maintenance.5`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-maintenance.5) | **已被替代的失败候选** | 连同 `DATA_DIRECTORY_ISOLATION = FAIL` 证据保留，由 maintenance.6 替代 |
 | [`v0.3.0-beta.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.3.0-beta.2) | **已被替代的 Beta 基线** | Gate 1 产品化更新，保留作发布历史 |
 | [`v0.2.0-alpha.2`](https://github.com/full-spectrum-lab/full-spectrum-observer/releases/tag/v0.2.0-alpha.2) | **历史预发布** | Foundation Kernel 上的 Engine v1.0/v1.5 兼容适配层 |
-| `v0.4`～`v1.0` | **已设计，尚未实现** | Scenario Pack、企业节点、多主体 Service 与真实组织验证 |
+| `v0.5`～`v1.0` | **未来方向，必须由 Release Evidence 逐项证明** | v0.4 预发布不代表企业节点、多主体 Service 或真实组织验证已经完成 |
 
-当前公开版本为 `v0.3.0-maintenance.6`。权威 Windows x64 包、身份文件和 Manifest 附在 GitHub Pre-release 中。`CANDIDATE_VALIDATED` 仅表示既定工程验证与 Owner UAT 证据链已经闭环，不改变 `NOT_RELEASED` 与 `PRODUCTION_READY=NO`，也不构成合规声明。
+最新公开预发布为 `v0.4.0-beta`，当前维护线候选为 `v0.3.0-maintenance.6`。两者都不是稳定版或生产版。`CANDIDATE_VALIDATED` 只表示指定范围和证据链闭环，不构成一般兼容、真实网络、生产或合规声明。
 
 ## 当前已实现能力
 
