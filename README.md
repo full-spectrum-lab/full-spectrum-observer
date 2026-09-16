@@ -1,10 +1,21 @@
 # Full Spectrum Observer
 
 - Created at: 2026-07-13 09:48
-- Last updated at: 2026-09-16 21:20
+- Last updated at: 2026-09-16 22:05
 - Time zone: Beijing time (UTC+8)
 
 [English](README.md) · [简体中文](README.zh-CN.md)
+
+## Public status header
+
+| Field | Value |
+|---|---|
+| `ROLE` | Authorized reality input, Observation, Evidence, Audit, Replay and bounded human review |
+| `STATUS` | `v0.4.0-beta` latest preview · `v0.3.0-maintenance.6` maintenance candidate |
+| `CURRENT_CAPABILITY` | Windows x64 local-first evidence and replay within named release scopes |
+| `NOT_CLAIMED` | APM, generic monitoring, final business judgment, production control or general compatibility |
+| `PRODUCTION_READY` | `NO` |
+| `START_HERE` | [Release truth](#release-truth) · [Public Architecture Map](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/public-architecture-map.md) |
 
 > Local-first Observer application for reproducible evidence, audit traces and bounded human review.
 

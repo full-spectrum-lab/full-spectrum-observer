@@ -1,7 +1,7 @@
 # Full Spectrum Observer
 
 - 创建时间：2026-07-16 17:35
-- 最后更新时间：2026-09-16 21:20
+- 最后更新时间：2026-09-16 22:05
 - 时区：北京时间（UTC+8）
 
 [![全频谱体系总图](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/diagrams/product-views/full-spectrum-system-master-map-zh-v01.png?raw=1)](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/start-from-your-question.zh-CN.md)
@@ -11,6 +11,17 @@
 **Observer 在体系中的位置：** Protocol 定义主体和治理契约，Engine 提供确定性分析，Observer 将获得授权的本地事实连接到 Evidence、Replay 与人工决策点。当前公开版本只做观察，不执行企业或生产系统的最终动作。
 
 [English](README.md) · [简体中文](README.zh-CN.md)
+
+## 公共状态头
+
+| 字段 | 当前值 |
+|---|---|
+| `ROLE` | 授权现实输入、Observation、Evidence、Audit、Replay 与有边界的人工复核 |
+| `STATUS` | `v0.4.0-beta` 最新预发布 · `v0.3.0-maintenance.6` 维护候选 |
+| `CURRENT_CAPABILITY` | Windows x64 本地优先证据与回放，仅限具体 Release 范围 |
+| `NOT_CLAIMED` | APM、通用监控、最终业务裁决、生产控制或一般兼容 |
+| `PRODUCTION_READY` | `NO` |
+| `START_HERE` | [版本真相](#版本真相) · [公共架构图](https://github.com/full-spectrum-lab/full-spectrum-commons/blob/main/docs/public-architecture-map.zh-CN.md) |
 
 > 面向可复现 Evidence、审计追踪和有限人工复核的本地优先 Observer 应用。
 
